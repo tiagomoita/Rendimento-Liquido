@@ -1,0 +1,37 @@
+{
+  "name": "npm-pkg-simul-simrl",
+  "version": "1.0.0",
+  "description": "SIMRL Common",
+  "main": "./lib/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch"
+  },
+  "devDependencies": {
+    "autoprefixer": "10.4.2",
+    "@rollup/plugin-json": "4.1.0",
+    "@svgr/rollup": "6.2.0",
+    "postcss": "8.4.6",
+    "typescript": "4.6.3",
+    "rollup": "2.64.0",
+    "rollup-plugin-copy": "3.4.0",
+    "rollup-plugin-postcss": "4.0.2",
+    "rollup-plugin-scss": "3.0.0",
+    "rollup-plugin-terser": "7.0.2",
+    "rollup-plugin-typescript2": "0.31.1",
+    "rollup-plugin-visualizer": "5.5.4",
+    "@typescript-eslint/eslint-plugin": "5.36.2",
+    "@typescript-eslint/parser": "5.36.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.bdso.tech/scm/omnicharch/frontend-react-oca-framework.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
