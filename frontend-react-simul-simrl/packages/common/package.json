@@ -1,0 +1,29 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "private": true,
+  "description": "QPI Common",
+  "main": "./lib/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch",
+    "postinstall": "npm run build",
+    "resources:export": "node ../../node_modules/nb-omc-xit-frontend/dist/utils/export.js",
+    "resources:import": "node ../../node_modules/nb-omc-xit-frontend/dist/utils/import.js -f Resources.xlsx"
+  },
+  "peerDependencies": {
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.bdso.tech/scm/omnicharch/frontend-react-oca-framework.git"
+  },
+  "author": "",
+  "license": "ISC"
+}

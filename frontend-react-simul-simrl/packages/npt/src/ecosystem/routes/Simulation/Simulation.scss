@@ -1,0 +1,57 @@
+.simulation-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.text-titles {
+  display: flex;
+  align-items: self-end;
+  margin-left: 16px;
+}
+
+.text-holder {
+  margin-right: 16px;
+  margin-top: 0px;
+}
+
+.text-holder-2 {
+  margin-right: 13px;
+  margin-top: 0px;
+}
+
+::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: white;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #229f98;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #808b94;
+}
+
+.skeleton-7 {
+  border-radius: 3px;
+  height: 24px;
+  width: 450px;
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.skeleton-8 {
+  border-radius: 3px;
+  height: 24px;
+  width: 160px;
+  margin-left: 16px;
+  margin-top: 10px;
+  margin-bottom: 16px;
+}

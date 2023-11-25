@@ -1,0 +1,14 @@
+0 silly argv {
+0 silly argv   _: [ 'run' ],
+0 silly argv   scope: 'npt',
+0 silly argv   stream: true,
+0 silly argv   lernaVersion: '3.22.1',
+0 silly argv   '$0': 'node_modules\\lerna\\cli.js',
+0 silly argv   script: 'test'
+0 silly argv }
+1 notice cli v3.22.1
+2 verbose rootPath C:\Dados\t04829\Work\Simuladores\Rendimento Liquido\frontend-react-simul-simrl
+3 info versioning independent
+4 error JSONError: Unexpected string in JSON at position 432 while parsing '{  "name": "npt",  "version": "1.0.0' in packages\npt\package.json
+4 error     at module.exports (C:\Dados\t04829\Work\Simuladores\Rendimento Liquido\frontend-react-simul-simrl\node_modules\load-json-file\node_modules\parse-json\index.js:26:19)
+4 error     at parse (C:\Dados\t04829\Work\Simuladores\Rendimento Liquido\frontend-react-simul-simrl\node_modules\load-json-file\index.js:15:9)

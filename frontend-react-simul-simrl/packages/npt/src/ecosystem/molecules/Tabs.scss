@@ -1,0 +1,18 @@
+.MuiTabs-scroller {
+  border-bottom: 1px solid #e0e7e8;
+  overflow: hidden;
+}
+
+.MuiTabs-flexContainer {
+  justify-content: flex-start;
+  border-bottom: 1px solid #e0e7e8;
+}
+
+.MuiButtonBase-root.MuiTab-root.Mui-selected {
+  color: #229f98;
+  font-size: 16px;
+}
+
+.MuiTabs-indicator {
+  background-color: #229f98;
+}

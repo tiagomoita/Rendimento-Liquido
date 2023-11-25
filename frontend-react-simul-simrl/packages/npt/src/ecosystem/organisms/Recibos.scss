@@ -1,0 +1,29 @@
+.recibos-wrapper {
+  margin-right: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.radio-buttons {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+}
+
+.radio-buttons-2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.question-wrapper {
+  margin-left: 12px;
+  margin-top: 40px;
+}
+
+.skeleton-3 {
+  height: 163px;
+  border-radius: 6px;
+  margin-bottom: 18px;
+}

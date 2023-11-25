@@ -1,0 +1,25 @@
+.buttons {
+  display: flex;
+}
+
+.row-wrapper {
+  display: flex;
+}
+
+.row-title-wrapper {
+  display: flex;
+  border-bottom: 1px solid #e0e7e8;
+  margin-bottom: 20px;
+}
+
+.row-wrapper-2 {
+  display: flex;
+  margin-left: auto;
+  margin-top: auto;
+}
+
+.info-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+}

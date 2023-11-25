@@ -1,0 +1,50 @@
+.stepper-wrapper {
+  margin-top: 24px;
+}
+
+.MuiStepIcon-root {
+  color: white;
+  border: 2px solid #c9d2d7;
+  border-radius: 50%;
+}
+
+.MuiStepIcon-root.Mui-completed {
+  color: white;
+  border: 2px solid #229f98;
+  border-radius: 50%;
+  background-color: #229f98;
+}
+
+.MuiStepIcon-root.Mui-active {
+  color: white;
+  border: 2px solid #229f98;
+  border-radius: 50%;
+}
+
+.MuiStepConnector-line {
+  border-color: #c9d2d7;
+  border-top-width: 2px;
+}
+
+.MuiStepIcon-text {
+  fill: #c9d2d7;
+}
+
+.MuiStepIcon-root.Mui-active {
+  .MuiStepIcon-text {
+    fill: #229f98;
+  }
+}
+
+.MuiBox-root {
+  width: max-content;
+}
+
+.MuiStep-root {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.MuiContainer-root.MuiContainer {
+  width: fit-content;
+}
