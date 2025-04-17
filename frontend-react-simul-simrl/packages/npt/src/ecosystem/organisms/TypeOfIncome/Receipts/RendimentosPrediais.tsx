@@ -7,8 +7,6 @@ import { useDebouncedCallback } from "use-debounce";
 import { useTranslation } from "react-i18next";
 import TextField from "../../../atoms/TextField";
 import Total from "../../../atoms/Total";
-import Text from "../../../atoms/Text";
-import info from "../../../../assets/images/info.svg";
 import {
   retrieveReceiptsData,
   retrieveReceiptsDataByHolder,
@@ -19,7 +17,6 @@ import {
   setReiceptsPropertyIncome,
 } from "../../../../store/modules/entities/holder/slices";
 import { formatToEuroCurrency } from "../../../../utils/utils";
-import { color } from "../../../../utils/colors";
 
 type RendimentosPrediaisProps = {
   readOnly?: boolean;
@@ -29,8 +26,12 @@ type RendimentosPrediaisProps = {
 const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
   const { readOnly, tabHolder } = props;
   const { t } = useTranslation();
-  const [isIrregular, setIsIrregular] = useState(false);
   const ReceiptsData = useSelector(retrieveReceiptsData);
+  const [isIrregular, setIsIrregular] = useState(
+    !!ReceiptsData?.propertyIncomeReceipts?.receipt4 ||
+      !!ReceiptsData?.propertyIncomeReceipts?.receipt5 ||
+      !!ReceiptsData?.propertyIncomeReceipts?.receipt6
+  );
   const ReceiptsDataByHolder = useSelector(
     retrieveReceiptsDataByHolder(tabHolder!)
   );
@@ -42,22 +43,39 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
     setIsIrregular(false);
   };
 
+  const handleCleanIrregularReceipts = (isRegularOrIrregular: boolean) => {
+    dispatch(
+      setReiceptsPropertyIncome({
+        data: {
+          receipt4: 0,
+          receipt5: 0,
+          receipt6: 0,
+          isIrregular: isRegularOrIrregular,
+        },
+      })
+    );
+  };
+
   const checkIsRegular = useDebouncedCallback(() => {
     if (
-      ReceiptsData?.propertyIncomeReceipts?.receipt1! > 0 &&
-      ReceiptsData?.propertyIncomeReceipts?.receipt2! > 0 &&
+      ReceiptsData?.propertyIncomeReceipts?.receipt1! > 0 ||
+      ReceiptsData?.propertyIncomeReceipts?.receipt2! > 0 ||
       ReceiptsData?.propertyIncomeReceipts?.receipt3! > 0
     ) {
-      setIsIrregular(
-        calculateIsRegularOrIrregular({
-          receipt1Value: ReceiptsData?.propertyIncomeReceipts?.receipt1!,
-          receipt2Value: ReceiptsData?.propertyIncomeReceipts?.receipt2!,
-          receipt3Value: ReceiptsData?.propertyIncomeReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
-        })
-      );
+      const isRegularOrIrregular = calculateIsRegularOrIrregular({
+        receipt1Value: ReceiptsData?.propertyIncomeReceipts?.receipt1!,
+        receipt2Value: ReceiptsData?.propertyIncomeReceipts?.receipt2!,
+        receipt3Value: ReceiptsData?.propertyIncomeReceipts?.receipt3!,
+        valueOfRegularReceipts:
+          Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
+      });
+      if (isRegularOrIrregular === false) {
+        handleCleanIrregularReceipts(isRegularOrIrregular);
+      }
+      setIsIrregular(isRegularOrIrregular);
     } else {
       setIsIrregular(false);
+      handleCleanIrregularReceipts(false);
     }
   }, 1000);
 
@@ -73,7 +91,7 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
     return (value: number) => {
       dispatch(
         setReiceptsPropertyIncome({
-          propertyIncomeTax: Taxes?.netIncomeReceipts!,
+          propertyIncomeTax: Taxes?.recParams.realEstateIncome.parameterValue!,
           data: {
             [field]: value,
             isIrregular,
@@ -84,36 +102,22 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
   };
 
   const summaryIsRegular = () => {
-    if (
-      ReceiptsDataByHolder?.propertyIncomeReceipts?.receipt4 === 0 &&
-      ReceiptsDataByHolder?.propertyIncomeReceipts?.receipt5 === 0 &&
-      ReceiptsDataByHolder?.propertyIncomeReceipts?.receipt6 === 0
-    ) {
-      return true;
-    }
-    return false;
+    return !calculateIsRegularOrIrregular({
+      receipt1Value: ReceiptsDataByHolder?.propertyIncomeReceipts?.receipt1!,
+      receipt2Value: ReceiptsDataByHolder?.propertyIncomeReceipts?.receipt2!,
+      receipt3Value: ReceiptsDataByHolder?.propertyIncomeReceipts?.receipt3!,
+      valueOfRegularReceipts:
+        Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
+    });
   };
 
   return (
     <div>
-      {!readOnly && (
-        <div className="info-wrapper">
-          <img src={info} alt="img" width="18px" />
-          <Text
-            text={t("fieldEmptyIsZero")}
-            fontSize="11px"
-            margin="0px 0px 0px 10px"
-            color={color.nb_bluegray}
-            alignSelf="center"
-          />
-        </div>
-      )}
       <TextField
-        label={`${t("receipt")} 1`}
+        id="propertyIncomeReceipt1"
+        label={`${t("grossReceiptValue")} 1`}
         defaultValue={
-          ReceiptsData?.propertyIncomeReceipts?.receipt1! === 0
-            ? undefined
-            : ReceiptsData?.propertyIncomeReceipts?.receipt1!.toString()!
+          ReceiptsData?.propertyIncomeReceipts?.receipt1!.toString()!
         }
         valueCallback={handleFieldChange("receipt1")}
         placeholder={
@@ -124,13 +128,14 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={t("fieldEmptyIsZero")}
       />
       <TextField
-        label={`${t("receipt")} 2`}
+        id="propertyIncomeReceipt2"
+        label={`${t("grossReceiptValue")} 2`}
         defaultValue={
-          ReceiptsData?.propertyIncomeReceipts?.receipt2! === 0
-            ? undefined
-            : ReceiptsData?.propertyIncomeReceipts?.receipt2!.toString()!
+          ReceiptsData?.propertyIncomeReceipts?.receipt2!.toString()!
         }
         valueCallback={handleFieldChange("receipt2")}
         placeholder={
@@ -141,13 +146,14 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={t("fieldEmptyIsZero")}
       />
       <TextField
-        label={`${t("receipt")} 3`}
+        id="propertyIncomeReceipt3"
+        label={`${t("grossReceiptValue")} 3`}
         defaultValue={
-          ReceiptsData?.propertyIncomeReceipts?.receipt3! === 0
-            ? undefined
-            : ReceiptsData?.propertyIncomeReceipts?.receipt3!.toString()!
+          ReceiptsData?.propertyIncomeReceipts?.receipt3!.toString()!
         }
         valueCallback={handleFieldChange("receipt3")}
         placeholder={
@@ -158,15 +164,18 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={t("fieldEmptyIsZero")}
       />
 
       {readOnly ? (
         summaryIsRegular() ? null : (
           <>
             <TextField
-              label={`${t("receipt")} 4`}
+              id="propertyIncomeReceipt4"
+              label={`${t("grossReceiptValue")} 4`}
               defaultValue={
-                ReceiptsData?.propertyIncomeReceipts?.receipt4! === 0
+                !isIrregular
                   ? undefined
                   : ReceiptsData?.propertyIncomeReceipts?.receipt4!.toString()!
               }
@@ -181,9 +190,10 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
               isDisabled={!isIrregular || readOnly}
             />
             <TextField
-              label={`${t("receipt")} 5`}
+              id="propertyIncomeReceipt5"
+              label={`${t("grossReceiptValue")} 5`}
               defaultValue={
-                ReceiptsData?.propertyIncomeReceipts?.receipt5! === 0
+                !isIrregular
                   ? undefined
                   : ReceiptsData?.propertyIncomeReceipts?.receipt5!.toString()!
               }
@@ -198,9 +208,10 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
               isDisabled={!isIrregular || readOnly}
             />
             <TextField
-              label={`${t("receipt")} 6`}
+              id="propertyIncomeReceipt6"
+              label={`${t("grossReceiptValue")} 6`}
               defaultValue={
-                ReceiptsData?.propertyIncomeReceipts?.receipt6! === 0
+                !isIrregular
                   ? undefined
                   : ReceiptsData?.propertyIncomeReceipts?.receipt6!.toString()!
               }
@@ -219,11 +230,12 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
       ) : (
         <>
           <TextField
-            label={`${t("receipt")} 4`}
+            id="propertyIncomeReceipt4"
+            label={`${t("grossReceiptValue")} 4`}
             defaultValue={
-              ReceiptsData?.propertyIncomeReceipts?.receipt4! === 0
+              !isIrregular
                 ? undefined
-                : ReceiptsData?.propertyIncomeReceipts?.receipt4!.toString()!
+                : ReceiptsData?.propertyIncomeReceipts?.receipt4!.toString()
             }
             valueCallback={handleFieldChange("receipt4")}
             placeholder={
@@ -234,13 +246,16 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
                 : ""
             }
             isDisabled={!isIrregular || readOnly}
+            infoIcon
+            textInfo={t("fieldEmptyIsZero")}
           />
           <TextField
-            label={`${t("receipt")} 5`}
+            id="propertyIncomeReceipt5"
+            label={`${t("grossReceiptValue")} 5`}
             defaultValue={
-              ReceiptsData?.propertyIncomeReceipts?.receipt5! === 0
+              !isIrregular
                 ? undefined
-                : ReceiptsData?.propertyIncomeReceipts?.receipt5!.toString()!
+                : ReceiptsData?.propertyIncomeReceipts?.receipt5!.toString()
             }
             valueCallback={handleFieldChange("receipt5")}
             placeholder={
@@ -251,13 +266,16 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
                 : ""
             }
             isDisabled={!isIrregular || readOnly}
+            infoIcon
+            textInfo={t("fieldEmptyIsZero")}
           />
           <TextField
-            label={`${t("receipt")} 6`}
+            id="propertyIncomeReceipt6"
+            label={`${t("grossReceiptValue")} 6`}
             defaultValue={
-              ReceiptsData?.propertyIncomeReceipts?.receipt6! === 0
+              !isIrregular
                 ? undefined
-                : ReceiptsData?.propertyIncomeReceipts?.receipt6!.toString()!
+                : ReceiptsData?.propertyIncomeReceipts?.receipt6!.toString()
             }
             valueCallback={handleFieldChange("receipt6")}
             placeholder={
@@ -268,13 +286,15 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
                 : ""
             }
             isDisabled={!isIrregular || readOnly}
+            infoIcon
+            textInfo={t("fieldEmptyIsZero")}
           />
         </>
       )}
 
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

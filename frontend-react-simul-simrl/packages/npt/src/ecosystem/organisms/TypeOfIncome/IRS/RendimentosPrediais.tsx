@@ -79,7 +79,11 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
           />
         </div>
       )}
-      <Accordion title={t("earnedIncome")}>
+      <Accordion
+        title={`${t("earnedIncome")}`}
+        infoIcon
+        textInfo={`${t("table")} 4`}
+      >
         <TextField
           label={`${t("grossIncome")}*`}
           defaultValue={
@@ -137,7 +141,11 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
           isDisabled={readOnly}
         />
       </Accordion>
-      <Accordion title={t("sublease")}>
+      <Accordion
+        title={`${t("sublease")}`}
+        infoIcon
+        textInfo={`${t("table")} 5`}
+      >
         <TextField
           label={`${t("incomeReceivedByTheSublessor")}*`}
           defaultValue={
@@ -197,7 +205,7 @@ const RendimentosPrediais = (props: RendimentosPrediaisProps) => {
       </Accordion>
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

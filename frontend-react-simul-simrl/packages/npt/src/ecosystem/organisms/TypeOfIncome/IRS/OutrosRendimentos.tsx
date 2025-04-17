@@ -81,7 +81,7 @@ const OutrosRendimentos = (props: OutrosRendimentosProps) => {
       />
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

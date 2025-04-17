@@ -2,14 +2,33 @@
   margin-bottom: 18px;
 }
 
-.accordion-header {
-  display: flex;
-  align-items: center;
-}
-
 .nb-x-it-component.nb-checkbox-container
   .nb-checkbox-label__container
   .nb-checkbox {
   padding-top: 0px;
   padding-bottom: 0px;
+}
+
+.accordion-wrapper {
+  margin-bottom: 18px;
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+}
+
+.skeleton-2 {
+  height: 67px;
+  border-radius: 6px;
+}
+
+.MuiGrid-root {
+  padding: 0px;
+}
+
+@media (min-width: 600px) {
+  .jjGGeo {
+    padding: 16px;
+  }
 }

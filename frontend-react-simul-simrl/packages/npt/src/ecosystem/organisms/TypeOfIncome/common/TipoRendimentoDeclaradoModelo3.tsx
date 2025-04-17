@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { NBButton } from "@nb-omc-xit-frontend/nb-shared/lib/NBButton";
 import { calculateNetIncomeIndependentWithoutOrganizedAccountingTotal } from "npm-pkg-simul-simrl";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { useSelector } from "react-redux";
 import { t } from "i18next";
 import Accordion from "../../../atoms/Accordion";
@@ -21,27 +21,26 @@ import {
   IndComProIncome,
 } from "../../../../store/modules/entities/holder/types";
 import "./Common.scss";
+import {
+  holderDataInitialStateAgriYieldsSilvLivstck,
+  holderDataInitialStateIndComProIncome,
+} from "../../../../store/modules/entities/holder/slices";
 
 type TipoRendimentoDeclaradoModelo3Props = {
   title: string;
   indComProIncome?: IndComProIncome;
   agriYieldsSilvLivstck?: AgriYieldsSilvLivstck;
-  otherIncome?: {
-    otherIncome: number;
-  };
   indComProIncomeByHolder?: IndComProIncome;
   agriYieldsSilvLivstckByHolder?: AgriYieldsSilvLivstck;
-  otherIncomeByHolder?: {
-    otherIncome: number;
-  };
   totalGrossIncomeByHolder?: number;
   readOnly?: boolean;
   applyTotalValue?: any;
   handleCleanModel?: any;
+  saveValues?: any;
 };
 
 type valuesInterface = {
-  [key: string]: { rate: number; name: string };
+  [key: string]: { rate: number; name: string; code: string; label: string };
 };
 
 const TipoRendimentoDeclaradoModelo3 = (
@@ -51,14 +50,13 @@ const TipoRendimentoDeclaradoModelo3 = (
     title,
     indComProIncome,
     agriYieldsSilvLivstck,
-    otherIncome,
     indComProIncomeByHolder,
     agriYieldsSilvLivstckByHolder,
-    otherIncomeByHolder,
     totalGrossIncomeByHolder,
     readOnly,
     applyTotalValue,
     handleCleanModel,
+    saveValues,
   } = props;
 
   const currentHolder = useSelector(retrieveCurrentHolder);
@@ -75,10 +73,6 @@ const TipoRendimentoDeclaradoModelo3 = (
   const [agriYieldsSilvLivstckClone, setAgriYieldsSilvLivstckClone] =
     useState<AgriYieldsSilvLivstck>(agriYieldsSilvLivstck!);
 
-  const [otherIncomeClone, setOtherIncomeClone] = useState<{
-    otherIncome: number;
-  }>(otherIncome!);
-
   const [totalGrossIncomeField, setTotalGrossIncomeField] = useState(0);
 
   const [
@@ -86,127 +80,94 @@ const TipoRendimentoDeclaradoModelo3 = (
     setRendimentosAgricolasSilvicolasPecuarios,
   ] = useState<valuesInterface>({});
 
-  const [outrosRendimentos, setOutrosRendimentos] = useState<valuesInterface>(
-    {}
-  );
-
   const returnDefaultValue = (field: string): number => {
-    if (field === "saleOfGoodsAndProducts") {
-      return indComProIncomeClone?.saleOfGoodsAndProducts ?? 0;
+    if (field === "saleOfMerchAndProducts") {
+      return indComProIncomeClone?.saleOfMerchAndProducts ?? 0;
     }
-    if (field === "provisionOfHotelAndSimilarServicesCateringAndBeverage") {
+    if (field === "provisionHotelServ2015And2016") {
+      return indComProIncomeClone?.provisionHotelServ2015And2016 ?? 0;
+    }
+    if (field === "provisionCateringAndBeverageServ") {
+      return indComProIncomeClone?.provisionCateringAndBeverageServ ?? 0;
+    }
+    if (field === "provisionHotelAndSimilarServ") {
+      return indComProIncomeClone?.provisionHotelAndSimilarServ ?? 0;
+    }
+    if (field === "provisionLocalAccommodationServ") {
+      return indComProIncomeClone?.provisionLocalAccommodationServ ?? 0;
+    }
+    if (field === "incomeProfActivitiesArt151CIRS") {
+      return indComProIncomeClone?.incomeProfActivitiesArt151CIRS ?? 0;
+    }
+    if (field === "incomeFromUnforcastedServProv") {
+      return indComProIncomeClone?.incomeFromUnforcastedServProv ?? 0;
+    }
+    if (field === "intellectualPropertyNotArt58EBF") {
+      return indComProIncomeClone?.intellectualPropertyNotArt58EBF ?? 0;
+    }
+    if (field === "intellectualPropertyIncomeArt58EBFNonExempt") {
       return (
-        indComProIncomeClone?.provisionOfHotelAndSimilarServicesCateringAndBeverage ??
-        0
+        indComProIncomeClone?.intellectualPropertyIncomeArt58EBFNonExempt ?? 0
       );
     }
-    if (field === "provisionOfCateringAndBeverageActivitiesServices") {
-      return (
-        indComProIncomeClone?.provisionOfCateringAndBeverageActivitiesServices ??
-        0
-      );
+    if (field === "positiveBalanceGainsLossesEquityInc") {
+      return indComProIncomeClone?.positiveBalanceGainsLossesEquityInc ?? 0;
     }
-    if (field === "provisionOfHotelServicesAndSimilarActivities") {
-      return (
-        indComProIncomeClone?.provisionOfHotelServicesAndSimilarActivities ?? 0
-      );
+    if (field === "incomeFromFinancialActivitiesCAE") {
+      return indComProIncomeClone?.incomeFromFinancialActivitiesCAE ?? 0;
     }
-    if (field === "provisionOfServRelatedToTheExploOfLocalAccEstablishments") {
-      return (
-        indComProIncomeClone?.provisionOfServRelatedToTheExploOfLocalAccEstablishments ??
-        0
-      );
+    if (field === "servicesProvidedByPartnersProfCo") {
+      return indComProIncomeClone?.servicesProvidedByPartnersProfCo ?? 0;
     }
-    if (field === "incomeFromProActivitiesSpecifArticle151OfTheCIRS") {
-      return (
-        indComProIncomeClone?.incomeFromProActivitiesSpecifArticle151OfTheCIRS ??
-        0
-      );
+    if (field === "positiveResultPropertyIncome") {
+      return indComProIncomeClone?.positiveResultPropertyIncome ?? 0;
     }
-    if (field === "incomeFromServicesRenderedNotForeseenInThePreviousFields") {
-      return (
-        indComProIncomeClone?.incomeFromServicesRenderedNotForeseenInThePreviousFields ??
-        0
-      );
+    if (field === "buildingIncomeAttribCatBActivity") {
+      return indComProIncomeClone?.buildingIncomeAttribCatBActivity ?? 0;
     }
-    if (field === "intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty") {
-      return (
-        indComProIncomeClone?.intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty ??
-        0
-      );
-    }
-    if (field === "intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart") {
-      return (
-        indComProIncomeClone?.intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart ??
-        0
-      );
-    }
-    if (field === "positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements") {
-      return (
-        indComProIncomeClone?.positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements ??
-        0
-      );
-    }
-    if (field === "incomeFromFinancialActivitiesCAECodesStartWith6465or66") {
-      return (
-        indComProIncomeClone?.incomeFromFinancialActivitiesCAECodesStartWith6465or66 ??
-        0
-      );
-    }
-    if (field === "servicProvidedByMembToProSocOfTheFiscalTransparencRegime") {
-      return (
-        indComProIncomeClone?.servicProvidedByMembToProSocOfTheFiscalTransparencRegime ??
-        0
-      );
-    }
-    if (field === "positiveResultOfPropertyIncome") {
-      return indComProIncomeClone?.positiveResultOfPropertyIncome ?? 0;
-    }
-    if (field === "propertyIncomeAttributableToCatBIncomeGeneratingActivity") {
-      return (
-        indComProIncomeClone?.propertyIncomeAttributableToCatBIncomeGeneratingActivity ??
-        0
-      );
-    }
-    if (field === "operatingSubsidies") {
-      return indComProIncomeClone?.operatingSubsidies ?? 0;
+    if (field === "explorationSubsidies") {
+      return indComProIncomeClone?.explorationSubsidies ?? 0;
     }
     if (field === "otherSubsidies") {
       return indComProIncomeClone?.otherSubsidies ?? 0;
     }
-    if (field === "categoryBIncomeNotIncludedInPreviousFields") {
-      return (
-        indComProIncomeClone?.categoryBIncomeNotIncludedInPreviousFields ?? 0
-      );
+    if (field === "catBIncomeNotInPrevFields") {
+      return indComProIncomeClone?.catBIncomeNotInPrevFields ?? 0;
     }
-    if (field === "salesProductsOtherThanThoseIncludField7") {
-      return (
-        agriYieldsSilvLivstckClone?.salesProductsOtherThanThoseIncludField7 ?? 0
-      );
+    if (field === "servicesProvidedByPartnersToCompanies") {
+      return indComProIncomeClone?.servicesProvidedByPartnersToCompanies ?? 0;
     }
-    if (field === "servicesRendered") {
-      return agriYieldsSilvLivstckClone?.servicesRendered ?? 0;
+
+    if (field === "salesOfOtherProducts") {
+      return agriYieldsSilvLivstckClone?.salesOfOtherProducts ?? 0;
     }
-    if (field === "incomeFromCapitalAndRealEstate") {
-      return agriYieldsSilvLivstckClone?.incomeFromCapitalAndRealEstate ?? 0;
+    if (field === "serviceProvision") {
+      return agriYieldsSilvLivstckClone?.serviceProvision ?? 0;
     }
-    if (field === "agriYieldsSilvLivstckPositiveResultOfPropertyIncome") {
-      return agriYieldsSilvLivstckClone?.positiveResultOfPropertyIncome ?? 0;
+    if (field === "incomeFromCapPropAttribCatB") {
+      return agriYieldsSilvLivstckClone?.incomeFromCapPropAttribCatB ?? 0;
     }
-    if (field === "operatingSubsidiesRelatedToSales") {
-      return agriYieldsSilvLivstckClone?.operatingSubsidiesRelatedToSales ?? 0;
+    if (field === "agriSilvPositiveResultPropertyIncome") {
+      return agriYieldsSilvLivstckClone?.positiveResultPropertyIncome ?? 0;
+    }
+    if (field === "operatingSubsidiesRelatedSales") {
+      return agriYieldsSilvLivstckClone?.operatingSubsidiesRelatedSales ?? 0;
     }
     if (field === "agriYieldsSilvLivstckOtherSubsidies") {
       return agriYieldsSilvLivstckClone?.otherSubsidies ?? 0;
     }
-    if (field === "incomeFromSalesMultiannual") {
-      return agriYieldsSilvLivstckClone?.incomeFromSalesMultiannual ?? 0;
+    if (field === "incomeFromSalesMultiAnnualForestry") {
+      return (
+        agriYieldsSilvLivstckClone?.incomeFromSalesMultiAnnualForestry ?? 0
+      );
     }
-    if (field === "categoryBIncome") {
-      return agriYieldsSilvLivstckClone?.categoryBIncome ?? 0;
+    if (field === "agriSilvCatBIncomeNotInPrevFields") {
+      return agriYieldsSilvLivstckClone?.catBIncomeNotInPrevFields ?? 0;
     }
-    if (field === "otherIncome") {
-      return otherIncomeClone?.otherIncome ?? 0;
+    if (field === "agriSilvServicesProvidedByPartnersToCompanies") {
+      return (
+        agriYieldsSilvLivstckClone?.servicesProvidedByPartnersToCompanies ?? 0
+      );
     }
 
     return 0;
@@ -215,128 +176,139 @@ const TipoRendimentoDeclaradoModelo3 = (
   const initialValuesTotal = () => {
     return {
       saleOfGoodsAndProductsTotal: roundValue(
-        returnDefaultValue("saleOfGoodsAndProducts") *
-          (Taxes?.saleOfGoodsAndProducts! || 0)
+        returnDefaultValue("saleOfMerchAndProducts") *
+          (Taxes?.anexxBParams.profCommIndIncomes.saleOfMerchAndProducts
+            .parameterValue! || 0)
       ),
       provisionOfHotelAndSimilarServicesCateringAndBeverageTotal: roundValue(
-        returnDefaultValue(
-          "provisionOfHotelAndSimilarServicesCateringAndBeverage"
-        ) * (Taxes?.provisionOfHotelAndSimilarServicesCateringAndBeverage! || 0)
+        returnDefaultValue("provisionHotelServ2015And2016") *
+          (Taxes?.anexxBParams.profCommIndIncomes.provisionHotelServ2015And2016
+            .parameterValue! || 0)
       ),
       provisionOfCateringAndBeverageActivitiesServicesTotal: roundValue(
-        returnDefaultValue("provisionOfCateringAndBeverageActivitiesServices") *
-          (Taxes?.provisionOfCateringAndBeverageActivitiesServices! || 0)
+        returnDefaultValue("provisionCateringAndBeverageServ") *
+          (Taxes?.anexxBParams.profCommIndIncomes
+            .provisionCateringAndBeverageServ.parameterValue! || 0)
       ),
       provisionOfHotelServicesAndSimilarActivitiesTotal: roundValue(
-        returnDefaultValue("provisionOfHotelServicesAndSimilarActivities") *
-          (Taxes?.provisionOfHotelServicesAndSimilarActivities! || 0)
+        returnDefaultValue("provisionHotelAndSimilarServ") *
+          (Taxes?.anexxBParams.profCommIndIncomes.provisionHotelAndSimilarServ
+            .parameterValue! || 0)
       ),
       provisionOfServRelatedToTheExploOfLocalAccEstablishmentsTotal: roundValue(
-        returnDefaultValue(
-          "provisionOfServRelatedToTheExploOfLocalAccEstablishments"
-        ) *
-          (Taxes?.provisionOfServRelatedToTheExploOfLocalAccEstablishments! ||
-            0)
+        returnDefaultValue("provisionLocalAccommodationServ") *
+          (Taxes?.anexxBParams.profCommIndIncomes
+            .provisionLocalAccommodationServ.parameterValue! || 0)
       ),
       incomeFromProActivitiesSpecifArticle151OfTheCIRSTotal: roundValue(
-        returnDefaultValue("incomeFromProActivitiesSpecifArticle151OfTheCIRS") *
-          (Taxes?.incomeFromProActivitiesSpecifArticle151OfTheCIRS! || 0)
+        returnDefaultValue("incomeProfActivitiesArt151CIRS") *
+          (Taxes?.anexxBParams.profCommIndIncomes.incomeProfActivitiesArt151CIRS
+            .parameterValue! || 0)
       ),
       incomeFromServicesRenderedNotForeseenInThePreviousFieldsTotal: roundValue(
-        returnDefaultValue(
-          "incomeFromServicesRenderedNotForeseenInThePreviousFields"
-        ) *
-          (Taxes?.incomeFromServicesRenderedNotForeseenInThePreviousFields! ||
-            0)
+        returnDefaultValue("incomeFromUnforcastedServProv") *
+          (Taxes?.anexxBParams.profCommIndIncomes.incomeFromUnforcastedServProv
+            .parameterValue! || 0)
       ),
       intellPropertyNotCoveByArtic58OfTheEBFIndOrInforPropertyTotal: roundValue(
-        returnDefaultValue(
-          "intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty"
-        ) *
-          (Taxes?.intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty! ||
-            0)
+        returnDefaultValue("intellectualPropertyNotArt58EBF") *
+          (Taxes?.anexxBParams.profCommIndIncomes
+            .intellectualPropertyNotArt58EBF.parameterValue! || 0)
       ),
       intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPartTotal: roundValue(
-        returnDefaultValue(
-          "intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart"
-        ) *
-          (Taxes?.intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart! || 0)
+        returnDefaultValue("intellectualPropertyIncomeArt58EBFNonExempt") *
+          (Taxes?.anexxBParams.profCommIndIncomes
+            .intellectualPropertyIncomeArt58EBFNonExempt.parameterValue! || 0)
       ),
       positiveBalanOfCapGainsAndLossesAndOtherEquityIncrementsTotal: roundValue(
-        returnDefaultValue(
-          "positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements"
-        ) *
-          (Taxes?.positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements! ||
-            0)
+        returnDefaultValue("positiveBalanceGainsLossesEquityInc") *
+          (Taxes?.anexxBParams.profCommIndIncomes
+            .positiveBalanceGainsLossesEquityInc.parameterValue! || 0)
       ),
       incomeFromFinancialActivitiesCAECodesStartWith6465or66Total: roundValue(
-        returnDefaultValue(
-          "incomeFromFinancialActivitiesCAECodesStartWith6465or66"
-        ) *
-          (Taxes?.incomeFromFinancialActivitiesCAECodesStartWith6465or66! || 0)
+        returnDefaultValue("incomeFromFinancialActivitiesCAE") *
+          (Taxes?.anexxBParams.profCommIndIncomes
+            .incomeFromFinancialActivitiesCAE.parameterValue! || 0)
       ),
       servicProvidedByMembToProSocOfTheFiscalTransparencRegimeTotal: roundValue(
-        returnDefaultValue(
-          "servicProvidedByMembToProSocOfTheFiscalTransparencRegime"
-        ) *
-          (Taxes?.servicProvidedByMembToProSocOfTheFiscalTransparencRegime! ||
-            0)
+        returnDefaultValue("servicesProvidedByPartnersProfCo") *
+          (Taxes?.anexxBParams.profCommIndIncomes
+            .servicesProvidedByPartnersProfCo.parameterValue! || 0)
       ),
       positiveResultOfPropertyIncomeTotal: roundValue(
-        returnDefaultValue("positiveResultOfPropertyIncome") *
-          (Taxes?.positiveResultOfPropertyIncome! || 0)
+        returnDefaultValue("positiveResultPropertyIncome") *
+          (Taxes?.anexxBParams.profCommIndIncomes.positiveResultPropertyIncome
+            .parameterValue! || 0)
       ),
       propertyIncomeAttributableToCatBIncomeGeneratingActivityTotal: roundValue(
-        returnDefaultValue(
-          "propertyIncomeAttributableToCatBIncomeGeneratingActivity"
-        ) *
-          (Taxes?.propertyIncomeAttributableToCatBIncomeGeneratingActivity! ||
-            0)
+        returnDefaultValue("buildingIncomeAttribCatBActivity") *
+          (Taxes?.anexxBParams.profCommIndIncomes
+            .buildingIncomeAttribCatBActivity.parameterValue! || 0)
       ),
       operatingSubsidiesTotal: roundValue(
-        returnDefaultValue("operatingSubsidies") *
-          (Taxes?.operatingSubsidies! || 0)
+        returnDefaultValue("explorationSubsidies") *
+          (Taxes?.anexxBParams.profCommIndIncomes.explorationSubsidies
+            .parameterValue! || 0)
       ),
       otherSubsidiesTotal: roundValue(
-        returnDefaultValue("otherSubsidies") * (Taxes?.otherSubsidies! || 0)
+        returnDefaultValue("otherSubsidies") *
+          (Taxes?.anexxBParams.profCommIndIncomes.otherSubsidies
+            .parameterValue! || 0)
       ),
       categoryBIncomeNotIncludedInPreviousFieldsTotal: roundValue(
-        returnDefaultValue("categoryBIncomeNotIncludedInPreviousFields") *
-          (Taxes?.categoryBIncomeNotIncludedInPreviousFields! || 0)
+        returnDefaultValue("catBIncomeNotInPrevFields") *
+          (Taxes?.anexxBParams.profCommIndIncomes.catBIncomeNotInPrevFields
+            .parameterValue! || 0)
+      ),
+      servicesProvidedByMemberssProComIndIncTotal: roundValue(
+        returnDefaultValue("servicesProvidedByPartnersToCompanies") *
+          (Taxes?.anexxBParams.profCommIndIncomes
+            .servicesProvidedByPartnersToCompanies.parameterValue! || 0)
       ),
       salesProductsOtherThanThoseIncludField7Total: roundValue(
-        returnDefaultValue("salesProductsOtherThanThoseIncludField7") *
-          (Taxes?.salesProductsOtherThanThoseIncludField7! || 0)
+        returnDefaultValue("salesOfOtherProducts") *
+          (Taxes?.anexxBParams.agriSilvPecuIncomes.salesOfOtherProducts
+            .parameterValue! || 0)
       ),
       servicesRenderedTotal: roundValue(
-        returnDefaultValue("servicesRendered") * (Taxes?.servicesRendered! || 0)
+        returnDefaultValue("serviceProvision") *
+          (Taxes?.anexxBParams.agriSilvPecuIncomes.serviceProvision
+            .parameterValue! || 0)
       ),
       incomeFromCapitalAndRealEstateTotal: roundValue(
-        returnDefaultValue("incomeFromCapitalAndRealEstate") *
-          (Taxes?.incomeFromCapitalAndRealEstate! || 0)
+        returnDefaultValue("incomeFromCapPropAttribCatB") *
+          (Taxes?.anexxBParams.agriSilvPecuIncomes.incomeFromCapPropAttribCatB
+            .parameterValue! || 0)
       ),
       agriYieldsSilvLivstckPositiveResultOfPropertyIncomeTotal: roundValue(
-        returnDefaultValue(
-          "agriYieldsSilvLivstckPositiveResultOfPropertyIncome"
-        ) * (Taxes?.positiveResultOfPropertyIncomeAgri! || 0)
+        returnDefaultValue("agriSilvPositiveResultPropertyIncome") *
+          (Taxes?.anexxBParams.agriSilvPecuIncomes.positiveResultPropertyIncome
+            .parameterValue! || 0)
       ),
       operatingSubsidiesRelatedToSalesTotal: roundValue(
-        returnDefaultValue("operatingSubsidiesRelatedToSales") *
-          (Taxes?.operatingSubsidiesRelatedToSales! || 0)
+        returnDefaultValue("operatingSubsidiesRelatedSales") *
+          (Taxes?.anexxBParams.agriSilvPecuIncomes
+            .operatingSubsidiesRelatedSales.parameterValue! || 0)
       ),
       agriYieldsSilvLivstckOtherSubsidiesTotal: roundValue(
         returnDefaultValue("agriYieldsSilvLivstckOtherSubsidies") *
-          (Taxes?.otherSubsidiesAgri! || 0)
+          (Taxes?.anexxBParams.agriSilvPecuIncomes.otherSubsidies
+            .parameterValue! || 0)
       ),
       incomeFromSalesMultiannualTotal: roundValue(
-        returnDefaultValue("incomeFromSalesMultiannual") *
-          (Taxes?.incomeFromSalesMultiannual! || 0)
+        returnDefaultValue("incomeFromSalesMultiAnnualForestry") *
+          (Taxes?.anexxBParams.agriSilvPecuIncomes
+            .incomeFromSalesMultiAnnualForestry.parameterValue! || 0)
       ),
       categoryBIncomeTotal: roundValue(
-        returnDefaultValue("categoryBIncome") * (Taxes?.categoryBIncome! || 0)
+        returnDefaultValue("agriSilvCatBIncomeNotInPrevFields") *
+          (Taxes?.anexxBParams.agriSilvPecuIncomes.catBIncomeNotInPrevFields
+            .parameterValue! || 0)
       ),
-      otherIncomeTotal: roundValue(
-        returnDefaultValue("otherIncome") * (Taxes?.otherIncome! || 0)
+      servicesProvidedByMemberssAgriSilvPecuTotal: roundValue(
+        returnDefaultValue("agriSilvServicesProvidedByPartnersToCompanies") *
+          (Taxes?.anexxBParams.agriSilvPecuIncomes
+            .servicesProvidedByPartnersToCompanies.parameterValue! || 0)
       ),
     };
   };
@@ -344,36 +316,8 @@ const TipoRendimentoDeclaradoModelo3 = (
   const [valueTotal, setValueTotal] = useState<any>(initialValuesTotal());
 
   const handleClean = () => {
-    setIndComProIncomeClone({
-      saleOfGoodsAndProducts: 0,
-      provisionOfHotelAndSimilarServicesCateringAndBeverage: 0,
-      provisionOfCateringAndBeverageActivitiesServices: 0,
-      provisionOfHotelServicesAndSimilarActivities: 0,
-      provisionOfServRelatedToTheExploOfLocalAccEstablishments: 0,
-      incomeFromProActivitiesSpecifArticle151OfTheCIRS: 0,
-      incomeFromServicesRenderedNotForeseenInThePreviousFields: 0,
-      intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty: 0,
-      intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart: 0,
-      positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements: 0,
-      incomeFromFinancialActivitiesCAECodesStartWith6465or66: 0,
-      servicProvidedByMembToProSocOfTheFiscalTransparencRegime: 0,
-      positiveResultOfPropertyIncome: 0,
-      propertyIncomeAttributableToCatBIncomeGeneratingActivity: 0,
-      operatingSubsidies: 0,
-      otherSubsidies: 0,
-      categoryBIncomeNotIncludedInPreviousFields: 0,
-    });
-    setAgriYieldsSilvLivstckClone({
-      salesProductsOtherThanThoseIncludField7: 0,
-      servicesRendered: 0,
-      incomeFromCapitalAndRealEstate: 0,
-      positiveResultOfPropertyIncome: 0,
-      operatingSubsidiesRelatedToSales: 0,
-      otherSubsidies: 0,
-      incomeFromSalesMultiannual: 0,
-      categoryBIncome: 0,
-    });
-    setOtherIncomeClone({ otherIncome: 0 });
+    setIndComProIncomeClone(holderDataInitialStateIndComProIncome);
+    setAgriYieldsSilvLivstckClone(holderDataInitialStateAgriYieldsSilvLivstck);
     setValueTotal({
       saleOfGoodsAndProductsTotal: 0,
       provisionOfHotelAndSimilarServicesCateringAndBeverageTotal: 0,
@@ -392,6 +336,7 @@ const TipoRendimentoDeclaradoModelo3 = (
       operatingSubsidiesTotal: 0,
       otherSubsidiesTotal: 0,
       categoryBIncomeNotIncludedInPreviousFieldsTotal: 0,
+      servicesProvidedByMemberssProComIndIncTotal: 0,
       salesProductsOtherThanThoseIncludField7Total: 0,
       servicesRenderedTotal: 0,
       incomeFromCapitalAndRealEstateTotal: 0,
@@ -400,7 +345,7 @@ const TipoRendimentoDeclaradoModelo3 = (
       agriYieldsSilvLivstckOtherSubsidiesTotal: 0,
       incomeFromSalesMultiannualTotal: 0,
       categoryBIncomeTotal: 0,
-      otherIncomeTotal: 0,
+      servicesProvidedByMemberssAgriSilvPecuTotal: 0,
     });
     handleCleanModel();
   };
@@ -422,18 +367,12 @@ const TipoRendimentoDeclaradoModelo3 = (
         [subfield!]: value,
       });
     }
-    if (field === "otherIncome") {
-      setOtherIncomeClone({
-        ...otherIncomeClone!,
-        [subfield!]: value,
-      });
-    }
   };
 
   const handleChange = (key: string, val: number, rate?: number) => {
     switch (key) {
       case "Venda de mercadorias e produtos": {
-        handleFieldChange("indComProIncome", val, "saleOfGoodsAndProducts");
+        handleFieldChange("indComProIncome", val, "saleOfMerchAndProducts");
         setValueTotal({
           ...valueTotal,
           saleOfGoodsAndProductsTotal: roundValue(val * rate!),
@@ -445,7 +384,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "provisionOfHotelAndSimilarServicesCateringAndBeverage"
+          "provisionHotelServ2015And2016"
         );
         setValueTotal({
           ...valueTotal,
@@ -458,7 +397,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "provisionOfCateringAndBeverageActivitiesServices"
+          "provisionCateringAndBeverageServ"
         );
         setValueTotal({
           ...valueTotal,
@@ -472,7 +411,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "provisionOfHotelServicesAndSimilarActivities"
+          "provisionHotelAndSimilarServ"
         );
         setValueTotal({
           ...valueTotal,
@@ -486,7 +425,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "provisionOfServRelatedToTheExploOfLocalAccEstablishments"
+          "provisionLocalAccommodationServ"
         );
         setValueTotal({
           ...valueTotal,
@@ -499,7 +438,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "incomeFromProActivitiesSpecifArticle151OfTheCIRS"
+          "incomeProfActivitiesArt151CIRS"
         );
         setValueTotal({
           ...valueTotal,
@@ -513,7 +452,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "incomeFromServicesRenderedNotForeseenInThePreviousFields"
+          "incomeFromUnforcastedServProv"
         );
         setValueTotal({
           ...valueTotal,
@@ -526,7 +465,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty"
+          "intellectualPropertyNotArt58EBF"
         );
         setValueTotal({
           ...valueTotal,
@@ -539,7 +478,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart"
+          "intellectualPropertyIncomeArt58EBFNonExempt"
         );
         setValueTotal({
           ...valueTotal,
@@ -552,7 +491,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements"
+          "positiveBalanceGainsLossesEquityInc"
         );
         setValueTotal({
           ...valueTotal,
@@ -565,7 +504,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "incomeFromFinancialActivitiesCAECodesStartWith6465or66"
+          "incomeFromFinancialActivitiesCAE"
         );
         setValueTotal({
           ...valueTotal,
@@ -578,7 +517,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "servicProvidedByMembToProSocOfTheFiscalTransparencRegime"
+          "servicesProvidedByPartnersProfCo"
         );
         setValueTotal({
           ...valueTotal,
@@ -591,7 +530,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "positiveResultOfPropertyIncome"
+          "positiveResultPropertyIncome"
         );
         setValueTotal({
           ...valueTotal,
@@ -603,7 +542,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "indComProIncome",
           val,
-          "propertyIncomeAttributableToCatBIncomeGeneratingActivity"
+          "buildingIncomeAttribCatBActivity"
         );
         setValueTotal({
           ...valueTotal,
@@ -613,7 +552,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         break;
       }
       case "Subsídios à exploração": {
-        handleFieldChange("indComProIncome", val, "operatingSubsidies");
+        handleFieldChange("indComProIncome", val, "explorationSubsidies");
         setValueTotal({
           ...valueTotal,
           operatingSubsidiesTotal: roundValue(val * rate!),
@@ -629,11 +568,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         break;
       }
       case "Rendimentos da Categoria B não incluídos nos campos anteriores": {
-        handleFieldChange(
-          "indComProIncome",
-          val,
-          "categoryBIncomeNotIncludedInPreviousFields"
-        );
+        handleFieldChange("indComProIncome", val, "catBIncomeNotInPrevFields");
         setValueTotal({
           ...valueTotal,
           categoryBIncomeNotIncludedInPreviousFieldsTotal: roundValue(
@@ -642,12 +577,20 @@ const TipoRendimentoDeclaradoModelo3 = (
         });
         break;
       }
-      case "Vendas de produtos com exceção das incluídas no campo 7": {
+      case "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS": {
         handleFieldChange(
-          "agriYieldsSilvLivstck",
+          "indComProIncome",
           val,
-          "salesProductsOtherThanThoseIncludField7"
+          "servicesProvidedByPartnersToCompanies"
         );
+        setValueTotal({
+          ...valueTotal,
+          servicesProvidedByMemberssProComIndIncTotal: roundValue(val * rate!),
+        });
+        break;
+      }
+      case "Vendas de produtos com exceção das incluídas no campo 457": {
+        handleFieldChange("agriYieldsSilvLivstck", val, "salesOfOtherProducts");
         setValueTotal({
           ...valueTotal,
           salesProductsOtherThanThoseIncludField7Total: roundValue(val * rate!),
@@ -655,7 +598,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         break;
       }
       case "Prestações de serviços": {
-        handleFieldChange("agriYieldsSilvLivstck", val, "servicesRendered");
+        handleFieldChange("agriYieldsSilvLivstck", val, "serviceProvision");
         setValueTotal({
           ...valueTotal,
           servicesRenderedTotal: roundValue(val * rate!),
@@ -666,7 +609,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "agriYieldsSilvLivstck",
           val,
-          "incomeFromCapitalAndRealEstate"
+          "incomeFromCapPropAttribCatB"
         );
         setValueTotal({
           ...valueTotal,
@@ -678,7 +621,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "agriYieldsSilvLivstck",
           val,
-          "positiveResultOfPropertyIncome"
+          "positiveResultPropertyIncome"
         );
         setValueTotal({
           ...valueTotal,
@@ -692,7 +635,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "agriYieldsSilvLivstck",
           val,
-          "operatingSubsidiesRelatedToSales"
+          "operatingSubsidiesRelatedSales"
         );
         setValueTotal({
           ...valueTotal,
@@ -712,7 +655,7 @@ const TipoRendimentoDeclaradoModelo3 = (
         handleFieldChange(
           "agriYieldsSilvLivstck",
           val,
-          "incomeFromSalesMultiannual"
+          "incomeFromSalesMultiAnnualForestry"
         );
         setValueTotal({
           ...valueTotal,
@@ -721,18 +664,26 @@ const TipoRendimentoDeclaradoModelo3 = (
         break;
       }
       case "Rendimentos da Categoria B não incluídos nos campos anteriores ": {
-        handleFieldChange("agriYieldsSilvLivstck", val, "categoryBIncome");
+        handleFieldChange(
+          "agriYieldsSilvLivstck",
+          val,
+          "catBIncomeNotInPrevFields"
+        );
         setValueTotal({
           ...valueTotal,
           categoryBIncomeTotal: roundValue(val * rate!),
         });
         break;
       }
-      case "OUTROS RENDIMENTOS": {
-        handleFieldChange("otherIncome", val, "otherIncome");
+      case "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS ": {
+        handleFieldChange(
+          "agriYieldsSilvLivstck",
+          val,
+          "servicesProvidedByPartnersToCompanies"
+        );
         setValueTotal({
           ...valueTotal,
-          otherIncomeTotal: roundValue(val * rate!),
+          servicesProvidedByMemberssAgriSilvPecuTotal: roundValue(val * rate!),
         });
         break;
       }
@@ -746,90 +697,88 @@ const TipoRendimentoDeclaradoModelo3 = (
       switch (key) {
         case "Venda de mercadorias e produtos": {
           return `${roundValue(
-            (indComProIncomeByHolder?.saleOfGoodsAndProducts! || 0) * rate
+            (indComProIncomeByHolder?.saleOfMerchAndProducts! || 0) * rate
           ).toString()} €`;
         }
         case "Prestações de serviços de atividades hoteleiras e similares, restauração e bebidas - anos 2015 e 2016": {
           return `${roundValue(
-            (indComProIncomeByHolder?.provisionOfHotelAndSimilarServicesCateringAndBeverage! ||
-              0) * rate
+            (indComProIncomeByHolder?.provisionHotelServ2015And2016! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Prestações de serviços de atividades de restauração e bebidas": {
           return `${roundValue(
-            (indComProIncomeByHolder?.provisionOfCateringAndBeverageActivitiesServices! ||
-              0) * rate
+            (indComProIncomeByHolder?.provisionCateringAndBeverageServ! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Prestações de serviços de atividades hoteleiras e similares": {
           return `${roundValue(
-            (indComProIncomeByHolder?.provisionOfHotelServicesAndSimilarActivities! ||
-              0) * rate
+            (indComProIncomeByHolder?.provisionHotelAndSimilarServ! || 0) * rate
           ).toString()} €`;
         }
         case "Prestações de serviços de atividades de exploração de estabelecimentos de alojamento local na modalidade de moradia ou apartamento": {
           return `${roundValue(
-            (indComProIncomeByHolder?.provisionOfServRelatedToTheExploOfLocalAccEstablishments! ||
-              0) * rate
+            (indComProIncomeByHolder?.provisionLocalAccommodationServ! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Rendimento das atividades profissionais especificamente previstas na Tabela do art.º 151.º do CIRS": {
           return `${roundValue(
-            (indComProIncomeByHolder?.incomeFromProActivitiesSpecifArticle151OfTheCIRS! ||
-              0) * rate
+            (indComProIncomeByHolder?.incomeProfActivitiesArt151CIRS! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Rendimentos de prestações de serviços não previstos nos campos anteriores": {
           return `${roundValue(
-            (indComProIncomeByHolder?.incomeFromServicesRenderedNotForeseenInThePreviousFields! ||
-              0) * rate
+            (indComProIncomeByHolder?.incomeFromUnforcastedServProv! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Propriedade intelectual(não abrangida pelo art. 58.º do EBF), industrial ou de prestação de informações": {
           return `${roundValue(
-            (indComProIncomeByHolder?.intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty! ||
-              0) * rate
+            (indComProIncomeByHolder?.intellectualPropertyNotArt58EBF! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Propriedade intelectual(Rendimentos abrangidos pelo art. 58.º do EBF - parte não isenta)": {
           return `${roundValue(
-            (indComProIncomeByHolder?.intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart! ||
+            (indComProIncomeByHolder?.intellectualPropertyIncomeArt58EBFNonExempt! ||
               0) * rate
           ).toString()} €`;
         }
         case "Saldo positivo das mais e menos-valias e restantes incrementos patrimoniais": {
           return `${roundValue(
-            (indComProIncomeByHolder?.positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements! ||
+            (indComProIncomeByHolder?.positiveBalanceGainsLossesEquityInc! ||
               0) * rate
           ).toString()} €`;
         }
         case "Rendimentos de Atividades Financeiras (Códigos CAE iniciados por 64, 65 ou 66)": {
           return `${roundValue(
-            (indComProIncomeByHolder?.incomeFromFinancialActivitiesCAECodesStartWith6465or66! ||
-              0) * rate
+            (indComProIncomeByHolder?.incomeFromFinancialActivitiesCAE! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Serviços prestados por sócios a sociedades de profissionais do Regime de Transparência Fiscal": {
           return `${roundValue(
-            (indComProIncomeByHolder?.servicProvidedByMembToProSocOfTheFiscalTransparencRegime! ||
-              0) * rate
+            (indComProIncomeByHolder?.servicesProvidedByPartnersProfCo! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Resultado positivo de rendimentos prediais": {
           return `${roundValue(
-            (indComProIncomeByHolder?.positiveResultOfPropertyIncome! || 0) *
-              rate
+            (indComProIncomeByHolder?.positiveResultPropertyIncome! || 0) * rate
           ).toString()} €`;
         }
         case "Rendimentos prediais imputáveis a atividade geradora de rendimentos da Categoria B": {
           return `${roundValue(
-            (indComProIncomeByHolder?.propertyIncomeAttributableToCatBIncomeGeneratingActivity! ||
-              0) * rate
+            (indComProIncomeByHolder?.buildingIncomeAttribCatBActivity! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Subsídios à exploração": {
           return `${roundValue(
-            (indComProIncomeByHolder?.operatingSubsidies! || 0) * rate
+            (indComProIncomeByHolder?.explorationSubsidies! || 0) * rate
           ).toString()} €`;
         }
         case "Outros subsídios": {
@@ -839,36 +788,40 @@ const TipoRendimentoDeclaradoModelo3 = (
         }
         case "Rendimentos da Categoria B não incluídos nos campos anteriores": {
           return `${roundValue(
-            (indComProIncomeByHolder?.categoryBIncomeNotIncludedInPreviousFields! ||
+            (indComProIncomeByHolder?.catBIncomeNotInPrevFields! || 0) * rate
+          ).toString()} €`;
+        }
+        case "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS": {
+          return `${roundValue(
+            (indComProIncomeByHolder?.servicesProvidedByPartnersToCompanies! ||
               0) * rate
           ).toString()} €`;
         }
-        case "Vendas de produtos com exceção das incluídas no campo 7": {
+        case "Vendas de produtos com exceção das incluídas no campo 457": {
           return `${roundValue(
-            (agriYieldsSilvLivstckByHolder?.salesProductsOtherThanThoseIncludField7! ||
-              0) * rate
+            (agriYieldsSilvLivstckByHolder?.salesOfOtherProducts! || 0) * rate
           ).toString()} €`;
         }
         case "Prestações de serviços": {
           return `${roundValue(
-            (agriYieldsSilvLivstckByHolder?.servicesRendered! || 0) * rate
+            (agriYieldsSilvLivstckByHolder?.serviceProvision! || 0) * rate
           ).toString()} €`;
         }
         case "Rendimentos de capitais e prediais imputáveis a atividades geradoras de rendimentos da Categoria B, rendimentos da propriedade intelectual, industrial ou prestação de informações, saldo positivo das mais e menos-valias e restantes incrementos patrimoniais": {
           return `${roundValue(
-            (agriYieldsSilvLivstckByHolder?.incomeFromCapitalAndRealEstate! ||
-              0) * rate
+            (agriYieldsSilvLivstckByHolder?.incomeFromCapPropAttribCatB! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Resultado positivo de rendimentos prediais ": {
           return `${roundValue(
-            (agriYieldsSilvLivstckByHolder?.positiveResultOfPropertyIncome! ||
+            (agriYieldsSilvLivstckByHolder?.positiveResultPropertyIncome! ||
               0) * rate
           ).toString()} €`;
         }
         case "Subsídios à exploração relacionados com as vendas": {
           return `${roundValue(
-            (agriYieldsSilvLivstckByHolder?.operatingSubsidiesRelatedToSales! ||
+            (agriYieldsSilvLivstckByHolder?.operatingSubsidiesRelatedSales! ||
               0) * rate
           ).toString()} €`;
         }
@@ -879,18 +832,20 @@ const TipoRendimentoDeclaradoModelo3 = (
         }
         case "Rendimentos decorrentes de vendas em explorações silvícolas plurianuais (art.º 59.º-D, n.º 1 do EBF)": {
           return `${roundValue(
-            (agriYieldsSilvLivstckByHolder?.incomeFromSalesMultiannual! || 0) *
-              rate
+            (agriYieldsSilvLivstckByHolder?.incomeFromSalesMultiAnnualForestry! ||
+              0) * rate
           ).toString()} €`;
         }
         case "Rendimentos da Categoria B não incluídos nos campos anteriores ": {
           return `${roundValue(
-            (agriYieldsSilvLivstckByHolder?.categoryBIncome! || 0) * rate
+            (agriYieldsSilvLivstckByHolder?.catBIncomeNotInPrevFields! || 0) *
+              rate
           ).toString()} €`;
         }
-        case "OUTROS RENDIMENTOS": {
+        case "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS ": {
           return `${roundValue(
-            (otherIncomeByHolder?.otherIncome! || 0) * rate
+            (agriYieldsSilvLivstckByHolder?.servicesProvidedByPartnersToCompanies! ||
+              0) * rate
           ).toString()} €`;
         }
         default:
@@ -900,89 +855,83 @@ const TipoRendimentoDeclaradoModelo3 = (
       switch (key) {
         case "Venda de mercadorias e produtos": {
           return `${roundValue(
-            (indComProIncomeClone?.saleOfGoodsAndProducts! || 0) * rate
+            (indComProIncomeClone?.saleOfMerchAndProducts! || 0) * rate
           ).toString()} €`;
         }
         case "Prestações de serviços de atividades hoteleiras e similares, restauração e bebidas - anos 2015 e 2016": {
           return `${roundValue(
-            (indComProIncomeClone?.provisionOfHotelAndSimilarServicesCateringAndBeverage! ||
-              0) * rate
+            (indComProIncomeClone?.provisionHotelServ2015And2016! || 0) * rate
           ).toString()} €`;
         }
         case "Prestações de serviços de atividades de restauração e bebidas": {
           return `${roundValue(
-            (indComProIncomeClone?.provisionOfCateringAndBeverageActivitiesServices! ||
-              0) * rate
+            (indComProIncomeClone?.provisionCateringAndBeverageServ! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Prestações de serviços de atividades hoteleiras e similares": {
           return `${roundValue(
-            (indComProIncomeClone?.provisionOfHotelServicesAndSimilarActivities! ||
-              0) * rate
+            (indComProIncomeClone?.provisionHotelAndSimilarServ! || 0) * rate
           ).toString()} €`;
         }
         case "Prestações de serviços de atividades de exploração de estabelecimentos de alojamento local na modalidade de moradia ou apartamento": {
           return `${roundValue(
-            (indComProIncomeClone?.provisionOfServRelatedToTheExploOfLocalAccEstablishments! ||
-              0) * rate
+            (indComProIncomeClone?.provisionLocalAccommodationServ! || 0) * rate
           ).toString()} €`;
         }
         case "Rendimento das atividades profissionais especificamente previstas na Tabela do art.º 151.º do CIRS": {
           return `${roundValue(
-            (indComProIncomeClone?.incomeFromProActivitiesSpecifArticle151OfTheCIRS! ||
-              0) * rate
+            (indComProIncomeClone?.incomeProfActivitiesArt151CIRS! || 0) * rate
           ).toString()} €`;
         }
         case "Rendimentos de prestações de serviços não previstos nos campos anteriores": {
           return `${roundValue(
-            (indComProIncomeClone?.incomeFromServicesRenderedNotForeseenInThePreviousFields! ||
-              0) * rate
+            (indComProIncomeClone?.incomeFromUnforcastedServProv! || 0) * rate
           ).toString()} €`;
         }
         case "Propriedade intelectual(não abrangida pelo art. 58.º do EBF), industrial ou de prestação de informações": {
           return `${roundValue(
-            (indComProIncomeClone?.intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty! ||
-              0) * rate
+            (indComProIncomeClone?.intellectualPropertyNotArt58EBF! || 0) * rate
           ).toString()} €`;
         }
         case "Propriedade intelectual(Rendimentos abrangidos pelo art. 58.º do EBF - parte não isenta)": {
           return `${roundValue(
-            (indComProIncomeClone?.intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart! ||
+            (indComProIncomeClone?.intellectualPropertyIncomeArt58EBFNonExempt! ||
               0) * rate
           ).toString()} €`;
         }
         case "Saldo positivo das mais e menos-valias e restantes incrementos patrimoniais": {
           return `${roundValue(
-            (indComProIncomeClone?.positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements! ||
-              0) * rate
+            (indComProIncomeClone?.positiveBalanceGainsLossesEquityInc! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Rendimentos de Atividades Financeiras (Códigos CAE iniciados por 64, 65 ou 66)": {
           return `${roundValue(
-            (indComProIncomeClone?.incomeFromFinancialActivitiesCAECodesStartWith6465or66! ||
-              0) * rate
+            (indComProIncomeClone?.incomeFromFinancialActivitiesCAE! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Serviços prestados por sócios a sociedades de profissionais do Regime de Transparência Fiscal": {
           return `${roundValue(
-            (indComProIncomeClone?.servicProvidedByMembToProSocOfTheFiscalTransparencRegime! ||
-              0) * rate
+            (indComProIncomeClone?.servicesProvidedByPartnersProfCo! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Resultado positivo de rendimentos prediais": {
           return `${roundValue(
-            (indComProIncomeClone?.positiveResultOfPropertyIncome! || 0) * rate
+            (indComProIncomeClone?.positiveResultPropertyIncome! || 0) * rate
           ).toString()} €`;
         }
         case "Rendimentos prediais imputáveis a atividade geradora de rendimentos da Categoria B": {
           return `${roundValue(
-            (indComProIncomeClone?.propertyIncomeAttributableToCatBIncomeGeneratingActivity! ||
-              0) * rate
+            (indComProIncomeClone?.buildingIncomeAttribCatBActivity! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Subsídios à exploração": {
           return `${roundValue(
-            (indComProIncomeClone?.operatingSubsidies! || 0) * rate
+            (indComProIncomeClone?.explorationSubsidies! || 0) * rate
           ).toString()} €`;
         }
         case "Outros subsídios": {
@@ -992,37 +941,41 @@ const TipoRendimentoDeclaradoModelo3 = (
         }
         case "Rendimentos da Categoria B não incluídos nos campos anteriores": {
           return `${roundValue(
-            (indComProIncomeClone?.categoryBIncomeNotIncludedInPreviousFields! ||
+            (indComProIncomeClone?.catBIncomeNotInPrevFields! || 0) * rate
+          ).toString()} €`;
+        }
+        case "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS": {
+          return `${roundValue(
+            (indComProIncomeClone?.servicesProvidedByPartnersToCompanies! ||
               0) * rate
           ).toString()} €`;
         }
-        case "Vendas de produtos com exceção das incluídas no campo 7": {
+        case "Vendas de produtos com exceção das incluídas no campo 457": {
           return `${roundValue(
-            (agriYieldsSilvLivstckClone?.salesProductsOtherThanThoseIncludField7! ||
-              0) * rate
+            (agriYieldsSilvLivstckClone?.salesOfOtherProducts! || 0) * rate
           ).toString()} €`;
         }
         case "Prestações de serviços": {
           return `${roundValue(
-            (agriYieldsSilvLivstckClone?.servicesRendered! || 0) * rate
+            (agriYieldsSilvLivstckClone?.serviceProvision! || 0) * rate
           ).toString()} €`;
         }
         case "Rendimentos de capitais e prediais imputáveis a atividades geradoras de rendimentos da Categoria B, rendimentos da propriedade intelectual, industrial ou prestação de informações, saldo positivo das mais e menos-valias e restantes incrementos patrimoniais": {
           return `${roundValue(
-            (agriYieldsSilvLivstckClone?.incomeFromCapitalAndRealEstate! || 0) *
+            (agriYieldsSilvLivstckClone?.incomeFromCapPropAttribCatB! || 0) *
               rate
           ).toString()} €`;
         }
         case "Resultado positivo de rendimentos prediais ": {
           return `${roundValue(
-            (agriYieldsSilvLivstckClone?.positiveResultOfPropertyIncome! || 0) *
+            (agriYieldsSilvLivstckClone?.positiveResultPropertyIncome! || 0) *
               rate
           ).toString()} €`;
         }
         case "Subsídios à exploração relacionados com as vendas": {
           return `${roundValue(
-            (agriYieldsSilvLivstckClone?.operatingSubsidiesRelatedToSales! ||
-              0) * rate
+            (agriYieldsSilvLivstckClone?.operatingSubsidiesRelatedSales! || 0) *
+              rate
           ).toString()} €`;
         }
         case "Outros subsídios ": {
@@ -1032,18 +985,19 @@ const TipoRendimentoDeclaradoModelo3 = (
         }
         case "Rendimentos decorrentes de vendas em explorações silvícolas plurianuais (art.º 59.º-D, n.º 1 do EBF)": {
           return `${roundValue(
-            (agriYieldsSilvLivstckClone?.incomeFromSalesMultiannual! || 0) *
-              rate
+            (agriYieldsSilvLivstckClone?.incomeFromSalesMultiAnnualForestry! ||
+              0) * rate
           ).toString()} €`;
         }
         case "Rendimentos da Categoria B não incluídos nos campos anteriores ": {
           return `${roundValue(
-            (agriYieldsSilvLivstckClone?.categoryBIncome! || 0) * rate
+            (agriYieldsSilvLivstckClone?.catBIncomeNotInPrevFields! || 0) * rate
           ).toString()} €`;
         }
-        case "OUTROS RENDIMENTOS": {
+        case "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS ": {
           return `${roundValue(
-            (otherIncomeClone?.otherIncome! || 0) * rate
+            (agriYieldsSilvLivstckClone?.servicesProvidedByPartnersToCompanies! ||
+              0) * rate
           ).toString()} €`;
         }
         default:
@@ -1053,83 +1007,86 @@ const TipoRendimentoDeclaradoModelo3 = (
   };
 
   const returnPlaceHolderValue = (field: string): string => {
-    if (field === "saleOfGoodsAndProducts") {
-      return indComProIncomeByHolder?.saleOfGoodsAndProducts?.toString()!;
+    if (field === "saleOfMerchAndProducts") {
+      return indComProIncomeByHolder?.saleOfMerchAndProducts?.toString()!;
     }
-    if (field === "provisionOfHotelAndSimilarServicesCateringAndBeverage") {
-      return indComProIncomeByHolder?.provisionOfHotelAndSimilarServicesCateringAndBeverage?.toString()!;
+    if (field === "provisionHotelServ2015And2016") {
+      return indComProIncomeByHolder?.provisionHotelServ2015And2016?.toString()!;
     }
-    if (field === "provisionOfCateringAndBeverageActivitiesServices") {
-      return indComProIncomeByHolder?.provisionOfCateringAndBeverageActivitiesServices?.toString()!;
+    if (field === "provisionCateringAndBeverageServ") {
+      return indComProIncomeByHolder?.provisionCateringAndBeverageServ?.toString()!;
     }
-    if (field === "provisionOfHotelServicesAndSimilarActivities") {
-      return indComProIncomeByHolder?.provisionOfHotelServicesAndSimilarActivities?.toString()!;
+    if (field === "provisionHotelAndSimilarServ") {
+      return indComProIncomeByHolder?.provisionHotelAndSimilarServ?.toString()!;
     }
-    if (field === "provisionOfServRelatedToTheExploOfLocalAccEstablishments") {
-      return indComProIncomeByHolder?.provisionOfServRelatedToTheExploOfLocalAccEstablishments?.toString()!;
+    if (field === "provisionLocalAccommodationServ") {
+      return indComProIncomeByHolder?.provisionLocalAccommodationServ?.toString()!;
     }
-    if (field === "incomeFromProActivitiesSpecifArticle151OfTheCIRS") {
-      return indComProIncomeByHolder?.incomeFromProActivitiesSpecifArticle151OfTheCIRS?.toString()!;
+    if (field === "incomeProfActivitiesArt151CIRS") {
+      return indComProIncomeByHolder?.incomeProfActivitiesArt151CIRS?.toString()!;
     }
-    if (field === "incomeFromServicesRenderedNotForeseenInThePreviousFields") {
-      return indComProIncomeByHolder?.incomeFromServicesRenderedNotForeseenInThePreviousFields?.toString()!;
+    if (field === "incomeFromUnforcastedServProv") {
+      return indComProIncomeByHolder?.incomeFromUnforcastedServProv?.toString()!;
     }
-    if (field === "intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty") {
-      return indComProIncomeByHolder?.intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty?.toString()!;
+    if (field === "intellectualPropertyNotArt58EBF") {
+      return indComProIncomeByHolder?.intellectualPropertyNotArt58EBF?.toString()!;
     }
-    if (field === "intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart") {
-      return indComProIncomeByHolder?.intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart?.toString()!;
+    if (field === "intellectualPropertyIncomeArt58EBFNonExempt") {
+      return indComProIncomeByHolder?.intellectualPropertyIncomeArt58EBFNonExempt?.toString()!;
     }
-    if (field === "positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements") {
-      return indComProIncomeByHolder?.positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements?.toString()!;
+    if (field === "positiveBalanceGainsLossesEquityInc") {
+      return indComProIncomeByHolder?.positiveBalanceGainsLossesEquityInc?.toString()!;
     }
-    if (field === "incomeFromFinancialActivitiesCAECodesStartWith6465or66") {
-      return indComProIncomeByHolder?.incomeFromFinancialActivitiesCAECodesStartWith6465or66?.toString()!;
+    if (field === "incomeFromFinancialActivitiesCAE") {
+      return indComProIncomeByHolder?.incomeFromFinancialActivitiesCAE?.toString()!;
     }
-    if (field === "servicProvidedByMembToProSocOfTheFiscalTransparencRegime") {
-      return indComProIncomeByHolder?.servicProvidedByMembToProSocOfTheFiscalTransparencRegime?.toString()!;
+    if (field === "servicesProvidedByPartnersProfCo") {
+      return indComProIncomeByHolder?.servicesProvidedByPartnersProfCo?.toString()!;
     }
-    if (field === "positiveResultOfPropertyIncome") {
-      return indComProIncomeByHolder?.positiveResultOfPropertyIncome?.toString()!;
+    if (field === "positiveResultPropertyIncome") {
+      return indComProIncomeByHolder?.positiveResultPropertyIncome?.toString()!;
     }
-    if (field === "propertyIncomeAttributableToCatBIncomeGeneratingActivity") {
-      return indComProIncomeByHolder?.propertyIncomeAttributableToCatBIncomeGeneratingActivity?.toString()!;
+    if (field === "buildingIncomeAttribCatBActivity") {
+      return indComProIncomeByHolder?.buildingIncomeAttribCatBActivity?.toString()!;
     }
-    if (field === "operatingSubsidies") {
-      return indComProIncomeByHolder?.operatingSubsidies?.toString()!;
+    if (field === "explorationSubsidies") {
+      return indComProIncomeByHolder?.explorationSubsidies?.toString()!;
     }
     if (field === "otherSubsidies") {
       return indComProIncomeByHolder?.otherSubsidies?.toString()!;
     }
-    if (field === "categoryBIncomeNotIncludedInPreviousFields") {
-      return indComProIncomeByHolder?.categoryBIncomeNotIncludedInPreviousFields?.toString()!;
+    if (field === "catBIncomeNotInPrevFields") {
+      return indComProIncomeByHolder?.catBIncomeNotInPrevFields?.toString()!;
     }
-    if (field === "salesProductsOtherThanThoseIncludField7") {
-      return agriYieldsSilvLivstckByHolder?.salesProductsOtherThanThoseIncludField7?.toString()!;
+    if (field === "servicesProvidedByPartnersToCompanies") {
+      return indComProIncomeByHolder?.servicesProvidedByPartnersToCompanies?.toString()!;
     }
-    if (field === "servicesRendered") {
-      return agriYieldsSilvLivstckByHolder?.servicesRendered?.toString()!;
+    if (field === "salesOfOtherProducts") {
+      return agriYieldsSilvLivstckByHolder?.salesOfOtherProducts?.toString()!;
     }
-    if (field === "incomeFromCapitalAndRealEstate") {
-      return agriYieldsSilvLivstckByHolder?.incomeFromCapitalAndRealEstate?.toString()!;
+    if (field === "serviceProvision") {
+      return agriYieldsSilvLivstckByHolder?.serviceProvision?.toString()!;
     }
-    if (field === "agriYieldsSilvLivstckPositiveResultOfPropertyIncome") {
-      return agriYieldsSilvLivstckByHolder?.positiveResultOfPropertyIncome?.toString()!;
+    if (field === "incomeFromCapPropAttribCatB") {
+      return agriYieldsSilvLivstckByHolder?.incomeFromCapPropAttribCatB?.toString()!;
     }
-    if (field === "operatingSubsidiesRelatedToSales") {
-      return agriYieldsSilvLivstckByHolder?.operatingSubsidiesRelatedToSales?.toString()!;
+    if (field === "agriSilvPositiveResultPropertyIncome") {
+      return agriYieldsSilvLivstckByHolder?.positiveResultPropertyIncome?.toString()!;
+    }
+    if (field === "operatingSubsidiesRelatedSales") {
+      return agriYieldsSilvLivstckByHolder?.operatingSubsidiesRelatedSales?.toString()!;
     }
     if (field === "agriYieldsSilvLivstckOtherSubsidies") {
       return agriYieldsSilvLivstckByHolder?.otherSubsidies?.toString()!;
     }
-    if (field === "incomeFromSalesMultiannual") {
-      return agriYieldsSilvLivstckByHolder?.incomeFromSalesMultiannual?.toString()!;
+    if (field === "incomeFromSalesMultiAnnualForestry") {
+      return agriYieldsSilvLivstckByHolder?.incomeFromSalesMultiAnnualForestry?.toString()!;
     }
-    if (field === "categoryBIncome") {
-      return agriYieldsSilvLivstckByHolder?.categoryBIncome?.toString()!;
+    if (field === "agriSilvCatBIncomeNotInPrevFields") {
+      return agriYieldsSilvLivstckByHolder?.catBIncomeNotInPrevFields?.toString()!;
     }
-    if (field === "otherIncome") {
-      return otherIncomeByHolder?.otherIncome?.toString()!;
+    if (field === "agriSilvServicesProvidedByPartnersToCompanies") {
+      return agriYieldsSilvLivstckByHolder?.servicesProvidedByPartnersToCompanies?.toString()!;
     }
 
     return "";
@@ -1140,175 +1097,185 @@ const TipoRendimentoDeclaradoModelo3 = (
 
     let NewAgriYieldsSilvLivstck = agriYieldsSilvLivstck;
 
-    let NewOtherIncome = otherIncome;
-
     // RENDIMENTOS PROFISSIONAIS, COMERCIAIS E INDUSTRIAIS
 
-    if (Taxes?.saleOfGoodsAndProductsVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.profCommIndIncomes.saleOfMerchAndProducts.visible! ===
+      false
+    ) {
       delete object["Venda de mercadorias e produtos"];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        saleOfGoodsAndProducts: 0,
+        saleOfMerchAndProducts: 0,
       };
     }
     if (
-      Taxes?.provisionOfHotelAndSimilarServicesCateringAndBeverageVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.provisionHotelServ2015And2016
+        .visible! === false
     ) {
       delete object[
         "Prestações de serviços de atividades hoteleiras e similares, restauração e bebidas - anos 2015 e 2016"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        provisionOfHotelAndSimilarServicesCateringAndBeverage: 0,
+        provisionHotelServ2015And2016: 0,
       };
     }
     if (
-      Taxes?.provisionOfCateringAndBeverageActivitiesServicesVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.provisionCateringAndBeverageServ
+        .visible! === false
     ) {
       delete object[
         "Prestações de serviços de atividades de restauração e bebidas"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        provisionOfCateringAndBeverageActivitiesServices: 0,
+        provisionCateringAndBeverageServ: 0,
       };
     }
     if (
-      Taxes?.provisionOfHotelServicesAndSimilarActivitiesVisibility! === false
+      Taxes?.anexxBParams.profCommIndIncomes.provisionHotelAndSimilarServ
+        .visible! === false
     ) {
       delete object[
         "Prestações de serviços de atividades hoteleiras e similares"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        provisionOfHotelServicesAndSimilarActivities: 0,
+        provisionHotelAndSimilarServ: 0,
       };
     }
     if (
-      Taxes?.provisionOfServRelatedToTheExploOfLocalAccEstablishmentsVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.provisionLocalAccommodationServ
+        .visible! === false
     ) {
       delete object[
         "Prestações de serviços de atividades de exploração de estabelecimentos de alojamento local na modalidade de moradia ou apartamento"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        provisionOfServRelatedToTheExploOfLocalAccEstablishments: 0,
+        provisionLocalAccommodationServ: 0,
       };
     }
     if (
-      Taxes?.incomeFromProActivitiesSpecifArticle151OfTheCIRSVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.incomeProfActivitiesArt151CIRS
+        .visible! === false
     ) {
       delete object[
         "Rendimento das atividades profissionais especificamente previstas na Tabela do art.º 151.º do CIRS"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        incomeFromProActivitiesSpecifArticle151OfTheCIRS: 0,
+        incomeProfActivitiesArt151CIRS: 0,
       };
     }
     if (
-      Taxes?.incomeFromServicesRenderedNotForeseenInThePreviousFieldsVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.incomeFromUnforcastedServProv
+        .visible! === false
     ) {
       delete object[
         "Rendimentos de prestações de serviços não previstos nos campos anteriores"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        incomeFromServicesRenderedNotForeseenInThePreviousFields: 0,
+        incomeFromUnforcastedServProv: 0,
       };
     }
     if (
-      Taxes?.intellPropertyNotCoveByArtic58OfTheEBFIndOrInforPropertyVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.intellectualPropertyNotArt58EBF
+        .visible! === false
     ) {
       delete object[
         "Propriedade intelectual(não abrangida pelo art. 58.º do EBF), industrial ou de prestação de informações"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty: 0,
+        intellectualPropertyNotArt58EBF: 0,
       };
     }
     if (
-      Taxes?.intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPartVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes
+        .intellectualPropertyIncomeArt58EBFNonExempt.visible! === false
     ) {
       delete object[
         "Propriedade intelectual(Rendimentos abrangidos pelo art. 58.º do EBF - parte não isenta)"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart: 0,
+        intellectualPropertyIncomeArt58EBFNonExempt: 0,
       };
     }
     if (
-      Taxes?.positiveBalanOfCapGainsAndLossesAndOtherEquityIncrementsVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.positiveBalanceGainsLossesEquityInc
+        .visible! === false
     ) {
       delete object[
         "Saldo positivo das mais e menos-valias e restantes incrementos patrimoniais"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements: 0,
+        positiveBalanceGainsLossesEquityInc: 0,
       };
     }
     if (
-      Taxes?.incomeFromFinancialActivitiesCAECodesStartWith6465or66Visibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.incomeFromFinancialActivitiesCAE
+        .visible! === false
     ) {
       delete object[
         "Rendimentos de Atividades Financeiras (Códigos CAE iniciados por 64, 65 ou 66)"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        incomeFromFinancialActivitiesCAECodesStartWith6465or66: 0,
+        incomeFromFinancialActivitiesCAE: 0,
       };
     }
     if (
-      Taxes?.servicProvidedByMembToProSocOfTheFiscalTransparencRegimeVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.servicesProvidedByPartnersProfCo
+        .visible! === false
     ) {
       delete object[
         "Serviços prestados por sócios a sociedades de profissionais do Regime de Transparência Fiscal"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        servicProvidedByMembToProSocOfTheFiscalTransparencRegime: 0,
-      };
-    }
-    if (Taxes?.positiveResultOfPropertyIncomeVisibility! === false) {
-      delete object["Resultado positivo de rendimentos prediais"];
-      NewIndComProIncome = {
-        ...NewIndComProIncome!,
-        positiveResultOfPropertyIncome: 0,
+        servicesProvidedByPartnersProfCo: 0,
       };
     }
     if (
-      Taxes?.propertyIncomeAttributableToCatBIncomeGeneratingActivityVisibility! ===
-      false
+      Taxes?.anexxBParams.profCommIndIncomes.positiveResultPropertyIncome
+        .visible! === false
+    ) {
+      delete object["Resultado positivo de rendimentos prediais"];
+      NewIndComProIncome = {
+        ...NewIndComProIncome!,
+        positiveResultPropertyIncome: 0,
+      };
+    }
+    if (
+      Taxes?.anexxBParams.profCommIndIncomes.buildingIncomeAttribCatBActivity
+        .visible! === false
     ) {
       delete object[
         "Rendimentos prediais imputáveis a atividade geradora de rendimentos da Categoria B"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        propertyIncomeAttributableToCatBIncomeGeneratingActivity: 0,
+        buildingIncomeAttribCatBActivity: 0,
       };
     }
-    if (Taxes?.operatingSubsidiesVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.profCommIndIncomes.explorationSubsidies.visible! ===
+      false
+    ) {
       delete object["Subsídios à exploração"];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        operatingSubsidies: 0,
+        explorationSubsidies: 0,
       };
     }
-    if (Taxes?.otherSubsidiesVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.profCommIndIncomes.otherSubsidies.visible! === false
+    ) {
       delete object["Outros subsídios"];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
@@ -1316,87 +1283,128 @@ const TipoRendimentoDeclaradoModelo3 = (
       };
     }
     if (
-      Taxes?.categoryBIncomeNotIncludedInPreviousFieldsVisibility! === false
+      Taxes?.anexxBParams.profCommIndIncomes.catBIncomeNotInPrevFields
+        .visible! === false
     ) {
       delete object[
         "Rendimentos da Categoria B não incluídos nos campos anteriores"
       ];
       NewIndComProIncome = {
         ...NewIndComProIncome!,
-        categoryBIncomeNotIncludedInPreviousFields: 0,
+        catBIncomeNotInPrevFields: 0,
+      };
+    }
+    if (
+      Taxes?.anexxBParams.profCommIndIncomes
+        .servicesProvidedByPartnersToCompanies.visible! === false
+    ) {
+      delete object[
+        "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS"
+      ];
+      NewIndComProIncome = {
+        ...NewIndComProIncome!,
+        servicesProvidedByPartnersToCompanies: 0,
       };
     }
 
     // RENDIMENTOS AGRÍCOLAS, SILVÍCOLAS E PECUÁRIOS
-    if (Taxes?.salesProductsOtherThanThoseIncludField7Visibility! === false) {
-      delete object["Vendas de produtos com exceção das incluídas no campo 7"];
+    if (
+      Taxes?.anexxBParams.agriSilvPecuIncomes.salesOfOtherProducts.visible! ===
+      false
+    ) {
+      delete object[
+        "Vendas de produtos com exceção das incluídas no campo 457"
+      ];
       NewAgriYieldsSilvLivstck = {
         ...NewAgriYieldsSilvLivstck!,
-        salesProductsOtherThanThoseIncludField7: 0,
+        salesOfOtherProducts: 0,
       };
     }
-    if (Taxes?.servicesRenderedVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.agriSilvPecuIncomes.serviceProvision.visible! ===
+      false
+    ) {
       delete object["Prestações de serviços"];
       NewAgriYieldsSilvLivstck = {
         ...NewAgriYieldsSilvLivstck!,
-        servicesRendered: 0,
+        serviceProvision: 0,
       };
     }
-    if (Taxes?.incomeFromCapitalAndRealEstateVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.agriSilvPecuIncomes.incomeFromCapPropAttribCatB
+        .visible! === false
+    ) {
       delete object[
         "Rendimentos de capitais e prediais imputáveis a atividades geradoras de rendimentos da Categoria B, rendimentos da propriedade intelectual, industrial ou prestação de informações, saldo positivo das mais e menos-valias e restantes incrementos patrimoniais"
       ];
       NewAgriYieldsSilvLivstck = {
         ...NewAgriYieldsSilvLivstck!,
-        incomeFromCapitalAndRealEstate: 0,
+        incomeFromCapPropAttribCatB: 0,
       };
     }
-    if (Taxes?.positiveResultOfPropertyIncomeAgriVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.agriSilvPecuIncomes.positiveResultPropertyIncome
+        .visible! === false
+    ) {
       delete object["Resultado positivo de rendimentos prediais "];
       NewAgriYieldsSilvLivstck = {
         ...NewAgriYieldsSilvLivstck!,
-        positiveResultOfPropertyIncome: 0,
+        positiveResultPropertyIncome: 0,
       };
     }
-    if (Taxes?.operatingSubsidiesRelatedToSalesVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.agriSilvPecuIncomes.operatingSubsidiesRelatedSales
+        .visible! === false
+    ) {
       delete object["Subsídios à exploração relacionados com as vendas"];
       NewAgriYieldsSilvLivstck = {
         ...NewAgriYieldsSilvLivstck!,
-        operatingSubsidiesRelatedToSales: 0,
+        operatingSubsidiesRelatedSales: 0,
       };
     }
-    if (Taxes?.otherSubsidiesAgriVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.agriSilvPecuIncomes.otherSubsidies.visible! === false
+    ) {
       delete object["Outros subsídios "];
       NewAgriYieldsSilvLivstck = {
         ...NewAgriYieldsSilvLivstck!,
         otherSubsidies: 0,
       };
     }
-    if (Taxes?.incomeFromSalesMultiannualVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.agriSilvPecuIncomes.incomeFromSalesMultiAnnualForestry
+        .visible! === false
+    ) {
       delete object[
         "Rendimentos decorrentes de vendas em explorações silvícolas plurianuais (art.º 59.º-D, n.º 1 do EBF)"
       ];
       NewAgriYieldsSilvLivstck = {
         ...NewAgriYieldsSilvLivstck!,
-        incomeFromSalesMultiannual: 0,
+        incomeFromSalesMultiAnnualForestry: 0,
       };
     }
-    if (Taxes?.categoryBIncomeVisibility! === false) {
+    if (
+      Taxes?.anexxBParams.agriSilvPecuIncomes.catBIncomeNotInPrevFields
+        .visible! === false
+    ) {
       delete object[
         "Rendimentos da Categoria B não incluídos nos campos anteriores "
       ];
       NewAgriYieldsSilvLivstck = {
         ...NewAgriYieldsSilvLivstck!,
-        categoryBIncome: 0,
+        catBIncomeNotInPrevFields: 0,
       };
     }
-
-    // OUTROS RENDIMENTOS
-    if (Taxes?.otherIncomeVisibility! === false) {
-      delete object["OUTROS RENDIMENTOS"];
-      NewOtherIncome = {
-        ...NewOtherIncome,
-        otherIncome: 0,
+    if (
+      Taxes?.anexxBParams.agriSilvPecuIncomes
+        .servicesProvidedByPartnersToCompanies.visible! === false
+    ) {
+      delete object[
+        "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS "
+      ];
+      NewAgriYieldsSilvLivstck = {
+        ...NewAgriYieldsSilvLivstck!,
+        servicesProvidedByPartnersToCompanies: 0,
       };
     }
 
@@ -1404,7 +1412,6 @@ const TipoRendimentoDeclaradoModelo3 = (
     setAgriYieldsSilvLivstckClone(
       NewAgriYieldsSilvLivstck ?? agriYieldsSilvLivstckClone
     );
-    setOtherIncomeClone(NewOtherIncome ?? otherIncomeClone);
 
     return object;
   };
@@ -1412,83 +1419,214 @@ const TipoRendimentoDeclaradoModelo3 = (
   const InitialsValues = () => {
     const InitialRendimentosProfissionaisComerciaisIndustriais = {
       "Venda de mercadorias e produtos": {
-        rate: Taxes?.saleOfGoodsAndProducts!,
-        name: "saleOfGoodsAndProducts",
+        rate: Taxes?.anexxBParams.profCommIndIncomes.saleOfMerchAndProducts
+          .parameterValue!,
+        name: "saleOfMerchAndProducts",
+        code:
+          Taxes?.anexxBParams.profCommIndIncomes.saleOfMerchAndProducts
+            .parameterCode ?? "401",
+        label:
+          Taxes?.anexxBParams.profCommIndIncomes.saleOfMerchAndProducts
+            .parameterName!,
       },
       "Prestações de serviços de atividades hoteleiras e similares, restauração e bebidas - anos 2015 e 2016":
         {
-          rate: Taxes?.provisionOfHotelAndSimilarServicesCateringAndBeverage!,
-          name: "provisionOfHotelAndSimilarServicesCateringAndBeverage",
-        },
-      "Prestações de serviços de atividades de restauração e bebidas": {
-        rate: Taxes?.provisionOfCateringAndBeverageActivitiesServices!,
-        name: "provisionOfCateringAndBeverageActivitiesServices",
-      },
-      "Prestações de serviços de atividades hoteleiras e similares": {
-        rate: Taxes?.provisionOfHotelServicesAndSimilarActivities!,
-        name: "provisionOfHotelServicesAndSimilarActivities",
-      },
-      "Prestações de serviços de atividades de exploração de estabelecimentos de alojamento local na modalidade de moradia ou apartamento":
-        {
-          rate: Taxes?.provisionOfServRelatedToTheExploOfLocalAccEstablishments!,
-          name: "provisionOfServRelatedToTheExploOfLocalAccEstablishments",
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .provisionHotelServ2015And2016.parameterValue!,
+          name: "provisionHotelServ2015And2016",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes.provisionHotelServ2015And2016
+              .parameterCode ?? "402",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes.provisionHotelServ2015And2016
+              .parameterName!,
         },
       "Rendimento das atividades profissionais especificamente previstas na Tabela do art.º 151.º do CIRS":
         {
-          rate: Taxes?.incomeFromProActivitiesSpecifArticle151OfTheCIRS!,
-          name: "incomeFromProActivitiesSpecifArticle151OfTheCIRS",
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .incomeProfActivitiesArt151CIRS.parameterValue!,
+          name: "incomeProfActivitiesArt151CIRS",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .incomeProfActivitiesArt151CIRS.parameterCode ?? "403",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .incomeProfActivitiesArt151CIRS.parameterName!,
         },
       "Rendimentos de prestações de serviços não previstos nos campos anteriores":
         {
-          rate: Taxes?.incomeFromServicesRenderedNotForeseenInThePreviousFields!,
-          name: "incomeFromServicesRenderedNotForeseenInThePreviousFields",
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .incomeFromUnforcastedServProv.parameterValue!,
+          name: "incomeFromUnforcastedServProv",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes.incomeFromUnforcastedServProv
+              .parameterCode ?? "404",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes.incomeFromUnforcastedServProv
+              .parameterName!,
         },
       "Propriedade intelectual(não abrangida pelo art. 58.º do EBF), industrial ou de prestação de informações":
         {
-          rate: Taxes?.intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty!,
-          name: "intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty",
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .intellectualPropertyNotArt58EBF.parameterValue!,
+          name: "intellectualPropertyNotArt58EBF",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .intellectualPropertyNotArt58EBF.parameterCode ?? "405",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .intellectualPropertyNotArt58EBF.parameterName!,
         },
       "Propriedade intelectual(Rendimentos abrangidos pelo art. 58.º do EBF - parte não isenta)":
         {
-          rate: Taxes?.intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart!,
-          name: "intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart",
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .intellectualPropertyIncomeArt58EBFNonExempt.parameterValue!,
+          name: "intellectualPropertyIncomeArt58EBFNonExempt",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .intellectualPropertyIncomeArt58EBFNonExempt.parameterCode ??
+            "406",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .intellectualPropertyIncomeArt58EBFNonExempt.parameterName!,
         },
       "Saldo positivo das mais e menos-valias e restantes incrementos patrimoniais":
         {
-          rate: Taxes?.positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements!,
-          name: "positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements",
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .positiveBalanceGainsLossesEquityInc.parameterValue!,
+          name: "positiveBalanceGainsLossesEquityInc",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .positiveBalanceGainsLossesEquityInc.parameterCode ?? "407",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .positiveBalanceGainsLossesEquityInc.parameterName!,
         },
       "Rendimentos de Atividades Financeiras (Códigos CAE iniciados por 64, 65 ou 66)":
         {
-          rate: Taxes?.incomeFromFinancialActivitiesCAECodesStartWith6465or66!,
-          name: "incomeFromFinancialActivitiesCAECodesStartWith6465or66",
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .incomeFromFinancialActivitiesCAE.parameterValue!,
+          name: "incomeFromFinancialActivitiesCAE",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .incomeFromFinancialActivitiesCAE.parameterCode ?? "408",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .incomeFromFinancialActivitiesCAE.parameterName!,
         },
       "Serviços prestados por sócios a sociedades de profissionais do Regime de Transparência Fiscal":
         {
-          rate: Taxes?.servicProvidedByMembToProSocOfTheFiscalTransparencRegime!,
-          name: "servicProvidedByMembToProSocOfTheFiscalTransparencRegime",
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .servicesProvidedByPartnersProfCo.parameterValue!,
+          name: "servicesProvidedByPartnersProfCo",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .servicesProvidedByPartnersProfCo.parameterCode ?? "409",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .servicesProvidedByPartnersProfCo.parameterName!,
         },
       "Resultado positivo de rendimentos prediais": {
-        rate: Taxes?.positiveResultOfPropertyIncome!,
-        name: "positiveResultOfPropertyIncome",
+        rate: Taxes?.anexxBParams.profCommIndIncomes
+          .positiveResultPropertyIncome.parameterValue!,
+        name: "positiveResultPropertyIncome",
+        code:
+          Taxes?.anexxBParams.profCommIndIncomes.positiveResultPropertyIncome
+            .parameterCode ?? "410",
+        label:
+          Taxes?.anexxBParams.profCommIndIncomes.positiveResultPropertyIncome
+            .parameterName!,
       },
       "Rendimentos prediais imputáveis a atividade geradora de rendimentos da Categoria B":
         {
-          rate: Taxes?.propertyIncomeAttributableToCatBIncomeGeneratingActivity!,
-          name: "propertyIncomeAttributableToCatBIncomeGeneratingActivity",
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .buildingIncomeAttribCatBActivity.parameterValue!,
+          name: "buildingIncomeAttribCatBActivity",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .buildingIncomeAttribCatBActivity.parameterCode ?? "411",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .buildingIncomeAttribCatBActivity.parameterName!,
         },
       "Subsídios à exploração": {
-        rate: Taxes?.operatingSubsidies!,
-        name: "operatingSubsidies",
+        rate: Taxes?.anexxBParams.profCommIndIncomes.explorationSubsidies
+          .parameterValue!,
+        name: "explorationSubsidies",
+        code:
+          Taxes?.anexxBParams.profCommIndIncomes.explorationSubsidies
+            .parameterCode ?? "412",
+        label:
+          Taxes?.anexxBParams.profCommIndIncomes.explorationSubsidies
+            .parameterName!,
       },
       "Outros subsídios": {
-        rate: Taxes?.otherSubsidies!,
+        rate: Taxes?.anexxBParams.profCommIndIncomes.otherSubsidies
+          .parameterValue!,
         name: "otherSubsidies",
+        code:
+          Taxes?.anexxBParams.profCommIndIncomes.otherSubsidies.parameterCode ??
+          "413",
+        label:
+          Taxes?.anexxBParams.profCommIndIncomes.otherSubsidies.parameterName!,
       },
       "Rendimentos da Categoria B não incluídos nos campos anteriores": {
-        rate: Taxes?.categoryBIncomeNotIncludedInPreviousFields!,
-        name: "categoryBIncomeNotIncludedInPreviousFields",
+        rate: Taxes?.anexxBParams.profCommIndIncomes.catBIncomeNotInPrevFields
+          .parameterValue!,
+        name: "catBIncomeNotInPrevFields",
+        code:
+          Taxes?.anexxBParams.profCommIndIncomes.catBIncomeNotInPrevFields
+            .parameterCode ?? "414",
+        label:
+          Taxes?.anexxBParams.profCommIndIncomes.catBIncomeNotInPrevFields
+            .parameterName!,
       },
+      "Prestações de serviços de atividades de restauração e bebidas": {
+        rate: Taxes?.anexxBParams.profCommIndIncomes
+          .provisionCateringAndBeverageServ.parameterValue!,
+        name: "provisionCateringAndBeverageServ",
+        code:
+          Taxes?.anexxBParams.profCommIndIncomes
+            .provisionCateringAndBeverageServ.parameterCode ?? "415",
+        label:
+          Taxes?.anexxBParams.profCommIndIncomes
+            .provisionCateringAndBeverageServ.parameterName!,
+      },
+      "Prestações de serviços de atividades hoteleiras e similares": {
+        rate: Taxes?.anexxBParams.profCommIndIncomes
+          .provisionHotelAndSimilarServ.parameterValue!,
+        name: "provisionHotelAndSimilarServ",
+        code:
+          Taxes?.anexxBParams.profCommIndIncomes.provisionHotelAndSimilarServ
+            .parameterCode ?? "416",
+        label:
+          Taxes?.anexxBParams.profCommIndIncomes.provisionHotelAndSimilarServ
+            .parameterName!,
+      },
+      "Prestações de serviços de atividades de exploração de estabelecimentos de alojamento local na modalidade de moradia ou apartamento":
+        {
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .provisionLocalAccommodationServ.parameterValue!,
+          name: "provisionLocalAccommodationServ",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .provisionLocalAccommodationServ.parameterCode ?? "417",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .provisionLocalAccommodationServ.parameterName!,
+        },
+      "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS":
+        {
+          rate: Taxes?.anexxBParams.profCommIndIncomes
+            .servicesProvidedByPartnersToCompanies.parameterValue!,
+          name: "servicesProvidedByPartnersToCompanies",
+          code:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .servicesProvidedByPartnersToCompanies.parameterCode ?? "418",
+          label:
+            Taxes?.anexxBParams.profCommIndIncomes
+              .servicesProvidedByPartnersToCompanies.parameterName!,
+        },
     };
 
     setRendimentosProfissionaisComerciaisIndustriais(
@@ -1496,60 +1634,119 @@ const TipoRendimentoDeclaradoModelo3 = (
     );
 
     const InitialRendimentosAgricolasSilvicolasPecuarios = {
-      "Vendas de produtos com exceção das incluídas no campo 7": {
-        rate: Taxes?.salesProductsOtherThanThoseIncludField7!,
-        name: "salesProductsOtherThanThoseIncludField7",
+      "Vendas de produtos com exceção das incluídas no campo 457": {
+        rate: Taxes?.anexxBParams.agriSilvPecuIncomes.salesOfOtherProducts
+          .parameterValue!,
+        name: "salesOfOtherProducts",
+        code:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.salesOfOtherProducts
+            .parameterCode ?? "451",
+        label:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.salesOfOtherProducts
+            .parameterName!,
       },
       "Prestações de serviços": {
-        rate: Taxes?.servicesRendered!,
-        name: "servicesRendered",
+        rate: Taxes?.anexxBParams.agriSilvPecuIncomes.serviceProvision
+          .parameterValue!,
+        name: "serviceProvision",
+        code:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.serviceProvision
+            .parameterCode ?? "452",
+        label:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.serviceProvision
+            .parameterName!,
       },
       "Rendimentos de capitais e prediais imputáveis a atividades geradoras de rendimentos da Categoria B, rendimentos da propriedade intelectual, industrial ou prestação de informações, saldo positivo das mais e menos-valias e restantes incrementos patrimoniais":
         {
-          rate: Taxes?.incomeFromCapitalAndRealEstate!,
-          name: "incomeFromCapitalAndRealEstate",
+          rate: Taxes?.anexxBParams.agriSilvPecuIncomes
+            .incomeFromCapPropAttribCatB.parameterValue!,
+          name: "incomeFromCapPropAttribCatB",
+          code:
+            Taxes?.anexxBParams.agriSilvPecuIncomes.incomeFromCapPropAttribCatB
+              .parameterCode ?? "453",
+          label:
+            Taxes?.anexxBParams.agriSilvPecuIncomes.incomeFromCapPropAttribCatB
+              .parameterName!,
         },
       "Resultado positivo de rendimentos prediais ": {
-        rate: Taxes?.positiveResultOfPropertyIncomeAgri!,
-        name: "agriYieldsSilvLivstckPositiveResultOfPropertyIncome",
+        rate: Taxes?.anexxBParams.agriSilvPecuIncomes
+          .positiveResultPropertyIncome.parameterValue!,
+        name: "agriSilvPositiveResultPropertyIncome",
+        code:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.positiveResultPropertyIncome
+            .parameterCode ?? "454",
+        label:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.positiveResultPropertyIncome
+            .parameterName!,
       },
       "Subsídios à exploração relacionados com as vendas": {
-        rate: Taxes?.operatingSubsidiesRelatedToSales!,
-        name: "operatingSubsidiesRelatedToSales",
+        rate: Taxes?.anexxBParams.agriSilvPecuIncomes
+          .operatingSubsidiesRelatedSales.parameterValue!,
+        name: "operatingSubsidiesRelatedSales",
+        code:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.operatingSubsidiesRelatedSales
+            .parameterCode ?? "455",
+        label:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.operatingSubsidiesRelatedSales
+            .parameterName!,
       },
       "Outros subsídios ": {
-        rate: Taxes?.otherSubsidiesAgri!,
+        rate: Taxes?.anexxBParams.agriSilvPecuIncomes.otherSubsidies
+          .parameterValue!,
         name: "agriYieldsSilvLivstckOtherSubsidies",
+        code:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.otherSubsidies
+            .parameterCode ?? "456",
+        label:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.otherSubsidies.parameterName!,
       },
       "Rendimentos decorrentes de vendas em explorações silvícolas plurianuais (art.º 59.º-D, n.º 1 do EBF)":
         {
-          rate: Taxes?.incomeFromSalesMultiannual!,
-          name: "incomeFromSalesMultiannual",
+          rate: Taxes?.anexxBParams.agriSilvPecuIncomes
+            .incomeFromSalesMultiAnnualForestry.parameterValue!,
+          name: "incomeFromSalesMultiAnnualForestry",
+          code:
+            Taxes?.anexxBParams.agriSilvPecuIncomes
+              .incomeFromSalesMultiAnnualForestry.parameterCode ?? "457",
+          label:
+            Taxes?.anexxBParams.agriSilvPecuIncomes
+              .incomeFromSalesMultiAnnualForestry.parameterName!,
         },
       "Rendimentos da Categoria B não incluídos nos campos anteriores ": {
-        rate: Taxes?.categoryBIncome!,
-        name: "categoryBIncome",
+        rate: Taxes?.anexxBParams.agriSilvPecuIncomes.catBIncomeNotInPrevFields
+          .parameterValue!,
+        name: "agriSilvCatBIncomeNotInPrevFields",
+        code:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.catBIncomeNotInPrevFields
+            .parameterCode ?? "458",
+        label:
+          Taxes?.anexxBParams.agriSilvPecuIncomes.catBIncomeNotInPrevFields
+            .parameterName!,
       },
+      "Serviços prestados por sócios a sociedades onde detenham partes de capital ou direitos de voto, nas condições previstas nos n.ºs 1 e 2 da subalínea ii) da alínea g) do n.º 1 do art.º 31.º do CIRS ":
+        {
+          rate: Taxes?.anexxBParams.agriSilvPecuIncomes
+            .servicesProvidedByPartnersToCompanies.parameterValue!,
+          name: "agriSilvServicesProvidedByPartnersToCompanies",
+          code:
+            Taxes?.anexxBParams.agriSilvPecuIncomes
+              .servicesProvidedByPartnersToCompanies.parameterCode ?? "459",
+          label:
+            Taxes?.anexxBParams.agriSilvPecuIncomes
+              .servicesProvidedByPartnersToCompanies.parameterName!,
+        },
     };
 
     setRendimentosAgricolasSilvicolasPecuarios(
       removeInvisibleLines(InitialRendimentosAgricolasSilvicolasPecuarios)
     );
-
-    const InitialOutrosRendimentos = {
-      "OUTROS RENDIMENTOS": {
-        rate: Taxes?.otherIncome!,
-        name: "otherIncome",
-      },
-    };
-
-    setOutrosRendimentos(removeInvisibleLines(InitialOutrosRendimentos));
   };
 
   useEffect(() => {
-    const value = calculateNetIncomeIndependentWithoutOrganizedAccountingTotal({
-      ...valueTotal,
-    });
+    const value =
+      calculateNetIncomeIndependentWithoutOrganizedAccountingTotal({
+        ...valueTotal,
+      }) * 0.75;
     setTotalGrossIncomeField(value);
   }, [valueTotal]);
 
@@ -1562,19 +1759,18 @@ const TipoRendimentoDeclaradoModelo3 = (
   useEffect(() => {
     setIndComProIncomeClone(indComProIncome!);
     setAgriYieldsSilvLivstckClone(agriYieldsSilvLivstck!);
-    setOtherIncomeClone(otherIncome!);
-  }, [indComProIncome, agriYieldsSilvLivstck, otherIncome]);
+  }, [indComProIncome, agriYieldsSilvLivstck]);
 
   useEffect(() => {
     if (
       indComProIncomeClone === indComProIncome &&
-      agriYieldsSilvLivstckClone === agriYieldsSilvLivstck &&
-      otherIncomeClone === otherIncome
+      agriYieldsSilvLivstckClone === agriYieldsSilvLivstck
     ) {
       setValueTotal(initialValuesTotal());
       InitialsValues();
     }
-  }, [indComProIncomeClone, agriYieldsSilvLivstckClone, otherIncomeClone]);
+    saveValues(indComProIncomeClone, agriYieldsSilvLivstckClone);
+  }, [indComProIncomeClone, agriYieldsSilvLivstckClone]);
 
   return (
     <div className="resume-wrapper" style={{ marginTop: "20px" }}>
@@ -1586,25 +1782,46 @@ const TipoRendimentoDeclaradoModelo3 = (
           margin="0px 0px 10px 0px"
         />
       </div>
-      <Accordion title={title}>
+      <Accordion title={title} open>
         <div className="row-title-wrapper">
-          <Text
-            text={<b>{t("grossIncome")} (1)</b>}
-            margin="auto auto 16px 0px"
-          />
-
-          <div style={{ width: "130px" }}>
+          <div style={{ width: "163px" }}>
             <Text
-              text={<b>{t("correctionFactor")} (2)</b>}
+              text={
+                <b>
+                  {t("grossIncome")}
+                  <br />
+                  (1)
+                </b>
+              }
+              margin="20px auto 16px 0px"
               textAlign="center"
-              margin="20px 0px"
             />
           </div>
-          <div style={{ width: "130px" }}>
+
+          <div style={{ width: "75px" }}>
             <Text
-              text={<b>{t("finalGrossIncome")} (1x2)</b>}
+              text={
+                <b>
+                  {t("correctionFactor")}
+                  <br />
+                  (2)
+                </b>
+              }
               textAlign="center"
-              margin="20px 0px"
+              margin="20px 10px"
+            />
+          </div>
+          <div style={{ width: "156px" }}>
+            <Text
+              text={
+                <b>
+                  {t("finalGrossIncome")}
+                  <br />
+                  (1x2)
+                </b>
+              }
+              textAlign="center"
+              margin="20px 10px"
             />
           </div>
         </div>
@@ -1618,10 +1835,10 @@ const TipoRendimentoDeclaradoModelo3 = (
           />
         ) : null}
         {Object.entries(rendimentosProfissionaisComerciaisIndustriais).map(
-          ([key, value], index) => (
+          ([key, value]) => (
             <div className="row-wrapper" key={key}>
               <TextField
-                label={`${index + 1}-${key}`}
+                label={`${value.code}-${value.label}`}
                 defaultValue={
                   returnDefaultValue(value.name) === 0
                     ? undefined
@@ -1643,19 +1860,23 @@ const TipoRendimentoDeclaradoModelo3 = (
               <div className="row-wrapper-2">
                 <div style={{ marginLeft: "5px" }}>
                   <TextField
-                    placeholder={`${value.rate * 100}%`}
+                    placeholder={`${
+                      value.rate
+                        ? parseInt((value.rate * 100).toString(), 10)
+                        : 0 * 100
+                    }%`}
                     isDisabled
-                    textAlign="center"
                     width="75px"
                   />
                 </div>
                 <div style={{ marginLeft: "5px" }}>
                   <TextField
                     placeholder={formatToEuroCurrency(
-                      parseFloat(calculateFinalGrossIncome(key, value.rate))
+                      parseFloat(
+                        calculateFinalGrossIncome(key, value.rate ?? 0)
+                      )
                     )}
                     isDisabled
-                    textAlign="center"
                   />
                 </div>
               </div>
@@ -1671,10 +1892,10 @@ const TipoRendimentoDeclaradoModelo3 = (
           />
         ) : null}
         {Object.entries(rendimentosAgricolasSilvicolasPecuarios).map(
-          ([key, value], index) => (
+          ([key, value]) => (
             <div className="row-wrapper" key={key}>
               <TextField
-                label={`${index + 1}-${key}`}
+                label={`${value.code}-${value.label}`}
                 defaultValue={
                   returnDefaultValue(value.name) === 0
                     ? undefined
@@ -1696,76 +1917,29 @@ const TipoRendimentoDeclaradoModelo3 = (
               <div className="row-wrapper-2">
                 <div style={{ marginLeft: "5px" }}>
                   <TextField
-                    placeholder={`${value.rate * 100}%`}
+                    placeholder={`${
+                      value.rate
+                        ? parseInt((value.rate * 100).toString(), 10)
+                        : 0 * 100
+                    }%`}
                     isDisabled
-                    textAlign="center"
                     width="75px"
                   />
                 </div>
                 <div style={{ marginLeft: "5px" }}>
                   <TextField
                     placeholder={formatToEuroCurrency(
-                      parseFloat(calculateFinalGrossIncome(key, value.rate))
+                      parseFloat(
+                        calculateFinalGrossIncome(key, value.rate ?? 0)
+                      )
                     )}
                     isDisabled
-                    textAlign="center"
                   />
                 </div>
               </div>
             </div>
           )
         )}
-
-        {Object.keys(outrosRendimentos).length !== 0 ? (
-          <Text
-            className="uppercase"
-            text={<b>{t("otherIncome")}</b>}
-            margin="2px 0px 20px 0px"
-          />
-        ) : null}
-        {Object.entries(outrosRendimentos).map(([key, value]) => (
-          <div className="row-wrapper" key={key}>
-            <TextField
-              label={key}
-              defaultValue={
-                returnDefaultValue(value.name) === 0
-                  ? undefined
-                  : returnDefaultValue(value.name)?.toString()!
-              }
-              valueCallback={(val: number) =>
-                handleChange(key, val, value.rate)
-              }
-              placeholder={
-                readOnly
-                  ? formatToEuroCurrency(
-                      parseFloat(returnPlaceHolderValue(value.name))
-                    )
-                  : ""
-              }
-              isDisabled={readOnly}
-              width="200px"
-            />
-            <div className="row-wrapper-2">
-              <div style={{ marginLeft: "5px" }}>
-                <TextField
-                  placeholder={`${value.rate * 100}%`}
-                  isDisabled
-                  textAlign="center"
-                  width="75px"
-                />
-              </div>
-              <div style={{ marginLeft: "5px" }}>
-                <TextField
-                  placeholder={formatToEuroCurrency(
-                    parseFloat(calculateFinalGrossIncome(key, value.rate))
-                  )}
-                  isDisabled
-                  textAlign="center"
-                />
-              </div>
-            </div>
-          </div>
-        ))}
       </Accordion>
       <Grid container>
         <Grid item xs={12} style={{ marginTop: "5px" }}>
@@ -1780,24 +1954,22 @@ const TipoRendimentoDeclaradoModelo3 = (
             />
           </div>
         </Grid>
-        <Grid item xs={12} md={6} style={{ marginTop: "5px" }}>
+        <Grid item xs={12} md={6} style={{ marginTop: "14px" }}>
           {!readOnly && (
-            <NBButton nbtype="Secondary" onClick={handleClean} fullWidth>
+            <NBButton variant="outlined" onClick={handleClean} fullWidth>
               {t("clean")}
             </NBButton>
           )}
         </Grid>
-        <Grid item xs={12} md={6} style={{ marginTop: "5px" }}>
+        <Grid item xs={12} md={6} style={{ marginTop: "14px" }}>
           {!readOnly && (
             <div className="row-spacing-div">
               <NBButton
-                nbtype="Secondary"
                 onClick={() =>
                   applyTotalValue(
                     totalGrossIncomeField,
                     indComProIncomeClone,
-                    agriYieldsSilvLivstckClone,
-                    otherIncomeClone
+                    agriYieldsSilvLivstckClone
                   )
                 }
                 fullWidth

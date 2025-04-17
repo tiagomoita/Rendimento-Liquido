@@ -1,5 +1,6 @@
 export interface holderContext {
   SimulationId: string;
+  ReferenceWF: string;
   Holders: number;
   currentHolder: number;
   currentTypeOfIncome: boolean;
@@ -41,35 +42,51 @@ export interface aggEachTypeOfIncome {
   totalNetIncomeRec: number;
 }
 
+export interface BusinessAndProfessionalIncome {
+  commercialAndIndustrialIncome: number;
+  agriculturalIncomeFromForestryOrLivestock: number;
+  incomeTableArticle151: number;
+  incomeFromUnforeseenInstallments: number;
+  intellectualOrIndustrialPropertyIncome: number;
+  incomeIntellectualPropertyArt58NonExempt: number;
+  incomeIntellectualPropertyArt58Exempt: number;
+  incomeOfArtistsAndSportsmen2017AndPrevious: number;
+  incomeAttributableBusinessIndIncomeGeneratingActivities: number;
+  incomeOfArtists2018AndLater: number;
+  incomeOfSportsmen2018AndLater: number;
+}
+
 export interface IndComProIncome {
-  saleOfGoodsAndProducts: number;
-  provisionOfHotelAndSimilarServicesCateringAndBeverage: number;
-  provisionOfCateringAndBeverageActivitiesServices: number;
-  provisionOfHotelServicesAndSimilarActivities: number;
-  provisionOfServRelatedToTheExploOfLocalAccEstablishments: number;
-  incomeFromProActivitiesSpecifArticle151OfTheCIRS: number;
-  incomeFromServicesRenderedNotForeseenInThePreviousFields: number;
-  intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty: number;
-  intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart: number;
-  positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements: number;
-  incomeFromFinancialActivitiesCAECodesStartWith6465or66: number;
-  servicProvidedByMembToProSocOfTheFiscalTransparencRegime: number;
-  positiveResultOfPropertyIncome: number;
-  propertyIncomeAttributableToCatBIncomeGeneratingActivity: number;
-  operatingSubsidies: number;
+  saleOfMerchAndProducts: number;
+  provisionHotelServ2015And2016: number;
+  provisionCateringAndBeverageServ: number;
+  provisionHotelAndSimilarServ: number;
+  provisionLocalAccommodationServ: number;
+  incomeProfActivitiesArt151CIRS: number;
+  incomeFromUnforcastedServProv: number;
+  intellectualPropertyNotArt58EBF: number;
+  intellectualPropertyIncomeArt58EBFNonExempt: number;
+  positiveBalanceGainsLossesEquityInc: number;
+  incomeFromFinancialActivitiesCAE: number;
+  servicesProvidedByPartnersProfCo: number;
+  positiveResultPropertyIncome: number;
+  buildingIncomeAttribCatBActivity: number;
+  explorationSubsidies: number;
   otherSubsidies: number;
-  categoryBIncomeNotIncludedInPreviousFields: number;
+  catBIncomeNotInPrevFields: number;
+  servicesProvidedByPartnersToCompanies: number;
 }
 
 export interface AgriYieldsSilvLivstck {
-  salesProductsOtherThanThoseIncludField7: number;
-  servicesRendered: number;
-  incomeFromCapitalAndRealEstate: number;
-  positiveResultOfPropertyIncome: number;
-  operatingSubsidiesRelatedToSales: number;
+  salesOfOtherProducts: number;
+  serviceProvision: number;
+  incomeFromCapPropAttribCatB: number;
+  positiveResultPropertyIncome: number;
+  operatingSubsidiesRelatedSales: number;
   otherSubsidies: number;
-  incomeFromSalesMultiannual: number;
-  categoryBIncome: number;
+  incomeFromSalesMultiAnnualForestry: number;
+  catBIncomeNotInPrevFields: number;
+  servicesProvidedByPartnersToCompanies: number;
 }
 export interface holderData {
   dependentsAndPensions: {
@@ -91,9 +108,6 @@ export interface holderData {
     independentWithoutOrganizedAccountingCheckBox: boolean;
     indComProIncome: IndComProIncome;
     agriYieldsSilvLivstck: AgriYieldsSilvLivstck;
-    otherIncome: {
-      otherIncome: number;
-    };
     charges: number;
     taxIncidence: number;
     netIncome: number;
@@ -152,12 +166,20 @@ export interface holderData {
       contributionsToSocialProtectionSchemes: number;
     };
     businessAndProfessionalIncome: {
-      indComProIncome: IndComProIncome;
-      agriYieldsSilvLivstck: AgriYieldsSilvLivstck;
-      otherIncome: {
-        otherIncome: number;
+      grossIncomes: {
+        commercialAndIndustrialIncome: number;
+        agriculturalIncomeFromForestryOrLivestock: number;
+        incomeTableArticle151: number;
+        incomeFromUnforeseenInstallments: number;
+        intellectualOrIndustrialPropertyIncome: number;
+        incomeIntellectualPropertyArt58NonExempt: number;
+        incomeIntellectualPropertyArt58Exempt: number;
+        incomeOfArtistsAndSportsmen2017AndPrevious: number;
+        incomeAttributableBusinessIndIncomeGeneratingActivities: number;
+        incomeOfArtists2018AndLater: number;
+        incomeOfSportsmen2018AndLater: number;
       };
-      grossIncome: number;
+      grossIncomeValue: number;
       taxPaidAbroad: number;
       contributionsToSocialProtectionSchemes: number;
       withholding: number;
@@ -169,6 +191,7 @@ export interface holderData {
     capitalIncome: {
       grossIncome: number;
       eithholdingTaxInPortugal: number;
+      taxPaidAbroad: number;
     };
     netIncome: number;
   };
@@ -209,12 +232,20 @@ export interface holderData {
 }
 
 interface GreenReceiptData {
-  indComProIncome: IndComProIncome;
-  agriYieldsSilvLivstck: AgriYieldsSilvLivstck;
-  otherIncome: {
-    otherIncome: number;
-  };
   receiptValue: number;
+  grossIncomes: {
+    indComProIncome: IndComProIncome;
+    agriYieldsSilvLivstck: AgriYieldsSilvLivstck;
+  };
+}
+
+export interface ReceiptsDataAux {
+  receipt1: number;
+  receipt2: number;
+  receipt3: number;
+  receipt4: number;
+  receipt5: number;
+  receipt6: number;
 }
 
 export interface ReceiptsData {
@@ -270,66 +301,71 @@ export interface ReceiptsData {
   };
 }
 
+export interface TaxeDetails {
+  parameterValue?: number;
+  visible?: boolean;
+  parameterCode?: string;
+  parameterName?: string;
+  lastUpdate?: string;
+}
+
 export interface Taxes {
-  indWorkWtoCalcTaxIncidence: number;
-  saleOfGoodsAndProducts: number;
-  provisionOfHotelAndSimilarServicesCateringAndBeverage: number;
-  provisionOfCateringAndBeverageActivitiesServices: number;
-  provisionOfHotelServicesAndSimilarActivities: number;
-  provisionOfServRelatedToTheExploOfLocalAccEstablishments: number;
-  incomeFromProActivitiesSpecifArticle151OfTheCIRS: number;
-  incomeFromServicesRenderedNotForeseenInThePreviousFields: number;
-  intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty: number;
-  intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart: number;
-  positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements: number;
-  incomeFromFinancialActivitiesCAECodesStartWith6465or66: number;
-  servicProvidedByMembToProSocOfTheFiscalTransparencRegime: number;
-  positiveResultOfPropertyIncome: number;
-  propertyIncomeAttributableToCatBIncomeGeneratingActivity: number;
-  operatingSubsidies: number;
-  otherSubsidies: number;
-  categoryBIncomeNotIncludedInPreviousFields: number;
-  salesProductsOtherThanThoseIncludField7: number;
-  servicesRendered: number;
-  incomeFromCapitalAndRealEstate: number;
-  positiveResultOfPropertyIncomeAgri: number;
-  operatingSubsidiesRelatedToSales: number;
-  otherSubsidiesAgri: number;
-  incomeFromSalesMultiannual: number;
-  categoryBIncome: number;
-  otherIncome: number;
-  valueToCalculateTaxIncidence: number;
-  valueEntitiesBasedInPortugal: number;
-  valueEntiWithoutHeadPortugal: number;
-  taxFreeIncomeValue: number;
-  valueOfRegularReceipts: number;
-  netIncomeReceipts: number;
-  saleOfGoodsAndProductsVisibility: boolean;
-  provisionOfHotelAndSimilarServicesCateringAndBeverageVisibility: boolean;
-  provisionOfCateringAndBeverageActivitiesServicesVisibility: boolean;
-  provisionOfHotelServicesAndSimilarActivitiesVisibility: boolean;
-  provisionOfServRelatedToTheExploOfLocalAccEstablishmentsVisibility: boolean;
-  incomeFromProActivitiesSpecifArticle151OfTheCIRSVisibility: boolean;
-  incomeFromServicesRenderedNotForeseenInThePreviousFieldsVisibility: boolean;
-  intellPropertyNotCoveByArtic58OfTheEBFIndOrInforPropertyVisibility: boolean;
-  intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPartVisibility: boolean;
-  positiveBalanOfCapGainsAndLossesAndOtherEquityIncrementsVisibility: boolean;
-  incomeFromFinancialActivitiesCAECodesStartWith6465or66Visibility: boolean;
-  servicProvidedByMembToProSocOfTheFiscalTransparencRegimeVisibility: boolean;
-  positiveResultOfPropertyIncomeVisibility: boolean;
-  propertyIncomeAttributableToCatBIncomeGeneratingActivityVisibility: boolean;
-  operatingSubsidiesVisibility: boolean;
-  otherSubsidiesVisibility: boolean;
-  categoryBIncomeNotIncludedInPreviousFieldsVisibility: boolean;
-  salesProductsOtherThanThoseIncludField7Visibility: boolean;
-  servicesRenderedVisibility: boolean;
-  incomeFromCapitalAndRealEstateVisibility: boolean;
-  positiveResultOfPropertyIncomeAgriVisibility: boolean;
-  operatingSubsidiesRelatedToSalesVisibility: boolean;
-  otherSubsidiesAgriVisibility: boolean;
-  incomeFromSalesMultiannualVisibility: boolean;
-  categoryBIncomeVisibility: boolean;
-  otherIncomeVisibility: boolean;
+  irsParams: {
+    taxIncOnIndWorkOrgAcc: TaxeDetails;
+    taxIncOnIndWorkNoOrgAcc: TaxeDetails;
+    taxFreeIncEarnedAbroadNonRes: TaxeDetails;
+  };
+  recParams: {
+    percVarAvgIncRecAboveIrreg: TaxeDetails;
+    realEstateIncome: TaxeDetails;
+  };
+  anexxBParams: {
+    profCommIndIncomes: {
+      saleOfMerchAndProducts: TaxeDetails;
+      provisionHotelServ2015And2016: TaxeDetails;
+      provisionCateringAndBeverageServ: TaxeDetails;
+      provisionHotelAndSimilarServ: TaxeDetails;
+      provisionLocalAccommodationServ: TaxeDetails;
+      incomeProfActivitiesArt151CIRS: TaxeDetails;
+      incomeFromUnforcastedServProv: TaxeDetails;
+      intellectualPropertyNotArt58EBF: TaxeDetails;
+      intellectualPropertyIncomeArt58EBFNonExempt: TaxeDetails;
+      positiveBalanceGainsLossesEquityInc: TaxeDetails;
+      incomeFromFinancialActivitiesCAE: TaxeDetails;
+      servicesProvidedByPartnersProfCo: TaxeDetails;
+      positiveResultPropertyIncome: TaxeDetails;
+      buildingIncomeAttribCatBActivity: TaxeDetails;
+      explorationSubsidies: TaxeDetails;
+      otherSubsidies: TaxeDetails;
+      catBIncomeNotInPrevFields: TaxeDetails;
+      servicesProvidedByPartnersToCompanies: TaxeDetails;
+    };
+    agriSilvPecuIncomes: {
+      salesOfOtherProducts: TaxeDetails;
+      serviceProvision: TaxeDetails;
+      incomeFromCapPropAttribCatB: TaxeDetails;
+      positiveResultPropertyIncome: TaxeDetails;
+      operatingSubsidiesRelatedSales: TaxeDetails;
+      otherSubsidies: TaxeDetails;
+      incomeFromSalesMultiAnnualForestry: TaxeDetails;
+      catBIncomeNotInPrevFields: TaxeDetails;
+      servicesProvidedByPartnersToCompanies: TaxeDetails;
+    };
+  };
+  anexxJParams: {
+    commIndIncome: TaxeDetails;
+    agriForestryLivestockIncome: TaxeDetails;
+    incomeFromProfActSpecProv: TaxeDetails;
+    incomeFromServNotPrevCodes: TaxeDetails;
+    incomeFromIntelOrIndusProp: TaxeDetails;
+    incomeFromIntelPropNonExempt: TaxeDetails;
+    incomeFromIntelPropExempt: TaxeDetails;
+    incomeOfArtistsSportsmenPrev: TaxeDetails;
+    incomeAttrToBusiProfAct: TaxeDetails;
+    artistIncomePost2018: TaxeDetails;
+    incomeOfAthletesPost2018: TaxeDetails;
+  };
+  lastUpdate?: string;
 }
 
 export interface Context {
@@ -354,17 +390,21 @@ export interface Model3Data {
   otherIncome?: {
     otherIncome: number;
   };
+  businessAndProfessionalIncome?: BusinessAndProfessionalIncome;
   indComProIncomeByHolder?: IndComProIncome;
   agriYieldsSilvLivstckByHolder?: AgriYieldsSilvLivstck;
   otherIncomeByHolder?: {
     otherIncome: number;
   };
+  businessAndProfessionalIncomeByHolder?: BusinessAndProfessionalIncome;
   totalGrossIncomeByHolder?: number;
   readOnly?: boolean;
   tabHolder?: number;
   applyTotalValue?: any;
   show?: boolean;
   handleCleanModel?: any;
+  isAttachmentJ?: boolean;
+  saveValues?: any;
 }
 
 // irsOrReceipts:  true -> IRS, false -> recibos de vencimento
@@ -374,6 +414,7 @@ enum ETypes {
   SLICE_NAME = "holderContext",
   THUNK_CREATE_CONTEXT = "holder/createContext",
   THUNK_GET_CONTEXT = "holder/getContext",
+  THUNK_GET_CONTEXT_WF = "holder/getContextWF",
   THUNK_GET_SIMULATION_ID = "holder/getSimulationId",
   THUNK_SIMULATE = "holder/simulate",
   THUNK_FIND_BY_SIMULATION_ID_AND_HOLDER = "holder/findBySimulationIdAndHolder",

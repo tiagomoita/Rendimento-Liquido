@@ -1,2 +1,2 @@
-export { default as Summary } from "./Summary";
-export type { default as SummaryProps } from "./types";
+export { default as Summary } from "./component";
+export type { default as ISummaryProps } from "./types";

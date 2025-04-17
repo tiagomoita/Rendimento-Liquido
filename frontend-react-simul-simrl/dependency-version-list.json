@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "name": "frontend-react-simul-simrl",
+  "dependencies": {
+    "@nb-omc-xit-frontend/nb-base": {
+      "version": "2.1.2",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-challenges": {
+      "version": "3.1.1",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-data-display": {
+      "version": "1.0.18",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-data-layer": {
+      "version": "2.1.0",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-date-pickers": {
+      "version": "2.1.1",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-documents": {
+      "version": "2.1.1",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-exception": {
+      "version": "2.1.1",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-feedback": {
+      "version": "1.0.13",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-http": {
+      "version": "1.3.2",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-i18n": {
+      "version": "2.1.1",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-icons": {
+      "version": "2.1.0",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-layout": {
+      "version": "2.1.0",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-navigation": {
+      "version": "1.0.16",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-shared": {
+      "version": "3.10.5",
+      "overridden": false
+    },
+    "@nb-omc-xit-frontend/nb-tests": {
+      "version": "2.1.0",
+      "overridden": false
+    }
+  }
+}

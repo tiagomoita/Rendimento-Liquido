@@ -7,15 +7,14 @@ import ReactDOM from "react-dom";
 import cssVars from "css-vars-ponyfill";
 import { I18nextProvider } from "react-i18next";
 import { BrowserRouter } from "react-router-dom";
-import { Container } from "@material-ui/core";
-import StylesProvider from "@mui/styles/StylesProvider";
+import { Container } from "@mui/material";
+import StyledEngineProvider from "@mui/material/StyledEngineProvider";
 import { NBLoader } from "@nb-omc-xit-frontend/nb-shared/lib/NBLoader";
 
 // Fw Packages Styles
-import "@nb-omc-xit-frontend/nb-base/lib/index.css";
+import "@nb-omc-xit-frontend/nb-base/lib/styles/index.scss";
 import "@nb-omc-xit-frontend/nb-feedback/lib/index.css";
-import "@nb-omc-xit-frontend/nb-shared/lib/index.css";
-
+// import "@nb-omc-xit-frontend/nb-shared/lib/";
 // Redux Store Provider
 import { Provider } from "react-redux";
 
@@ -42,7 +41,7 @@ const onSuccess = () => {
   ReactDOM.render(
     <React.StrictMode>
       <I18nextProvider i18n={i18next}>
-        <StylesProvider injectFirst>
+        <StyledEngineProvider injectFirst>
           <Provider store={store}>
             <Suspense fallback={<NBLoader />}>
               <BrowserRouter basename={window._env_.REACT_APP_BASE_DIRECTORY}>
@@ -52,7 +51,7 @@ const onSuccess = () => {
               </BrowserRouter>
             </Suspense>
           </Provider>
-        </StylesProvider>
+        </StyledEngineProvider>
       </I18nextProvider>
     </React.StrictMode>,
     document.getElementById("root")

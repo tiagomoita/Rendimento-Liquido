@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "./Recibos.scss";
 import { NBRadio } from "@nb-omc-xit-frontend/nb-shared/lib/NBRadio";
 import Skeleton from "@mui/material/Skeleton";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Text from "../atoms/Text";
 import AccordionCheckbox from "../molecules/AccordionCheckbox";
@@ -25,14 +25,23 @@ type RecibosProps = {
   setModel3Data: Dispatch<SetStateAction<Model3Data>>;
 };
 
+const initialReceiptsChackboxOpenStatus = {
+  recibosVencimentosOuPensoesCheckboxOpen: false,
+  recibosVerdesCheckboxOpen: false,
+  rendimentosPrediaisCheckboxOpen: false,
+  bolsasInvestigacaoEstagioCheckboxOpen: false,
+  pensoesAlimentosCheckboxOpen: false,
+};
+
 const Recibos = (props: RecibosProps) => {
   const { setModel3Data } = props;
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
   const ReceiptsData = useSelector(retrieveReceiptsData);
   const irsOrReceipts = useSelector(retrieveIrsOrReceipts);
   const currentTypeOfIncome = useSelector(retrieveCurrentTypeOfIncome);
   const isLoading = useSelector(main.selectors.isLoading);
   const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(initialReceiptsChackboxOpenStatus);
 
   return (
     <div className="recibos-wrapper">
@@ -42,12 +51,20 @@ const Recibos = (props: RecibosProps) => {
           ReceiptsData?.salaryOrPensionReceipts
             ?.salaryOrPensionReceiptsCheckBox!
         }
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        initialIrsChackboxOpenStatus={initialReceiptsChackboxOpenStatus}
+        name="recibosVencimentosOuPensoesCheckboxOpen"
       >
         <RecibosVencimentosOuPensoes />
       </AccordionCheckbox>
       <AccordionCheckbox
         title={t("greenReceipts")}
         isDisableCheckbox={ReceiptsData?.greenReceipts?.greenReceiptsCheckBox!}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        initialIrsChackboxOpenStatus={initialReceiptsChackboxOpenStatus}
+        name="recibosVerdesCheckboxOpen"
       >
         <RecibosVerdes setModel3Data={setModel3Data} />
       </AccordionCheckbox>
@@ -56,6 +73,10 @@ const Recibos = (props: RecibosProps) => {
         isDisableCheckbox={
           ReceiptsData?.propertyIncomeReceipts?.propertyIncomeRecCheckBox!
         }
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        initialIrsChackboxOpenStatus={initialReceiptsChackboxOpenStatus}
+        name="rendimentosPrediaisCheckboxOpen"
       >
         <RendimentosPrediais />
       </AccordionCheckbox>
@@ -65,6 +86,10 @@ const Recibos = (props: RecibosProps) => {
           ReceiptsData?.researchScholarshipsInternshipReceipts
             ?.researchScholarReceiptsCheckBox!
         }
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        initialIrsChackboxOpenStatus={initialReceiptsChackboxOpenStatus}
+        name="bolsasInvestigacaoEstagioCheckboxOpen"
       >
         <BolsasInvestigacaoEstagio />
       </AccordionCheckbox>
@@ -73,6 +98,10 @@ const Recibos = (props: RecibosProps) => {
         isDisableCheckbox={
           ReceiptsData?.alimonyReceipts?.almonyReceiptsCheckBox!
         }
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        initialIrsChackboxOpenStatus={initialReceiptsChackboxOpenStatus}
+        name="pensoesAlimentosCheckboxOpen"
       >
         <PensoesAlimentos />
       </AccordionCheckbox>

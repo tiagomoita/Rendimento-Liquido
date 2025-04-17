@@ -28,7 +28,7 @@ const Resume = () => {
       dependentsAndPensions,
       independentWithOrganizedAccounting,
       independentWithoutOrganizedAccounting,
-      // taxTransparency,
+      taxTransparency,
       propertyIncome,
       exemptIncomeOrIntellectualProperty,
       incomeEarnedAbroadForResidents,
@@ -44,7 +44,7 @@ const Resume = () => {
       (independentWithoutOrganizedAccounting
         ? independentWithoutOrganizedAccounting.netIncome!
         : 0) +
-      // (taxTransparency ? taxTransparency.netIncome! : 0) +
+      (taxTransparency ? taxTransparency.netIncome! : 0) +
       (propertyIncome ? propertyIncome.netIncome! : 0) +
       (exemptIncomeOrIntellectualProperty
         ? exemptIncomeOrIntellectualProperty.netIncome!

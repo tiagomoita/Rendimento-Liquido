@@ -19,6 +19,83 @@ import { holder } from "../../store/modules/entities/holder/types";
 import main from "../../store/modules/main";
 import { color } from "../../utils/colors";
 
+type CommonTableTotalProps = {
+  title: string;
+  rowsType: any;
+  lastRowBorderName: string;
+};
+
+const CommonTableTotal = (props: CommonTableTotalProps) => {
+  const { title, rowsType, lastRowBorderName } = props;
+  const arrayHolders = useSelector(retrieveArrayHolders);
+  const { t } = useTranslation();
+
+  return (
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell align="left">
+              <Text
+                className="text-holder"
+                text={<b>{t(title)}</b>}
+                fontSize="20px"
+                color={color.nb_green}
+              />
+            </TableCell>
+            <TableCell align="right">{t("aggregator")}</TableCell>
+            {arrayHolders.map((elem: holder) => {
+              return (
+                <TableCell key={elem.holderNumber} align="right">
+                  {elem.holderNumber}
+                  {t("holderNumber")}
+                </TableCell>
+              );
+            })}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rowsType.map((row: any) => (
+            <TableRow
+              key={row.name}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell
+                component="th"
+                scope="row"
+                style={{
+                  borderBottom:
+                    row.name === lastRowBorderName
+                      ? "1px solid black"
+                      : "1px solid rgba(224, 224, 224, 1)",
+                }}
+              >
+                {row.name}
+              </TableCell>
+              {row.value.map((val: number, index: any) => {
+                return (
+                  <TableCell
+                    key={(row.name, index)}
+                    align="right"
+                    style={{
+                      borderBottom:
+                        row.name === lastRowBorderName
+                          ? "1px solid black"
+                          : "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    {val}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
 const TableTotal = () => {
   const { t } = useTranslation();
   const isLoading = useSelector(main.selectors.isLoading);
@@ -31,7 +108,7 @@ const TableTotal = () => {
     return { name, value };
   };
 
-  function formatToEuroCurrency(number: number): string {
+  const formatToEuroCurrency = (number: number): string => {
     const formatter = new Intl.NumberFormat("es-ES", {
       style: "currency",
       currency: "EUR",
@@ -41,7 +118,7 @@ const TableTotal = () => {
     });
 
     return formatter.format(number);
-  }
+  };
 
   useEffect(() => {
     setIrsRows([
@@ -184,136 +261,22 @@ const TableTotal = () => {
         <Skeleton variant="rectangular" className="skeleton-4" />
       ) : (
         <div className="table-wrapper-irs">
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">
-                    <Text
-                      className="text-holder"
-                      text={<b>{t("annualIncomes")}</b>}
-                      fontSize="20px"
-                      color={color.nb_green}
-                    />
-                  </TableCell>
-                  <TableCell align="right">{t("aggregator")}</TableCell>
-                  {arrayHolders.map((elem: holder) => {
-                    return (
-                      <TableCell key={elem.holderNumber} align="right">
-                        {elem.holderNumber}
-                        {t("holderNumber")}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {irsRows.map((row: any) => (
-                  <TableRow
-                    key={row.name}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      style={{
-                        borderBottom:
-                          row.name === "Outros Rendimentos"
-                            ? "1px solid black"
-                            : "1px solid rgba(224, 224, 224, 1)",
-                      }}
-                    >
-                      {row.name}
-                    </TableCell>
-                    {row.value.map((val: number, index: any) => {
-                      return (
-                        <TableCell
-                          key={(row.name, index)}
-                          align="right"
-                          style={{
-                            borderBottom:
-                              row.name === "Outros Rendimentos"
-                                ? "1px solid black"
-                                : "1px solid rgba(224, 224, 224, 1)",
-                          }}
-                        >
-                          {val}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <CommonTableTotal
+            title="annualIncomes"
+            rowsType={irsRows}
+            lastRowBorderName="Outros Rendimentos"
+          />
         </div>
       )}
       {isLoading ? (
         <Skeleton variant="rectangular" className="skeleton-5" />
       ) : (
         <div className="table-wrapper-receipts">
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">
-                    <Text
-                      className="text-holder"
-                      text={<b>{t("monthlyIncome")}</b>}
-                      fontSize="20px"
-                      color={color.nb_green}
-                    />
-                  </TableCell>
-                  <TableCell align="right">{t("aggregator")}</TableCell>
-                  {arrayHolders.map((elem: holder) => {
-                    return (
-                      <TableCell key={elem.holderNumber} align="right">
-                        {elem.holderNumber}
-                        {t("holderNumber")}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {receiptsRows.map((row: any) => (
-                  <TableRow
-                    key={row.name}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      style={{
-                        borderBottom:
-                          row.name === "Pensões de alimentos"
-                            ? "1px solid black"
-                            : "1px solid rgba(224, 224, 224, 1)",
-                      }}
-                    >
-                      {row.name}
-                    </TableCell>
-                    {row.value.map((val: number, index: any) => {
-                      return (
-                        <TableCell
-                          key={(row.name, index)}
-                          align="right"
-                          style={{
-                            borderBottom:
-                              row.name === "Pensões de alimentos"
-                                ? "1px solid black"
-                                : "1px solid rgba(224, 224, 224, 1)",
-                          }}
-                        >
-                          {val}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <CommonTableTotal
+            title="monthlyIncome"
+            rowsType={receiptsRows}
+            lastRowBorderName="Pensões de Alimentos"
+          />
         </div>
       )}
     </>

@@ -107,7 +107,7 @@ const RendimentosObtidosNoEstrangeiroParaNãoResidentes = (
           isDisabled={readOnly}
         />
         <TextField
-          label={t("taxPaidAbroad")}
+          label={`${t("taxPaidAbroad")}*`}
           defaultValue={
             IRSData?.incomeEarnedAbroadForNonResidents?.incomeNotExemptFromTax
               ?.taxPaidAbroad === 0
@@ -129,7 +129,7 @@ const RendimentosObtidosNoEstrangeiroParaNãoResidentes = (
           isDisabled={readOnly}
         />
         <TextField
-          label={t("taxWithheldAbroad")}
+          label={`${t("taxWithheldAbroad")}*`}
           defaultValue={
             IRSData?.incomeEarnedAbroadForNonResidents?.incomeNotExemptFromTax
               ?.taxWithheldAbroad === 0
@@ -197,7 +197,7 @@ const RendimentosObtidosNoEstrangeiroParaNãoResidentes = (
       </Accordion>
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

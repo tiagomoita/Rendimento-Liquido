@@ -20,6 +20,8 @@ import {
   retrieveTaxes,
   retrieveContext,
   retrieveState,
+  retrieveCurrentName,
+  retrieveCurrentNIF,
 } from "../../store/modules/entities/holder/selectors";
 import {
   increaseCurrentHolder,
@@ -29,11 +31,11 @@ import {
   decreaseCurrentHolder,
   setIrsOrReceipts,
   setNameAndNif,
+  holderDataInitialStateIndComProIncome,
+  holderDataInitialStateAgriYieldsSilvLivstck,
 } from "../../store/modules/entities/holder/slices";
 
 import {
-  addAlert,
-  removeAlert,
   setIsLoadingFalse,
   setIsLoadingTrue,
 } from "../../store/modules/main/slices";
@@ -56,21 +58,27 @@ import {
   validateMandatoryFieldsIRS,
   validateMandatoryFieldsReceipts,
 } from "../helper/functions";
+import ERouteUrls from "../../enums/route-urls";
+import { useAlert } from "../../hooks/useAlert";
 
 type FooterProps = {
   setModel3Data?: Dispatch<SetStateAction<Model3Data>>;
+  isScrollbar?: boolean;
 };
 
 const Footer = (props: FooterProps) => {
   const { t } = useTranslation();
-  const { setModel3Data } = props;
+  const { setModel3Data, isScrollbar } = props;
   const navigate = useNavigate();
+  const { setAlert } = useAlert();
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
   const { numberOfHolders, loadNPTCtx } = getQueryParams();
   const [buttonName, setButtonName] = useState(t("continue"));
   const state = useSelector(retrieveState);
   const contexto = useSelector(retrieveContext);
+  const currentName = useSelector(retrieveCurrentName);
+  const currentNIF = useSelector(retrieveCurrentNIF);
   const currentHolder = useSelector(retrieveCurrentHolder);
   const holders = useSelector(retrieveNumberOfHolders);
   const currentTypeOfIncome = useSelector(retrieveCurrentTypeOfIncome);
@@ -87,33 +95,42 @@ const Footer = (props: FooterProps) => {
     useState(false);
   const [isValidSimulation, setIsValidSimulation] = useState(false);
 
-  const setAlert = (variant: string, title: string, message: string) => {
-    const id = Math.random().toString(36).slice(2, 9);
-
-    dispatch(addAlert({ variant, title, message, id }));
-
-    setTimeout(() => {
-      dispatch(removeAlert({ id }));
-    }, 10000);
-  };
-
   const validateSimulation = () => {
     setIsValidSimulation(false);
-    arrayHolders.forEach((elem: holder) => {
+    if (arrayHolders.length === 1) {
       if (
-        elem.irsOrReceipts === null ||
-        (elem.IRSTotal === 0 && elem.ReceiptsTotal === 0)
+        !arrayHolders.some(
+          (elem: holder) =>
+            elem.irsOrReceipts !== null &&
+            (elem.IRSTotal !== 0 || elem.ReceiptsTotal !== 0),
+        )
       ) {
         setIsValidSimulation(true);
       }
-    });
+    } else if (
+      arrayHolders.every(
+        (elem: holder) =>
+          elem.irsOrReceipts === null &&
+          (elem.IRSTotal !== 0 || elem.ReceiptsTotal !== 0),
+      ) ||
+      arrayHolders.some(
+        (elem: holder) =>
+          elem.irsOrReceipts === null &&
+          (elem.IRSTotal !== 0 || elem.ReceiptsTotal !== 0),
+      ) ||
+      arrayHolders.every(
+        (elem: holder) => elem.IRSTotal === 0 && elem.ReceiptsTotal === 0,
+      )
+    ) {
+      setIsValidSimulation(true);
+    }
   };
 
   useEffect(() => {
     if (
       currentHolder === holders &&
       currentTypeOfIncome === false &&
-      location.pathname === "/simulation"
+      location.pathname === ERouteUrls.Simulation
     ) {
       setButtonName(t("simulate"));
       validateSimulation();
@@ -134,7 +151,7 @@ const Footer = (props: FooterProps) => {
       validateMandatoryFieldsIRS(
         IRSData,
         setIsButton,
-        setIsButtonTaxesGreaterGrossIncome
+        setIsButtonTaxesGreaterGrossIncome,
       );
     }
     if (currentTypeOfIncome === false) {
@@ -142,7 +159,7 @@ const Footer = (props: FooterProps) => {
         ReceiptsData,
         setIsButton,
         calculateIsRegularOrIrregular,
-        Taxes
+        Taxes,
       );
     }
   }, [IRSData, ReceiptsData]);
@@ -165,9 +182,9 @@ const Footer = (props: FooterProps) => {
 
   const handleNext = async () => {
     if (setModel3Data) {
-      setModel3Data({ show: false, title: "" });
+      setModel3Data({ show: false, title: "", isAttachmentJ: false });
     }
-    if (location.pathname === "/") {
+    if (location.pathname === ERouteUrls.Holders) {
       dispatch(setIsLoadingTrue());
       withThunkWrapper(
         dispatch(createContextThunk()),
@@ -185,7 +202,7 @@ const Footer = (props: FooterProps) => {
                   Nome,
                   Nif,
                   currentHolder: 1,
-                })
+                }),
               );
             } catch (error) {
               // Cockpit não encontrado.
@@ -194,23 +211,22 @@ const Footer = (props: FooterProps) => {
 
           for (let i = 1; i <= parseInt(numberOfHolders, 10); i += 1) {
             const holderName = state.arrayHolders.find(
-              (e: holder) => e.holderNumber === i
+              (e: holder) => e.holderNumber === i,
             )?.Name;
             const holderNif = state.arrayHolders.find(
-              (e: holder) => e.holderNumber === i
+              (e: holder) => e.holderNumber === i,
             )?.Nif;
             const bodyIRS = state.arrayHolders.find(
-              (e: holder) => e.holderNumber === i
+              (e: holder) => e.holderNumber === i,
             )?.IRSData;
             const bodyReceipts = state.arrayHolders.find(
-              (e: holder) => e.holderNumber === i
+              (e: holder) => e.holderNumber === i,
             )?.ReceiptsData;
             const mostRepresentativeCheckBok = state.arrayHolders.find(
-              (e: holder) => e.holderNumber === i
+              (e: holder) => e.holderNumber === i,
             )?.irsOrReceipts;
-
             await dispatch(
-              simulateThunk({ holder: i, holderName, holderNif, bodyIRS })
+              simulateThunk({ holder: i, holderName, holderNif, bodyIRS }),
             );
             await dispatch(
               simulateReceiptsThunk({
@@ -219,14 +235,14 @@ const Footer = (props: FooterProps) => {
                 holderNif,
                 bodyReceipts,
                 mostRepresentativeCheckBok,
-              })
+              }),
             );
           }
 
           await handleFindBySimulationIdAndHolder();
           await handleFindBySimulationIdAndHolderReceipts();
           navigate({
-            pathname: "/simulation",
+            pathname: ERouteUrls.Simulation,
             search: updateQueryParams({ simulationId: payload.simulationId }),
           });
           dispatch(setIsLoadingFalse());
@@ -234,31 +250,36 @@ const Footer = (props: FooterProps) => {
         () => {
           dispatch(setIsLoadingFalse());
           navigate({
-            pathname: "/",
+            pathname: ERouteUrls.Holders,
             search: window.location.search,
           });
           setAlert(
             "primary-error",
             t("errors.errorOccurred"),
-            t("errors.errorUnexpected")
+            t("errors.errorUnexpected"),
           );
-        }
+        },
       );
       return;
     }
     if (currentHolder === holders && currentTypeOfIncome === false) {
       if (!isButton && !isValidSimulation) {
         dispatch(setIsLoadingTrue());
-        await dispatch(simulateReceiptsThunk({}));
+        await dispatch(
+          simulateReceiptsThunk({
+            holderName: currentName,
+            holderNif: currentNIF,
+          }),
+        );
         withThunkWrapper(
           dispatch(
             simulationResultsThunk({
               toView: undefined,
-            })
+            }),
           ),
           async () => {
             navigate({
-              pathname: "/summary",
+              pathname: ERouteUrls.Summary,
               search: window.location.search,
             });
             dispatch(increaseCurrentHolder());
@@ -266,27 +287,27 @@ const Footer = (props: FooterProps) => {
             setAlert(
               "primary-success",
               t("successes.success"),
-              t("successes.successSimulation")
+              t("successes.successSimulation"),
             );
           },
           () => {
             dispatch(setIsLoadingFalse());
             navigate({
-              pathname: "/",
+              pathname: ERouteUrls.Holders,
               search: window.location.search,
             });
             setAlert(
               "primary-error",
               t("errors.errorOccurred"),
-              t("errors.errorUnexpected")
+              t("errors.errorUnexpected"),
             );
-          }
+          },
         );
       } else {
         setAlert(
           "secondary-error",
           t("errors.errorOccurred"),
-          t("errors.existsHoldersWithoutIncomes")
+          t("errors.existsHoldersWithoutIncomes"),
         );
       }
 
@@ -297,7 +318,12 @@ const Footer = (props: FooterProps) => {
         if (currentTypeOfIncome === false) {
           dispatch(setIsLoadingTrue());
           withThunkWrapper(
-            dispatch(simulateReceiptsThunk({})),
+            dispatch(
+              simulateReceiptsThunk({
+                holderName: currentName,
+                holderNif: currentNIF,
+              }),
+            ),
             async () => {
               dispatch(increaseCurrentHolder());
               await handleFindBySimulationIdAndHolder();
@@ -308,20 +334,22 @@ const Footer = (props: FooterProps) => {
             () => {
               dispatch(setIsLoadingFalse());
               navigate({
-                pathname: "/",
+                pathname: ERouteUrls.Holders,
                 search: window.location.search,
               });
               setAlert(
                 "primary-error",
                 t("errors.errorOccurred"),
-                t("errors.errorUnexpected")
+                t("errors.errorUnexpected"),
               );
-            }
+            },
           );
         } else {
           dispatch(setIsLoadingTrue());
           withThunkWrapper(
-            dispatch(simulateThunk({})),
+            dispatch(
+              simulateThunk({ holderName: currentName, holderNif: currentNIF }),
+            ),
             async () => {
               await handleFindBySimulationIdAndHolder();
               await handleFindBySimulationIdAndHolderReceipts();
@@ -331,36 +359,36 @@ const Footer = (props: FooterProps) => {
             () => {
               dispatch(setIsLoadingFalse());
               navigate({
-                pathname: "/",
+                pathname: ERouteUrls.Holders,
                 search: window.location.search,
               });
               setAlert(
                 "primary-error",
-                "Ocorreu um erro",
-                "Um erro inesperado aconteceu."
+                t("errors.errorOccurred"),
+                t("errors.errorUnexpected"),
               );
-            }
+            },
           );
         }
       } else {
         setAlert(
           "secondary-error",
-          "Ocorreu um erro",
-          "O somatório dos campos de impostos não podem ser superiores ao valor dos rendimentos brutos."
+          t("errors.errorOccurred"),
+          t("errors.sumTaxFieldsGreaterThanGrossIncome"),
         );
       }
     } else {
       setAlert(
         "secondary-error",
         t("errors.errorOccurred"),
-        t("errors.requiredFieldsToChangePage")
+        t("errors.requiredFieldsToChangePage"),
       );
     }
   };
 
   const handlePrevious = async () => {
     if (setModel3Data) {
-      setModel3Data({ show: false, title: "" });
+      setModel3Data({ show: false, title: "", isAttachmentJ: false });
     }
     if (!isButton) {
       if (!isButtonTaxesGreaterGrossIncome) {
@@ -368,11 +396,16 @@ const Footer = (props: FooterProps) => {
           if (isButton === false) {
             dispatch(setIsLoadingTrue());
             withThunkWrapper(
-              dispatch(simulateThunk({})),
+              dispatch(
+                simulateThunk({
+                  holderName: currentName,
+                  holderNif: currentNIF,
+                }),
+              ),
               async () => {
                 if (currentHolder === 1) {
                   navigate({
-                    pathname: "/",
+                    pathname: ERouteUrls.Holders,
                     search: window.location.search,
                   });
                 }
@@ -387,15 +420,15 @@ const Footer = (props: FooterProps) => {
               () => {
                 dispatch(setIsLoadingFalse());
                 navigate({
-                  pathname: "/",
+                  pathname: ERouteUrls.Holders,
                   search: window.location.search,
                 });
                 setAlert(
                   "primary-error",
                   t("errors.errorOccurred"),
-                  t("errors.errorUnexpected")
+                  t("errors.errorUnexpected"),
                 );
-              }
+              },
             );
           }
         }
@@ -403,7 +436,12 @@ const Footer = (props: FooterProps) => {
           dispatch(setIsLoadingTrue());
 
           withThunkWrapper(
-            dispatch(simulateReceiptsThunk({})),
+            dispatch(
+              simulateReceiptsThunk({
+                holderName: currentName,
+                holderNif: currentNIF,
+              }),
+            ),
             async () => {
               dispatch(toggleCurrentTypeOfIncome());
               await handleFindBySimulationIdAndHolder();
@@ -413,29 +451,29 @@ const Footer = (props: FooterProps) => {
             () => {
               dispatch(setIsLoadingFalse());
               navigate({
-                pathname: "/",
+                pathname: ERouteUrls.Holders,
                 search: window.location.search,
               });
               setAlert(
                 "primary-error",
                 t("errors.errorOccurred"),
-                t("errors.errorUnexpected")
+                t("errors.errorUnexpected"),
               );
-            }
+            },
           );
         }
       } else {
         setAlert(
           "secondary-error",
           t("errors.errorOccurred"),
-          t("errors.sumTaxFieldsGreaterThanGrossIncome")
+          t("errors.sumTaxFieldsGreaterThanGrossIncome"),
         );
       }
     } else {
       setAlert(
         "secondary-error",
         t("errors.errorOccurred"),
-        t("errors.requiredFieldsToChangePage")
+        t("errors.requiredFieldsToChangePage"),
       );
     }
   };
@@ -445,35 +483,9 @@ const Footer = (props: FooterProps) => {
       setModel3Data({
         title: "",
         show: false,
-        indComProIncome: {
-          saleOfGoodsAndProducts: 0,
-          provisionOfHotelAndSimilarServicesCateringAndBeverage: 0,
-          provisionOfCateringAndBeverageActivitiesServices: 0,
-          provisionOfHotelServicesAndSimilarActivities: 0,
-          provisionOfServRelatedToTheExploOfLocalAccEstablishments: 0,
-          incomeFromProActivitiesSpecifArticle151OfTheCIRS: 0,
-          incomeFromServicesRenderedNotForeseenInThePreviousFields: 0,
-          intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty: 0,
-          intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart: 0,
-          positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements: 0,
-          incomeFromFinancialActivitiesCAECodesStartWith6465or66: 0,
-          servicProvidedByMembToProSocOfTheFiscalTransparencRegime: 0,
-          positiveResultOfPropertyIncome: 0,
-          propertyIncomeAttributableToCatBIncomeGeneratingActivity: 0,
-          operatingSubsidies: 0,
-          otherSubsidies: 0,
-          categoryBIncomeNotIncludedInPreviousFields: 0,
-        },
-        agriYieldsSilvLivstck: {
-          salesProductsOtherThanThoseIncludField7: 0,
-          servicesRendered: 0,
-          incomeFromCapitalAndRealEstate: 0,
-          positiveResultOfPropertyIncome: 0,
-          operatingSubsidiesRelatedToSales: 0,
-          otherSubsidies: 0,
-          incomeFromSalesMultiannual: 0,
-          categoryBIncome: 0,
-        },
+        isAttachmentJ: false,
+        indComProIncome: holderDataInitialStateIndComProIncome,
+        agriYieldsSilvLivstck: holderDataInitialStateAgriYieldsSilvLivstck,
         otherIncome: { otherIncome: 0 },
       });
     }
@@ -485,38 +497,49 @@ const Footer = (props: FooterProps) => {
       dispatch(setClean("resetReceipts"));
       dispatch(setIrsOrReceipts({ irsOrReceipts: null }));
     }
+    document
+      ?.getElementById("simulation-scroller")
+      ?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <div className="footer-wrapper" data-testid="Footer-testId">
-      {location.pathname !== "/" ? (
+    <div
+      className="footer-wrapper"
+      data-testid="Footer-testId"
+      style={{
+        marginRight: isScrollbar === false ? "0px" : "16px",
+        transition: "margin-right 0.5s ease-in-out",
+      }}
+    >
+      {location.pathname !== ERouteUrls.Holders ? (
         <>
-          <NBButton
-            className="clean-button"
-            nbtype="Secondary"
-            onClick={handleClean}
-          >
-            {t("clean")}
-          </NBButton>
-          <NBButton
-            className="previous-button"
-            onClick={() => handlePrevious()}
-          >
-            {t("previous")}
-          </NBButton>
+          <div className="clean-button">
+            <NBButton variant="outlined" onClick={handleClean}>
+              {t("clean")}
+            </NBButton>
+          </div>
+          <div className="previous-button">
+            <NBButton
+              className="previous-button"
+              onClick={() => handlePrevious()}
+            >
+              {t("previous")}
+            </NBButton>
+          </div>
         </>
       ) : null}
-      <NBButton
-        className="continue-button"
-        onClick={() => handleNext()}
-        disabled={
-          ((numberOfHolders === undefined || numberOfHolders === "") &&
-            location.pathname === "/") ||
-          contexto.Abreviado === undefined
-        }
-      >
-        {buttonName}
-      </NBButton>
+      <div className="continue-button">
+        <NBButton
+          onClick={() => handleNext()}
+          disabled={
+            ((numberOfHolders === undefined || numberOfHolders === "") &&
+              location.pathname === ERouteUrls.Holders) ||
+            contexto.Abreviado === undefined
+          }
+        >
+          {buttonName}
+        </NBButton>
+      </div>
     </div>
   );
 };

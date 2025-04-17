@@ -1,0 +1,24 @@
+.summary-footer-wrapper {
+  display: flex;
+  justify-content: end;
+  margin-top: auto;
+  gap: 16px;
+}
+
+.button {
+  margin-left: 16px;
+}
+
+.summary-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.skeleton-6 {
+  border-radius: 3px;
+  height: 17px;
+  width: 450px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+}

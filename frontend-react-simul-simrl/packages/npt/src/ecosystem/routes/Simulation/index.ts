@@ -1,2 +1,2 @@
-export { default as Simulation } from "./Simulation";
-export type { default as SimulationPageProps } from "./types";
+export { default as Simulation } from "./component";
+export type { default as ISimulationProps } from "./types";

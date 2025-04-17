@@ -95,6 +95,21 @@ const RendimentosDeCapitais = (props: RendimentosDeCapitaisProps) => {
           "incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal"
         )}
       >
+        {!readOnly && (
+          <div className="info-wrapper">
+            <img src={info} alt="img" width="18px" />
+
+            <Text
+              text={t(
+                "incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugalText"
+              )}
+              fontSize="11px"
+              margin="0px 0px 0px 10px"
+              color={color.nb_bluegray}
+              alignSelf="center"
+            />
+          </div>
+        )}
         <NBDropdown
           id="select-years-number-entitiesBasedInPortugal"
           label={t("declarationsNumber")}
@@ -108,22 +123,43 @@ const RendimentosDeCapitais = (props: RendimentosDeCapitaisProps) => {
               value: "3",
             },
           ]}
-          placeholder={t("select")}
-          value={IRSData?.capitalIncome?.incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal.declarationsNumber?.toString()}
-          onChange={(value: string) =>
-            dispatch(
-              setCapitalIncome({
-                data: {
-                  incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal:
-                    {
-                      ...IRSData?.capitalIncome
-                        .incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal,
-                      declarationsNumber: Number(value),
-                    },
-                },
-              })
-            )
+          placeholder={
+            readOnly
+              ? IRSDataByHolder?.capitalIncome?.incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal?.declarationsNumber?.toString()
+              : t("select")
           }
+          value={IRSData?.capitalIncome?.incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal.declarationsNumber?.toString()}
+          onChange={(value) => {
+            if (value === "2") {
+              dispatch(
+                setCapitalIncome({
+                  data: {
+                    incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal:
+                      {
+                        ...IRSData?.capitalIncome
+                          .incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal,
+                        declarationsNumber: Number(value),
+                        grossIncomeYear3: 0,
+                      },
+                  },
+                })
+              );
+            } else {
+              dispatch(
+                setCapitalIncome({
+                  data: {
+                    incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal:
+                      {
+                        ...IRSData?.capitalIncome
+                          .incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal,
+                        declarationsNumber: Number(value),
+                      },
+                  },
+                })
+              );
+            }
+          }}
+          disabled={readOnly}
         />
 
         <TextField
@@ -199,12 +235,16 @@ const RendimentosDeCapitais = (props: RendimentosDeCapitaisProps) => {
             "grossIncomeYear3"
           )}
           placeholder={
+            // eslint-disable-next-line no-nested-ternary
             readOnly
-              ? formatToEuroCurrency(
-                  IRSDataByHolder?.capitalIncome
-                    ?.incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal
-                    ?.grossIncomeYear3
-                )
+              ? IRSDataByHolder?.capitalIncome?.incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal.declarationsNumber?.toString() ===
+                "2"
+                ? undefined
+                : formatToEuroCurrency(
+                    IRSDataByHolder?.capitalIncome
+                      ?.incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal
+                      ?.grossIncomeYear3
+                  )
               : ""
           }
           isDisabled={
@@ -223,6 +263,21 @@ const RendimentosDeCapitais = (props: RendimentosDeCapitaisProps) => {
           "incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal"
         )}
       >
+        {!readOnly && (
+          <div className="info-wrapper">
+            <img src={info} alt="img" width="18px" />
+
+            <Text
+              text={t(
+                "incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugalText"
+              )}
+              fontSize="11px"
+              margin="0px 0px 0px 10px"
+              color={color.nb_bluegray}
+              alignSelf="center"
+            />
+          </div>
+        )}
         <NBDropdown
           id="select-years-number-entitiesWithoutHeadquartersInPortugal"
           label={t("declarationsNumber")}
@@ -236,22 +291,43 @@ const RendimentosDeCapitais = (props: RendimentosDeCapitaisProps) => {
               value: "3",
             },
           ]}
-          placeholder={t("select")}
-          value={IRSData?.capitalIncome?.incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal.declarationsNumber?.toString()}
-          onChange={(value: string) =>
-            dispatch(
-              setCapitalIncome({
-                data: {
-                  incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal:
-                    {
-                      ...IRSData?.capitalIncome
-                        .incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal,
-                      declarationsNumber: Number(value),
-                    },
-                },
-              })
-            )
+          placeholder={
+            readOnly
+              ? IRSDataByHolder?.capitalIncome?.incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal?.declarationsNumber?.toString()
+              : t("select")
           }
+          value={IRSData?.capitalIncome?.incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal.declarationsNumber?.toString()}
+          onChange={(value) => {
+            if (value === "2") {
+              dispatch(
+                setCapitalIncome({
+                  data: {
+                    incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal:
+                      {
+                        ...IRSData?.capitalIncome
+                          .incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal,
+                        declarationsNumber: Number(value),
+                        grossIncomeYear3: 0,
+                      },
+                  },
+                })
+              );
+            } else {
+              dispatch(
+                setCapitalIncome({
+                  data: {
+                    incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal:
+                      {
+                        ...IRSData?.capitalIncome
+                          .incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal,
+                        declarationsNumber: Number(value),
+                      },
+                  },
+                })
+              );
+            }
+          }}
+          disabled={readOnly}
         />
         <TextField
           margin="18px 0px 18px 0px"
@@ -326,12 +402,16 @@ const RendimentosDeCapitais = (props: RendimentosDeCapitaisProps) => {
             "grossIncomeYear3"
           )}
           placeholder={
+            // eslint-disable-next-line no-nested-ternary
             readOnly
-              ? formatToEuroCurrency(
-                  IRSDataByHolder?.capitalIncome
-                    ?.incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal
-                    ?.grossIncomeYear3
-                )
+              ? IRSDataByHolder?.capitalIncome?.incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal.declarationsNumber?.toString() ===
+                "2"
+                ? undefined
+                : formatToEuroCurrency(
+                    IRSDataByHolder?.capitalIncome
+                      ?.incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal
+                      ?.grossIncomeYear3
+                  )
               : ""
           }
           isDisabled={
@@ -347,7 +427,7 @@ const RendimentosDeCapitais = (props: RendimentosDeCapitaisProps) => {
       </Accordion>
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

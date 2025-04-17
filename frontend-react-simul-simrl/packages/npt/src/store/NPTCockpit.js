@@ -278,7 +278,7 @@ export default function Cockpit() {
     this.ClearLocal = function () {
       this.Local.Clear();
     };
-
+    /*
     this.get_Command = function () {
       return this.Local.ID;
     };
@@ -348,7 +348,7 @@ export default function Cockpit() {
       }
       return op.Execute();
     };
-
+*/
     this.get_DadosContexto = function () {
       var dados = new Object();
       dados.NomeOperador = this.Session.Get("OPER", "uchLiNOpe");

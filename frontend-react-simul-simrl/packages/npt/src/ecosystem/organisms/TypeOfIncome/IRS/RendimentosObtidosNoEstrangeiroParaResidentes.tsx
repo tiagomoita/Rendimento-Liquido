@@ -1,7 +1,8 @@
+/* eslint-disable no-nested-ternary */
 import { NBButton } from "@nb-omc-xit-frontend/nb-shared/lib/NBButton";
 import { useDispatch, useSelector } from "react-redux";
 import "./TypeOfIncome.scss";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Total from "../../../atoms/Total";
 import Accordion from "../../../atoms/Accordion";
@@ -17,9 +18,14 @@ import {
   setClean,
   setIncomeEarnedAbroadForResidents,
 } from "../../../../store/modules/entities/holder/slices";
-import { formatToEuroCurrency } from "../../../../utils/utils";
+import {
+  formatNumber2DecimalPlaces,
+  formatToEuroCurrency,
+  roundValue,
+} from "../../../../utils/utils";
 import { Model3Data } from "../../../../store/modules/entities/holder/types";
 import { color } from "../../../../utils/colors";
+import { agriYieldsSilvLivstck, indComProIncome } from "../Common/dataAuxiliar";
 
 type RendimentosObtidosNoEstrangeiroParaResidentesProps = {
   setModel3Data?: Dispatch<SetStateAction<Model3Data>>;
@@ -38,6 +44,8 @@ const RendimentosObtidosNoEstrangeiroParaResidentes = (
 
   const handleClean = () => {
     dispatch(setClean("incomeEarnedAbroadForResidents2"));
+    if (setModel3Data)
+      setModel3Data({ show: false, title: "", isAttachmentJ: false });
   };
 
   const handleCleanModel = () => {
@@ -47,37 +55,11 @@ const RendimentosObtidosNoEstrangeiroParaResidentes = (
           businessAndProfessionalIncome: {
             ...IRSData?.incomeEarnedAbroadForResidents
               ?.businessAndProfessionalIncome!,
-            indComProIncome: {
-              saleOfGoodsAndProducts: 0,
-              provisionOfHotelAndSimilarServicesCateringAndBeverage: 0,
-              provisionOfCateringAndBeverageActivitiesServices: 0,
-              provisionOfHotelServicesAndSimilarActivities: 0,
-              provisionOfServRelatedToTheExploOfLocalAccEstablishments: 0,
-              incomeFromProActivitiesSpecifArticle151OfTheCIRS: 0,
-              incomeFromServicesRenderedNotForeseenInThePreviousFields: 0,
-              intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty: 0,
-              intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart: 0,
-              positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements: 0,
-              incomeFromFinancialActivitiesCAECodesStartWith6465or66: 0,
-              servicProvidedByMembToProSocOfTheFiscalTransparencRegime: 0,
-              positiveResultOfPropertyIncome: 0,
-              propertyIncomeAttributableToCatBIncomeGeneratingActivity: 0,
-              operatingSubsidies: 0,
-              otherSubsidies: 0,
-              categoryBIncomeNotIncludedInPreviousFields: 0,
+            grossIncomes: {
+              indComProIncome,
+              agriYieldsSilvLivstck,
             },
-            agriYieldsSilvLivstck: {
-              salesProductsOtherThanThoseIncludField7: 0,
-              servicesRendered: 0,
-              incomeFromCapitalAndRealEstate: 0,
-              positiveResultOfPropertyIncome: 0,
-              operatingSubsidiesRelatedToSales: 0,
-              otherSubsidies: 0,
-              incomeFromSalesMultiannual: 0,
-              categoryBIncome: 0,
-            },
-            otherIncome: { otherIncome: 0 },
-            grossIncome: 0,
+            grossIncomeValue: 0,
           },
         },
       })
@@ -153,9 +135,7 @@ const RendimentosObtidosNoEstrangeiroParaResidentes = (
 
   const applyTotalValue = (
     valueTotal: any,
-    indComProIncomeClone: any,
-    agriYieldsSilvLivstckClone: any,
-    otherIncomeClone: any
+    businessAndProfessionalIncomeClone: any
   ) => {
     dispatch(
       setIncomeEarnedAbroadForResidents({
@@ -163,16 +143,46 @@ const RendimentosObtidosNoEstrangeiroParaResidentes = (
           businessAndProfessionalIncome: {
             ...IRSData?.incomeEarnedAbroadForResidents
               ?.businessAndProfessionalIncome!,
-            indComProIncome: { ...indComProIncomeClone },
-            agriYieldsSilvLivstck: { ...agriYieldsSilvLivstckClone },
-            otherIncome: { ...otherIncomeClone },
-            grossIncome: valueTotal,
+            grossIncomes: {
+              ...businessAndProfessionalIncomeClone,
+            },
+            grossIncomeValue: valueTotal,
           },
         },
       })
     );
-    if (setModel3Data) setModel3Data({ show: false, title: "" });
+    if (setModel3Data)
+      setModel3Data({ show: false, title: "", isAttachmentJ: false });
   };
+
+  const saveValues = (businessAndProfessionalIncomeClone: any) => {
+    dispatch(
+      setIncomeEarnedAbroadForResidents({
+        data: {
+          businessAndProfessionalIncome: {
+            ...IRSData?.incomeEarnedAbroadForResidents
+              ?.businessAndProfessionalIncome!,
+            grossIncomes: {
+              ...businessAndProfessionalIncomeClone,
+            },
+          },
+        },
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (
+      IRSData?.incomeEarnedAbroadForResidents
+        ?.incomeEarnedAbroadForResidentsCheckBox! === false
+    ) {
+      if (setModel3Data)
+        setModel3Data({ show: false, title: "", isAttachmentJ: false });
+    }
+  }, [
+    IRSData?.incomeEarnedAbroadForResidents
+      ?.incomeEarnedAbroadForResidentsCheckBox!,
+  ]);
 
   return (
     <div>
@@ -370,72 +380,63 @@ const RendimentosObtidosNoEstrangeiroParaResidentes = (
             label={`${t("grossIncome")}*`}
             defaultValue={
               IRSData?.incomeEarnedAbroadForResidents
-                ?.businessAndProfessionalIncome?.grossIncome! === 0
+                ?.businessAndProfessionalIncome?.grossIncomeValue! === 0
                 ? undefined
-                : IRSData?.incomeEarnedAbroadForResidents?.businessAndProfessionalIncome?.grossIncome?.toString()!
+                : readOnly
+                ? IRSData?.incomeEarnedAbroadForResidents?.businessAndProfessionalIncome?.grossIncomeValue?.toString()!
+                : formatNumber2DecimalPlaces(
+                    roundValue(
+                      IRSData?.incomeEarnedAbroadForResidents
+                        ?.businessAndProfessionalIncome?.grossIncomeValue!
+                    )
+                  )
             }
-            valueCallback={handleFieldChange(
-              "businessAndProfessionalIncome",
-              "grossIncome"
-            )}
             placeholder={
               readOnly
                 ? formatToEuroCurrency(
                     IRSDataByHolder?.incomeEarnedAbroadForResidents
-                      ?.businessAndProfessionalIncome?.grossIncome
+                      ?.businessAndProfessionalIncome?.grossIncomeValue
                   )
                 : ""
             }
-            isDisabled
+            isDisabled={readOnly}
           />
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              cursor: "pointer",
-            }}
-            role="presentation"
-            onClick={() => {
-              if (setModel3Data) {
-                setModel3Data({
-                  title: `${t("attachment")} J`,
-                  show: true,
-                  indComProIncome: {
-                    ...IRSData?.incomeEarnedAbroadForResidents
-                      ?.businessAndProfessionalIncome?.indComProIncome,
-                  },
-                  agriYieldsSilvLivstck: {
-                    ...IRSData?.incomeEarnedAbroadForResidents
-                      ?.businessAndProfessionalIncome?.agriYieldsSilvLivstck,
-                  },
-                  otherIncome: {
-                    ...IRSData?.incomeEarnedAbroadForResidents
-                      ?.businessAndProfessionalIncome?.otherIncome,
-                  },
-                  indComProIncomeByHolder: {
-                    ...IRSDataByHolder?.incomeEarnedAbroadForResidents
-                      ?.businessAndProfessionalIncome?.indComProIncome,
-                  },
-                  agriYieldsSilvLivstckByHolder: {
-                    ...IRSDataByHolder?.incomeEarnedAbroadForResidents
-                      ?.businessAndProfessionalIncome?.agriYieldsSilvLivstck,
-                  },
-                  otherIncomeByHolder: {
-                    ...IRSDataByHolder?.incomeEarnedAbroadForResidents
-                      ?.businessAndProfessionalIncome?.otherIncome,
-                  },
-                  totalGrossIncomeByHolder:
-                    IRSDataByHolder?.incomeEarnedAbroadForResidents
-                      ?.businessAndProfessionalIncome?.grossIncome,
-                  applyTotalValue,
-                  handleCleanModel,
-                });
-              }
-            }}
-          />
+          {!readOnly && (
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                cursor: "pointer",
+              }}
+              role="presentation"
+              onClick={() => {
+                if (setModel3Data) {
+                  setModel3Data({
+                    title: `${t("attachmentJGrossIncome")}`,
+                    show: true,
+                    isAttachmentJ: true,
+                    businessAndProfessionalIncome: {
+                      ...IRSData?.incomeEarnedAbroadForResidents
+                        ?.businessAndProfessionalIncome?.grossIncomes,
+                    },
+                    businessAndProfessionalIncomeByHolder: {
+                      ...IRSDataByHolder?.incomeEarnedAbroadForResidents
+                        ?.businessAndProfessionalIncome?.grossIncomes,
+                    },
+                    totalGrossIncomeByHolder:
+                      IRSDataByHolder?.incomeEarnedAbroadForResidents
+                        ?.businessAndProfessionalIncome?.grossIncomeValue,
+                    applyTotalValue,
+                    handleCleanModel,
+                    saveValues,
+                  });
+                }
+              }}
+            />
+          )}
         </span>
         <TextField
           label={t("taxPaidAbroad")}
@@ -588,10 +589,29 @@ const RendimentosObtidosNoEstrangeiroParaResidentes = (
           }
           isDisabled={readOnly}
         />
+        <TextField
+          label={t("taxPaidAbroad")}
+          defaultValue={
+            IRSData?.incomeEarnedAbroadForResidents?.capitalIncome
+              ?.taxPaidAbroad === 0
+              ? undefined
+              : IRSData?.incomeEarnedAbroadForResidents?.capitalIncome?.taxPaidAbroad?.toString()!
+          }
+          valueCallback={handleFieldChange("capitalIncome", "taxPaidAbroad")}
+          placeholder={
+            readOnly
+              ? formatToEuroCurrency(
+                  IRSDataByHolder?.incomeEarnedAbroadForResidents?.capitalIncome
+                    ?.taxPaidAbroad
+                )
+              : ""
+          }
+          isDisabled={readOnly}
+        />
       </Accordion>
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

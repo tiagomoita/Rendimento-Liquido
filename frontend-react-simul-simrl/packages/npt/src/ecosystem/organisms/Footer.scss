@@ -4,7 +4,6 @@
   width: 100%;
   height: min-content;
   margin-top: 20px;
-  margin-right: 16px;
 }
 
 .clean-button {
@@ -13,4 +12,8 @@
 
 .previous-button {
   margin-right: 16px;
+}
+
+.footer-wrapper button {
+  min-width: 180px;
 }

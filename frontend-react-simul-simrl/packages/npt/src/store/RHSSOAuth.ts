@@ -3,6 +3,7 @@
 import { AxiosRequestConfig } from "axios";
 import Keycloak, { KeycloakInstance, KeycloakInitOptions } from "keycloak-js";
 import Cockpit from "./NPTCockpit";
+import EntitiesCode from "../enums/entities-code";
 
 // Bypass 'Only a void function can be called with the 'new' keyword.' TS error
 const KCConstructor: any | typeof Keycloak = Keycloak;
@@ -87,7 +88,7 @@ class RHSSOAuth {
       const createURL = this._kc.createLoginUrl;
       this._kc.createLoginUrl = (options) => {
         const url = createURL(options);
-        return `${url}&agpEstrutura=B0210&agpEmpresa=0007&agpAplicacao=SIM&agpProcesso=PPS0100`;
+        return `${url}&agpEstrutura=B0210&agpEmpresa=${EntitiesCode.BES}&agpAplicacao=SIM&agpProcesso=PPS0100`;
       };
     }
     this._kc

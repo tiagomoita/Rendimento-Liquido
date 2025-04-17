@@ -65,7 +65,8 @@ const IndependenteComContabilidadeOrganizada = (
     return (value: number) => {
       dispatch(
         setIndependentWithOrganizedAccounting({
-          taxIncidenceRate: Taxes?.indWorkWtoCalcTaxIncidence!,
+          taxIncidenceRate:
+            Taxes?.irsParams.taxIncOnIndWorkOrgAcc.parameterValue!,
           data: {
             [field]: value,
           },
@@ -106,6 +107,8 @@ const IndependenteComContabilidadeOrganizada = (
             : ""
         }
         isDisabled={!isActive[2].valueOf() || readOnly}
+        infoIcon
+        textInfo="470"
       />
       <TextField
         label={`${t("calculatedLoss")}*`}
@@ -124,6 +127,8 @@ const IndependenteComContabilidadeOrganizada = (
             : ""
         }
         isDisabled={!isActive[1].valueOf() || readOnly}
+        infoIcon
+        textInfo="469"
       />
       <TextField
         label={t("taxIncidence")}
@@ -143,7 +148,7 @@ const IndependenteComContabilidadeOrganizada = (
       />
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

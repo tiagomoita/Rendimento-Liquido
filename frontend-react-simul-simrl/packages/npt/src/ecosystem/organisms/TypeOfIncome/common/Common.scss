@@ -4,6 +4,16 @@
   }
 }
 
+@media (max-width: 960px) {
+  .row-title-wrapper {
+    font-size: 12px;
+  }
+}
+
+.row-title-wrapper {
+  justify-content: space-between;
+}
+
 .row-wrapper-2 {
   display: flex;
   margin-left: auto;

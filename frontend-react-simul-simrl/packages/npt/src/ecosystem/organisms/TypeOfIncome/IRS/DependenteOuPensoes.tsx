@@ -65,7 +65,7 @@ const DependenteOuPensoes = (props: DependenteOuPensoesProps) => {
         defaultValue={
           IRSData?.dependentsAndPensions?.grossIncome === 0
             ? undefined
-            : IRSData?.dependentsAndPensions?.grossIncome.toString()!
+            : IRSData?.dependentsAndPensions?.grossIncome?.toString()!
         }
         label={`${t("grossIncome")}*`}
         valueCallback={handleFieldChange("grossIncome")}
@@ -134,7 +134,7 @@ const DependenteOuPensoes = (props: DependenteOuPensoesProps) => {
       />
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

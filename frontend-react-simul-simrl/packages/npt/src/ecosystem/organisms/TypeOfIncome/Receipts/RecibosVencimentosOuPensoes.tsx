@@ -31,12 +31,17 @@ const RecibosVencimentosOuPensoes = (
 ) => {
   const { readOnly, tabHolder } = props;
   const { t } = useTranslation();
-
-  const [isIrregular, setIsIrregular] = useState(false);
   const ReceiptsData = useSelector(retrieveReceiptsData);
+
+  const [isIrregular, setIsIrregular] = useState(
+    !!ReceiptsData?.salaryOrPensionReceipts?.receipt4 ||
+      !!ReceiptsData?.salaryOrPensionReceipts?.receipt5 ||
+      !!ReceiptsData?.salaryOrPensionReceipts?.receipt6
+  );
   const ReceiptsDataByHolder = useSelector(
     retrieveReceiptsDataByHolder(tabHolder!)
   );
+
   const Taxes = useSelector(retrieveTaxes);
 
   const dispatch = useDispatch();
@@ -46,22 +51,39 @@ const RecibosVencimentosOuPensoes = (
     setIsIrregular(false);
   };
 
+  const handleCleanIrregularReceipts = (isRegularOrIrregular: boolean) => {
+    dispatch(
+      setSalaryOrPensionReceipts({
+        data: {
+          receipt4: 0,
+          receipt5: 0,
+          receipt6: 0,
+          isIrregular: isRegularOrIrregular,
+        },
+      })
+    );
+  };
+
   const checkIsRegular = useDebouncedCallback(() => {
     if (
-      ReceiptsData?.salaryOrPensionReceipts?.receipt1! > 0 &&
-      ReceiptsData?.salaryOrPensionReceipts?.receipt2! > 0 &&
+      ReceiptsData?.salaryOrPensionReceipts?.receipt1! > 0 ||
+      ReceiptsData?.salaryOrPensionReceipts?.receipt2! > 0 ||
       ReceiptsData?.salaryOrPensionReceipts?.receipt3! > 0
     ) {
-      setIsIrregular(
-        calculateIsRegularOrIrregular({
-          receipt1Value: ReceiptsData?.salaryOrPensionReceipts?.receipt1!,
-          receipt2Value: ReceiptsData?.salaryOrPensionReceipts?.receipt2!,
-          receipt3Value: ReceiptsData?.salaryOrPensionReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
-        })
-      );
+      const isRegularOrIrregular = calculateIsRegularOrIrregular({
+        receipt1Value: ReceiptsData?.salaryOrPensionReceipts?.receipt1!,
+        receipt2Value: ReceiptsData?.salaryOrPensionReceipts?.receipt2!,
+        receipt3Value: ReceiptsData?.salaryOrPensionReceipts?.receipt3!,
+        valueOfRegularReceipts:
+          Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
+      });
+      if (isRegularOrIrregular === false) {
+        handleCleanIrregularReceipts(isRegularOrIrregular);
+      }
+      setIsIrregular(isRegularOrIrregular);
     } else {
       setIsIrregular(false);
+      handleCleanIrregularReceipts(false);
     }
   }, 1000);
 
@@ -87,14 +109,13 @@ const RecibosVencimentosOuPensoes = (
   };
 
   const summaryIsRegular = () => {
-    if (
-      ReceiptsDataByHolder?.salaryOrPensionReceipts?.receipt4 === 0 &&
-      ReceiptsDataByHolder?.salaryOrPensionReceipts?.receipt5 === 0 &&
-      ReceiptsDataByHolder?.salaryOrPensionReceipts?.receipt6 === 0
-    ) {
-      return true;
-    }
-    return false;
+    return !calculateIsRegularOrIrregular({
+      receipt1Value: ReceiptsDataByHolder?.salaryOrPensionReceipts?.receipt1!,
+      receipt2Value: ReceiptsDataByHolder?.salaryOrPensionReceipts?.receipt2!,
+      receipt3Value: ReceiptsDataByHolder?.salaryOrPensionReceipts?.receipt3!,
+      valueOfRegularReceipts:
+        Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
+    });
   };
 
   return (
@@ -103,7 +124,7 @@ const RecibosVencimentosOuPensoes = (
         <div className="info-wrapper">
           <img src={info} alt="img" width="18px" />
           <Text
-            text={t("fieldEmptyIsZero")}
+            text={t("salaryOrPensionText")}
             fontSize="11px"
             margin="0px 0px 0px 10px"
             color={color.nb_bluegray}
@@ -112,10 +133,9 @@ const RecibosVencimentosOuPensoes = (
         </div>
       )}
       <TextField
+        id="salaryOrPensionReceipt1"
         defaultValue={
-          ReceiptsData?.salaryOrPensionReceipts?.receipt1! === 0
-            ? undefined
-            : ReceiptsData?.salaryOrPensionReceipts?.receipt1!.toString()!
+          ReceiptsData?.salaryOrPensionReceipts?.receipt1!.toString()!
         }
         label={`${t("receipt")} 1`}
         valueCallback={handleFieldChange("receipt1")}
@@ -127,12 +147,13 @@ const RecibosVencimentosOuPensoes = (
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={t("fieldEmptyIsZero")}
       />
       <TextField
+        id="salaryOrPensionReceipt2"
         defaultValue={
-          ReceiptsData?.salaryOrPensionReceipts?.receipt2! === 0
-            ? undefined
-            : ReceiptsData?.salaryOrPensionReceipts?.receipt2!.toString()!
+          ReceiptsData?.salaryOrPensionReceipts?.receipt2!.toString()!
         }
         label={`${t("receipt")} 2`}
         valueCallback={handleFieldChange("receipt2")}
@@ -144,12 +165,13 @@ const RecibosVencimentosOuPensoes = (
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={t("fieldEmptyIsZero")}
       />
       <TextField
+        id="salaryOrPensionReceipt3"
         defaultValue={
-          ReceiptsData?.salaryOrPensionReceipts?.receipt3! === 0
-            ? undefined
-            : ReceiptsData?.salaryOrPensionReceipts?.receipt3!.toString()!
+          ReceiptsData?.salaryOrPensionReceipts?.receipt3!.toString()!
         }
         label={`${t("receipt")} 3`}
         valueCallback={handleFieldChange("receipt3")}
@@ -161,13 +183,16 @@ const RecibosVencimentosOuPensoes = (
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={t("fieldEmptyIsZero")}
       />
       {readOnly ? (
         summaryIsRegular() ? null : (
           <>
             <TextField
+              id="salaryOrPensionReceipt4"
               defaultValue={
-                ReceiptsData?.salaryOrPensionReceipts?.receipt4! === 0
+                !isIrregular
                   ? undefined
                   : ReceiptsData?.salaryOrPensionReceipts?.receipt4!.toString()!
               }
@@ -183,8 +208,9 @@ const RecibosVencimentosOuPensoes = (
               isDisabled={!isIrregular || readOnly}
             />
             <TextField
+              id="salaryOrPensionReceipt5"
               defaultValue={
-                ReceiptsData?.salaryOrPensionReceipts?.receipt5! === 0
+                !isIrregular
                   ? undefined
                   : ReceiptsData?.salaryOrPensionReceipts?.receipt5!.toString()!
               }
@@ -200,8 +226,9 @@ const RecibosVencimentosOuPensoes = (
               isDisabled={!isIrregular || readOnly}
             />
             <TextField
+              id="salaryOrPensionReceipt6"
               defaultValue={
-                ReceiptsData?.salaryOrPensionReceipts?.receipt6! === 0
+                !isIrregular
                   ? undefined
                   : ReceiptsData?.salaryOrPensionReceipts?.receipt6!.toString()!
               }
@@ -221,10 +248,11 @@ const RecibosVencimentosOuPensoes = (
       ) : (
         <>
           <TextField
+            id="salaryOrPensionReceipt4"
             defaultValue={
-              ReceiptsData?.salaryOrPensionReceipts?.receipt4! === 0
+              !isIrregular
                 ? undefined
-                : ReceiptsData?.salaryOrPensionReceipts?.receipt4!.toString()!
+                : ReceiptsData?.salaryOrPensionReceipts?.receipt4!.toString()
             }
             label={`${t("receipt")} 4`}
             valueCallback={handleFieldChange("receipt4")}
@@ -236,12 +264,15 @@ const RecibosVencimentosOuPensoes = (
                 : ""
             }
             isDisabled={!isIrregular || readOnly}
+            infoIcon
+            textInfo={t("fieldEmptyIsZero")}
           />
           <TextField
+            id="salaryOrPensionReceipt5"
             defaultValue={
-              ReceiptsData?.salaryOrPensionReceipts?.receipt5! === 0
+              !isIrregular
                 ? undefined
-                : ReceiptsData?.salaryOrPensionReceipts?.receipt5!.toString()!
+                : ReceiptsData?.salaryOrPensionReceipts?.receipt5!.toString()
             }
             label={`${t("receipt")} 5`}
             valueCallback={handleFieldChange("receipt5")}
@@ -253,12 +284,15 @@ const RecibosVencimentosOuPensoes = (
                 : ""
             }
             isDisabled={!isIrregular || readOnly}
+            infoIcon
+            textInfo={t("fieldEmptyIsZero")}
           />
           <TextField
+            id="salaryOrPensionReceipt6"
             defaultValue={
-              ReceiptsData?.salaryOrPensionReceipts?.receipt6! === 0
+              !isIrregular
                 ? undefined
-                : ReceiptsData?.salaryOrPensionReceipts?.receipt6!.toString()!
+                : ReceiptsData?.salaryOrPensionReceipts?.receipt6!.toString()
             }
             label={`${t("receipt")} 6`}
             valueCallback={handleFieldChange("receipt6")}
@@ -270,13 +304,15 @@ const RecibosVencimentosOuPensoes = (
                 : ""
             }
             isDisabled={!isIrregular || readOnly}
+            infoIcon
+            textInfo={t("fieldEmptyIsZero")}
           />
         </>
       )}
 
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

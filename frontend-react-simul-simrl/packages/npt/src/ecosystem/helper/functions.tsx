@@ -25,9 +25,11 @@ const validateMandatoryFieldsIRS = (
         setIsButtonTaxesGreaterGrossIncome(false);
       } else {
         setIsButtonTaxesGreaterGrossIncome(true);
+        return;
       }
     } else {
       setIsButton(true);
+      return;
     }
   }
 
@@ -38,61 +40,64 @@ const validateMandatoryFieldsIRS = (
   ) {
     if (
       IRSData?.independentWithoutOrganizedAccounting?.indComProIncome
-        ?.categoryBIncomeNotIncludedInPreviousFields > 0 ||
+        ?.saleOfMerchAndProducts > 0 ||
       IRSData?.independentWithoutOrganizedAccounting?.indComProIncome
-        ?.incomeFromFinancialActivitiesCAECodesStartWith6465or66 > 0 ||
+        ?.provisionHotelServ2015And2016 > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.incomeFromProActivitiesSpecifArticle151OfTheCIRS > 0 ||
+        ?.provisionCateringAndBeverageServ > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.incomeFromServicesRenderedNotForeseenInThePreviousFields > 0 ||
+        ?.provisionHotelAndSimilarServ > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart > 0 ||
+        ?.provisionLocalAccommodationServ > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty > 0 ||
+        ?.incomeProfActivitiesArt151CIRS > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.operatingSubsidies > 0 ||
+        ?.incomeFromUnforcastedServProv > 0 ||
+      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
+        ?.intellectualPropertyNotArt58EBF > 0 ||
+      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
+        ?.intellectualPropertyIncomeArt58EBFNonExempt > 0 ||
+      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
+        ?.positiveBalanceGainsLossesEquityInc > 0 ||
+      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
+        ?.incomeFromFinancialActivitiesCAE > 0 ||
+      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
+        ?.servicesProvidedByPartnersProfCo > 0 ||
+      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
+        ?.positiveResultPropertyIncome > 0 ||
+      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
+        ?.buildingIncomeAttribCatBActivity > 0 ||
+      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
+        ?.explorationSubsidies > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.indComProIncome
         ?.otherSubsidies > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements > 0 ||
+        ?.catBIncomeNotInPrevFields > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.positiveResultOfPropertyIncome > 0 ||
-      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.propertyIncomeAttributableToCatBIncomeGeneratingActivity > 0 ||
-      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.provisionOfCateringAndBeverageActivitiesServices > 0 ||
-      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.provisionOfHotelAndSimilarServicesCateringAndBeverage > 0 ||
-      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.provisionOfHotelServicesAndSimilarActivities > 0 ||
-      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.provisionOfServRelatedToTheExploOfLocalAccEstablishments > 0 ||
-      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.saleOfGoodsAndProducts > 0 ||
-      IRSData?.independentWithoutOrganizedAccounting.indComProIncome
-        ?.servicProvidedByMembToProSocOfTheFiscalTransparencRegime > 0 ||
+        ?.servicesProvidedByPartnersToCompanies > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.agriYieldsSilvLivstck
-        ?.categoryBIncome > 0 ||
+        ?.salesOfOtherProducts > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.agriYieldsSilvLivstck
-        ?.incomeFromCapitalAndRealEstate > 0 ||
+        ?.serviceProvision > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.agriYieldsSilvLivstck
-        ?.incomeFromSalesMultiannual > 0 ||
+        ?.incomeFromCapPropAttribCatB > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.agriYieldsSilvLivstck
-        ?.operatingSubsidiesRelatedToSales > 0 ||
+        ?.positiveResultPropertyIncome > 0 ||
+      IRSData?.independentWithoutOrganizedAccounting.agriYieldsSilvLivstck
+        ?.operatingSubsidiesRelatedSales > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.agriYieldsSilvLivstck
         ?.otherSubsidies > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.agriYieldsSilvLivstck
-        ?.positiveResultOfPropertyIncome > 0 ||
+        ?.incomeFromSalesMultiAnnualForestry > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.agriYieldsSilvLivstck
-        ?.salesProductsOtherThanThoseIncludField7 > 0 ||
+        ?.catBIncomeNotInPrevFields > 0 ||
       IRSData?.independentWithoutOrganizedAccounting.agriYieldsSilvLivstck
-        ?.servicesRendered > 0 ||
-      IRSData?.independentWithoutOrganizedAccounting.otherIncome?.otherIncome >
-        0
+        ?.servicesProvidedByPartnersToCompanies > 0
     ) {
       setIsButton(false);
     } else {
       setIsButton(true);
+      return;
     }
   }
 
@@ -108,11 +113,12 @@ const validateMandatoryFieldsIRS = (
       setIsButton(false);
     } else {
       setIsButton(true);
+      return;
     }
   }
 
   // Anexo D
-  if (IRSData?.taxTransparency.taxTransparencyCheckBox === true) {
+  if (IRSData?.taxTransparency?.taxTransparencyCheckBox === true) {
     if (
       IRSData?.taxTransparency.societies.netIncome > 0 ||
       IRSData?.taxTransparency.complementaryGrouping.profit > 0 ||
@@ -121,6 +127,7 @@ const validateMandatoryFieldsIRS = (
       setIsButton(false);
     } else {
       setIsButton(true);
+      return;
     }
   }
 
@@ -129,6 +136,14 @@ const validateMandatoryFieldsIRS = (
     // Com duas declarações é obrigatório que os dois campos de rendimento bruto tenha o valor > 0.
     // Com três declarações é obrigatório que pelo menos um dos campos de rendimento bruto tenha o valor > 0.
     if (
+      !(
+        IRSData?.capitalIncome
+          ?.incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal
+          .declarationsNumber === 0 &&
+        IRSData?.capitalIncome
+          ?.incomeObtainedInPortugueseTerritoryByEntitiesWithoutHeadquartersInPortugal
+          .declarationsNumber === 0
+      ) &&
       !(
         IRSData?.capitalIncome
           ?.incomeObtainedInPortugueseTerritoryByEntitiesBasedInPortugal
@@ -183,47 +198,57 @@ const validateMandatoryFieldsIRS = (
       setIsButton(false);
     } else {
       setIsButton(true);
+      return;
     }
   }
 
   // Anexo F
   if (IRSData?.propertyIncome.propertyIncomeCheckBox === true) {
     if (
-      IRSData?.propertyIncome.earnedIncome.grossIncome > 0 ||
-      IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor > 0
+      (IRSData?.propertyIncome.earnedIncome.grossIncome > 0 &&
+        IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor === 0 &&
+        IRSData?.propertyIncome.sublease.irsWithholdingTax === 0 &&
+        IRSData?.propertyIncome.sublease.rentPaidToLandlord === 0) ||
+      (IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor > 0 &&
+        IRSData?.propertyIncome.sublease.rentPaidToLandlord > 0 &&
+        IRSData?.propertyIncome.earnedIncome.grossIncome === 0 &&
+        IRSData?.propertyIncome.earnedIncome.supportedAndPaidExpenses === 0 &&
+        IRSData?.propertyIncome.earnedIncome.withholdingTax === 0) ||
+      (IRSData?.propertyIncome.earnedIncome.grossIncome > 0 &&
+        IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor > 0 &&
+        IRSData?.propertyIncome.sublease.rentPaidToLandlord > 0)
     ) {
       setIsButton(false);
       if (
         (IRSData?.propertyIncome.earnedIncome.grossIncome > 0 &&
-          IRSData?.propertyIncome.earnedIncome.withholdingTax > 0 &&
           IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor > 0 &&
           IRSData?.propertyIncome.sublease.rentPaidToLandlord > 0 &&
-          IRSData?.propertyIncome.sublease.irsWithholdingTax > 0 &&
           IRSData?.propertyIncome.earnedIncome.withholdingTax <
             IRSData?.propertyIncome.earnedIncome.grossIncome &&
           IRSData?.propertyIncome.sublease.irsWithholdingTax <
             IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor) ||
         (IRSData?.propertyIncome.earnedIncome.grossIncome > 0 &&
-          IRSData?.propertyIncome.earnedIncome.withholdingTax > 0 &&
           IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor === 0 &&
           IRSData?.propertyIncome.sublease.rentPaidToLandlord === 0 &&
           IRSData?.propertyIncome.sublease.irsWithholdingTax === 0 &&
           IRSData?.propertyIncome.earnedIncome.withholdingTax <
             IRSData?.propertyIncome.earnedIncome.grossIncome) ||
-        (IRSData?.propertyIncome.earnedIncome.grossIncome === 0 &&
-          IRSData?.propertyIncome.earnedIncome.withholdingTax === 0 &&
-          IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor > 0 &&
+        (IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor > 0 &&
           IRSData?.propertyIncome.sublease.rentPaidToLandlord > 0 &&
-          IRSData?.propertyIncome.sublease.irsWithholdingTax > 0 &&
+          IRSData?.propertyIncome.earnedIncome.grossIncome === 0 &&
+          IRSData?.propertyIncome.earnedIncome.withholdingTax === 0 &&
+          IRSData?.propertyIncome.earnedIncome.supportedAndPaidExpenses === 0 &&
           IRSData?.propertyIncome.sublease.irsWithholdingTax <
             IRSData?.propertyIncome.sublease.incomeReceivedByTheSublessor)
       ) {
         setIsButtonTaxesGreaterGrossIncome(false);
       } else {
         setIsButtonTaxesGreaterGrossIncome(true);
+        return;
       }
     } else {
       setIsButton(true);
+      return;
     }
   }
 
@@ -256,9 +281,11 @@ const validateMandatoryFieldsIRS = (
         setIsButtonTaxesGreaterGrossIncome(false);
       } else {
         setIsButtonTaxesGreaterGrossIncome(true);
+        return;
       }
     } else {
       setIsButton(true);
+      return;
     }
   }
 
@@ -275,7 +302,7 @@ const validateMandatoryFieldsIRS = (
       IRSData?.incomeEarnedAbroadForResidents.pensionIncome.grossIncome > 0 ||
       // Categoria B
       IRSData?.incomeEarnedAbroadForResidents.businessAndProfessionalIncome
-        .grossIncome > 0 ||
+        .grossIncomeValue > 0 ||
       // Categoria F
       IRSData?.incomeEarnedAbroadForResidents.propertyIncome.netIncome > 0 ||
       // Categoria E
@@ -327,7 +354,7 @@ const validateMandatoryFieldsIRS = (
                 .grossIncome)) &&
         // Categoria B
         ((IRSData?.incomeEarnedAbroadForResidents.businessAndProfessionalIncome
-          .grossIncome > 0 &&
+          .grossIncomeValue > 0 &&
           (IRSData?.incomeEarnedAbroadForResidents.businessAndProfessionalIncome
             .contributionsToSocialProtectionSchemes || 0) +
             (IRSData?.incomeEarnedAbroadForResidents
@@ -335,9 +362,9 @@ const validateMandatoryFieldsIRS = (
             (IRSData?.incomeEarnedAbroadForResidents
               .businessAndProfessionalIncome.withholding || 0) <
             IRSData?.incomeEarnedAbroadForResidents
-              .businessAndProfessionalIncome.grossIncome) ||
+              .businessAndProfessionalIncome.grossIncomeValue) ||
           (IRSData?.incomeEarnedAbroadForResidents.businessAndProfessionalIncome
-            .grossIncome === 0 &&
+            .grossIncomeValue === 0 &&
             (IRSData?.incomeEarnedAbroadForResidents
               .businessAndProfessionalIncome
               .contributionsToSocialProtectionSchemes || 0) +
@@ -346,7 +373,7 @@ const validateMandatoryFieldsIRS = (
               (IRSData?.incomeEarnedAbroadForResidents
                 .businessAndProfessionalIncome.withholding || 0) ===
               IRSData?.incomeEarnedAbroadForResidents
-                .businessAndProfessionalIncome.grossIncome)) &&
+                .businessAndProfessionalIncome.grossIncomeValue)) &&
         // Categoria F
         ((IRSData?.incomeEarnedAbroadForResidents.propertyIncome.netIncome >
           0 &&
@@ -375,9 +402,11 @@ const validateMandatoryFieldsIRS = (
         setIsButtonTaxesGreaterGrossIncome(false);
       } else {
         setIsButtonTaxesGreaterGrossIncome(true);
+        return;
       }
     } else {
       setIsButton(true);
+      return;
     }
   }
 
@@ -387,8 +416,12 @@ const validateMandatoryFieldsIRS = (
       .incomeEarnedAbroadForNonResidentsCheckBok === true
   ) {
     if (
-      IRSData?.incomeEarnedAbroadForNonResidents.incomeNotExemptFromTax
-        .grossIncome > 0 ||
+      (IRSData?.incomeEarnedAbroadForNonResidents.incomeNotExemptFromTax
+        .grossIncome > 0 &&
+        (IRSData?.incomeEarnedAbroadForNonResidents.incomeNotExemptFromTax
+          .taxPaidAbroad > 0 ||
+          IRSData?.incomeEarnedAbroadForNonResidents.incomeNotExemptFromTax
+            .taxWithheldAbroad > 0)) ||
       IRSData?.incomeEarnedAbroadForNonResidents.taxFreeIncome.grossIncome > 0
     ) {
       setIsButton(false);
@@ -416,6 +449,7 @@ const validateMandatoryFieldsIRS = (
       }
     } else {
       setIsButton(true);
+      return;
     }
   }
 
@@ -441,38 +475,41 @@ const validateMandatoryFieldsReceipts = (
     true
   ) {
     if (
-      (ReceiptsData?.salaryOrPensionReceipts?.receipt1! > 0 &&
-        ReceiptsData?.salaryOrPensionReceipts?.receipt2! > 0 &&
-        ReceiptsData?.salaryOrPensionReceipts?.receipt3! > 0 &&
+      ((ReceiptsData?.salaryOrPensionReceipts?.receipt1! > 0 ||
+        ReceiptsData?.salaryOrPensionReceipts?.receipt2! > 0 ||
+        ReceiptsData?.salaryOrPensionReceipts?.receipt3! > 0) &&
         calculateIsRegularOrIrregular({
           receipt1Value: ReceiptsData?.salaryOrPensionReceipts?.receipt1!,
           receipt2Value: ReceiptsData?.salaryOrPensionReceipts?.receipt2!,
           receipt3Value: ReceiptsData?.salaryOrPensionReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
+          valueOfRegularReceipts:
+            Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
         }) === false) ||
-      (ReceiptsData?.salaryOrPensionReceipts?.receipt1! > 0 &&
-        ReceiptsData?.salaryOrPensionReceipts?.receipt2! > 0 &&
-        ReceiptsData?.salaryOrPensionReceipts?.receipt3! > 0 &&
-        ReceiptsData?.salaryOrPensionReceipts?.receipt4! > 0 &&
-        ReceiptsData?.salaryOrPensionReceipts?.receipt5! > 0 &&
-        ReceiptsData?.salaryOrPensionReceipts?.receipt6! > 0 &&
+      ((ReceiptsData?.salaryOrPensionReceipts?.receipt1! > 0 ||
+        ReceiptsData?.salaryOrPensionReceipts?.receipt2! > 0 ||
+        ReceiptsData?.salaryOrPensionReceipts?.receipt3! > 0 ||
+        ReceiptsData?.salaryOrPensionReceipts?.receipt4! > 0 ||
+        ReceiptsData?.salaryOrPensionReceipts?.receipt5! > 0 ||
+        ReceiptsData?.salaryOrPensionReceipts?.receipt6! > 0) &&
         calculateIsRegularOrIrregular({
           receipt1Value: ReceiptsData?.salaryOrPensionReceipts?.receipt1!,
           receipt2Value: ReceiptsData?.salaryOrPensionReceipts?.receipt2!,
           receipt3Value: ReceiptsData?.salaryOrPensionReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
+          valueOfRegularReceipts:
+            Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
         }) === true)
     ) {
       setIsButton(false);
     } else {
       setIsButton(true);
+      return;
     }
   }
   if (ReceiptsData?.greenReceipts?.greenReceiptsCheckBox! === true) {
     if (
-      (ReceiptsData?.greenReceipts?.greenReceiptsIncomes1?.receiptValue! > 0 &&
-        ReceiptsData?.greenReceipts?.greenReceiptsIncomes2?.receiptValue! > 0 &&
-        ReceiptsData?.greenReceipts?.greenReceiptsIncomes3?.receiptValue! > 0 &&
+      (ReceiptsData?.greenReceipts.greenReceiptsIncomes1?.receiptValue! > 0 &&
+        ReceiptsData?.greenReceipts.greenReceiptsIncomes2?.receiptValue! > 0 &&
+        ReceiptsData?.greenReceipts.greenReceiptsIncomes3?.receiptValue! > 0 &&
         calculateIsRegularOrIrregular({
           receipt1Value:
             ReceiptsData?.greenReceipts?.greenReceiptsIncomes1?.receiptValue!,
@@ -480,14 +517,15 @@ const validateMandatoryFieldsReceipts = (
             ReceiptsData?.greenReceipts?.greenReceiptsIncomes2?.receiptValue!,
           receipt3Value:
             ReceiptsData?.greenReceipts?.greenReceiptsIncomes3?.receiptValue!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
+          valueOfRegularReceipts:
+            Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
         }) === false) ||
-      (ReceiptsData?.greenReceipts?.greenReceiptsIncomes1?.receiptValue! > 0 &&
-        ReceiptsData?.greenReceipts?.greenReceiptsIncomes2?.receiptValue! > 0 &&
-        ReceiptsData?.greenReceipts?.greenReceiptsIncomes3?.receiptValue! > 0 &&
-        ReceiptsData?.greenReceipts?.greenReceiptsIncomes4?.receiptValue! > 0 &&
-        ReceiptsData?.greenReceipts?.greenReceiptsIncomes5?.receiptValue! > 0 &&
-        ReceiptsData?.greenReceipts?.greenReceiptsIncomes6?.receiptValue! > 0 &&
+      (ReceiptsData?.greenReceipts.greenReceiptsIncomes1?.receiptValue! > 0 &&
+        ReceiptsData?.greenReceipts.greenReceiptsIncomes2?.receiptValue! > 0 &&
+        ReceiptsData?.greenReceipts.greenReceiptsIncomes3?.receiptValue! > 0 &&
+        ReceiptsData?.greenReceipts.greenReceiptsIncomes4?.receiptValue! > 0 &&
+        ReceiptsData?.greenReceipts.greenReceiptsIncomes5?.receiptValue! > 0 &&
+        ReceiptsData?.greenReceipts.greenReceiptsIncomes6?.receiptValue! > 0 &&
         calculateIsRegularOrIrregular({
           receipt1Value:
             ReceiptsData?.greenReceipts?.greenReceiptsIncomes1?.receiptValue!,
@@ -495,43 +533,48 @@ const validateMandatoryFieldsReceipts = (
             ReceiptsData?.greenReceipts?.greenReceiptsIncomes2?.receiptValue!,
           receipt3Value:
             ReceiptsData?.greenReceipts?.greenReceiptsIncomes3?.receiptValue!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
+          valueOfRegularReceipts:
+            Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
         }) === true)
     ) {
       setIsButton(false);
     } else {
       setIsButton(true);
+      return;
     }
   }
   if (
     ReceiptsData?.propertyIncomeReceipts?.propertyIncomeRecCheckBox! === true
   ) {
     if (
-      (ReceiptsData?.propertyIncomeReceipts?.receipt1! > 0 &&
-        ReceiptsData?.propertyIncomeReceipts?.receipt2! > 0 &&
-        ReceiptsData?.propertyIncomeReceipts?.receipt3! > 0 &&
+      ((ReceiptsData?.propertyIncomeReceipts?.receipt1! > 0 ||
+        ReceiptsData?.propertyIncomeReceipts?.receipt2! > 0 ||
+        ReceiptsData?.propertyIncomeReceipts?.receipt3! > 0) &&
         calculateIsRegularOrIrregular({
           receipt1Value: ReceiptsData?.propertyIncomeReceipts?.receipt1!,
           receipt2Value: ReceiptsData?.propertyIncomeReceipts?.receipt2!,
           receipt3Value: ReceiptsData?.propertyIncomeReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
+          valueOfRegularReceipts:
+            Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
         }) === false) ||
-      (ReceiptsData?.propertyIncomeReceipts?.receipt1! > 0 &&
-        ReceiptsData?.propertyIncomeReceipts?.receipt2! > 0 &&
-        ReceiptsData?.propertyIncomeReceipts?.receipt3! > 0 &&
-        ReceiptsData?.propertyIncomeReceipts?.receipt4! > 0 &&
-        ReceiptsData?.propertyIncomeReceipts?.receipt5! > 0 &&
-        ReceiptsData?.propertyIncomeReceipts?.receipt6! > 0 &&
+      ((ReceiptsData?.propertyIncomeReceipts?.receipt1! > 0 ||
+        ReceiptsData?.propertyIncomeReceipts?.receipt2! > 0 ||
+        ReceiptsData?.propertyIncomeReceipts?.receipt3! > 0 ||
+        ReceiptsData?.propertyIncomeReceipts?.receipt4! > 0 ||
+        ReceiptsData?.propertyIncomeReceipts?.receipt5! > 0 ||
+        ReceiptsData?.propertyIncomeReceipts?.receipt6! > 0) &&
         calculateIsRegularOrIrregular({
           receipt1Value: ReceiptsData?.propertyIncomeReceipts?.receipt1!,
           receipt2Value: ReceiptsData?.propertyIncomeReceipts?.receipt2!,
           receipt3Value: ReceiptsData?.propertyIncomeReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
+          valueOfRegularReceipts:
+            Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
         }) === true)
     ) {
       setIsButton(false);
     } else {
       setIsButton(true);
+      return;
     }
   }
   if (
@@ -539,9 +582,9 @@ const validateMandatoryFieldsReceipts = (
       ?.researchScholarReceiptsCheckBox! === true
   ) {
     if (
-      (ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1! > 0 &&
-        ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2! > 0 &&
-        ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3! > 0 &&
+      ((ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1! > 0 ||
+        ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2! > 0 ||
+        ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3! > 0) &&
         calculateIsRegularOrIrregular({
           receipt1Value:
             ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1!,
@@ -549,51 +592,56 @@ const validateMandatoryFieldsReceipts = (
             ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2!,
           receipt3Value:
             ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
+          valueOfRegularReceipts:
+            Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
         }) === false) ||
-      (ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1! > 0 &&
-        ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2! > 0 &&
-        ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3! > 0 &&
-        ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt4! > 0 &&
-        ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt5! > 0 &&
-        ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt6! > 0 &&
-        calculateIsRegularOrIrregular({
-          receipt1Value:
-            ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1!,
-          receipt2Value:
-            ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2!,
-          receipt3Value:
-            ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
-        }) === true)
+      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1! > 0 ||
+      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2! > 0 ||
+      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3! > 0 ||
+      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt4! > 0 ||
+      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt5! > 0 ||
+      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt6! > 0 ||
+      calculateIsRegularOrIrregular({
+        receipt1Value:
+          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1!,
+        receipt2Value:
+          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2!,
+        receipt3Value:
+          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3!,
+        valueOfRegularReceipts:
+          Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
+      }) === true
     ) {
       setIsButton(false);
     } else {
       setIsButton(true);
+      return;
     }
   }
   if (ReceiptsData?.alimonyReceipts?.almonyReceiptsCheckBox! === true) {
     if (
-      (ReceiptsData?.alimonyReceipts?.receipt1! > 0 &&
-        ReceiptsData?.alimonyReceipts?.receipt2! > 0 &&
-        ReceiptsData?.alimonyReceipts?.receipt3! > 0 &&
+      ((ReceiptsData?.alimonyReceipts?.receipt1! > 0 ||
+        ReceiptsData?.alimonyReceipts?.receipt2! > 0 ||
+        ReceiptsData?.alimonyReceipts?.receipt3! > 0) &&
         calculateIsRegularOrIrregular({
           receipt1Value: ReceiptsData?.alimonyReceipts?.receipt1!,
           receipt2Value: ReceiptsData?.alimonyReceipts?.receipt2!,
           receipt3Value: ReceiptsData?.alimonyReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
+          valueOfRegularReceipts:
+            Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
         }) === false) ||
-      (ReceiptsData?.alimonyReceipts?.receipt1! > 0 &&
-        ReceiptsData?.alimonyReceipts?.receipt2! > 0 &&
-        ReceiptsData?.alimonyReceipts?.receipt3! > 0 &&
-        ReceiptsData?.alimonyReceipts?.receipt4! > 0 &&
-        ReceiptsData?.alimonyReceipts?.receipt5! > 0 &&
-        ReceiptsData?.alimonyReceipts?.receipt6! > 0 &&
+      ((ReceiptsData?.alimonyReceipts?.receipt1! > 0 ||
+        ReceiptsData?.alimonyReceipts?.receipt2! > 0 ||
+        ReceiptsData?.alimonyReceipts?.receipt3! > 0 ||
+        ReceiptsData?.alimonyReceipts?.receipt4! > 0 ||
+        ReceiptsData?.alimonyReceipts?.receipt5! > 0 ||
+        ReceiptsData?.alimonyReceipts?.receipt6! > 0) &&
         calculateIsRegularOrIrregular({
           receipt1Value: ReceiptsData?.alimonyReceipts?.receipt1!,
           receipt2Value: ReceiptsData?.alimonyReceipts?.receipt2!,
           receipt3Value: ReceiptsData?.alimonyReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
+          valueOfRegularReceipts:
+            Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
         }) === true)
     ) {
       setIsButton(false);
@@ -603,4 +651,14 @@ const validateMandatoryFieldsReceipts = (
   }
 };
 
-export { validateMandatoryFieldsIRS, validateMandatoryFieldsReceipts };
+const formatValue2DecimalPlaces = (formatedValue: string) => {
+  const fValue = formatedValue === "NaN" ? "0" : formatedValue.toString();
+  const floatValue = parseFloat(fValue?.replace(",", ".")).toFixed(2);
+  return floatValue.replace(".", ",");
+};
+
+export {
+  validateMandatoryFieldsIRS,
+  validateMandatoryFieldsReceipts,
+  formatValue2DecimalPlaces,
+};

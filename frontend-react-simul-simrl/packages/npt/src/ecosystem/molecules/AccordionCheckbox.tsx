@@ -1,10 +1,18 @@
-import { useState, ReactNode, useEffect, useRef } from "react";
+import {
+  useState,
+  ReactNode,
+  useEffect,
+  useRef,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import "./AccordionCheckbox.scss";
 import { NBAccordion } from "@nb-omc-xit-frontend/nb-shared/lib/NBAccordion";
 import { NBCheckbox } from "@nb-omc-xit-frontend/nb-shared/lib/NBCheckbox";
 import Skeleton from "@mui/material/Skeleton";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { NBTooltip } from "@nb-omc-xit-frontend/nb-data-display/lib/NBTooltip";
 import {
   retrieveCleanHolder,
   retrieveCurrentHolder,
@@ -30,38 +38,64 @@ import {
   setTaxTransparency,
 } from "../../store/modules/entities/holder/slices";
 import main from "../../store/modules/main";
+import infoSolid from "../../assets/images/circle-info-solid.svg";
+import { Model3Data } from "../../store/modules/entities/holder/types";
 
 type AccordionProps = {
   title: string;
   children?: ReactNode;
-  callback?: Function;
   disable?: boolean;
   isDisableCheckbox?: boolean;
+  textInfo?: string;
+  infoIcon?: boolean;
+  setModel3Data?: Dispatch<SetStateAction<Model3Data>>;
+  isOpen: any;
+  setIsOpen: any;
+  name: string;
+  initialIrsChackboxOpenStatus: any;
 };
 
 const AccordionCheckbox = (props: AccordionProps) => {
-  const { title, children, callback, disable, isDisableCheckbox } = props;
+  const {
+    title,
+    children,
+    disable,
+    isDisableCheckbox,
+    textInfo = "",
+    infoIcon,
+    setModel3Data,
+    isOpen,
+    setIsOpen,
+    name,
+    initialIrsChackboxOpenStatus,
+  } = props;
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const currentHolder = useSelector(retrieveCurrentHolder);
   const cleanHolder = useSelector(retrieveCleanHolder);
   const IRSData = useSelector(retrieveIRSData);
   const ReceiptsData = useSelector(retrieveReceiptsData);
-  const dispatch = useDispatch();
-  const [minimize, setMinimize] = useState(false);
+  const dispatch = useDispatch<any>();
+  const [check, setCheck] = useState(false);
   const isMounted = useRef(false);
   const isMounted2 = useRef(false);
   const isLoading = useSelector(main.selectors.isLoading);
 
   useEffect(() => {
-    setIsOpen(isDisableCheckbox!);
+    setIsOpen({
+      ...initialIrsChackboxOpenStatus,
+      [name]: isDisableCheckbox!,
+    });
+    setCheck(isDisableCheckbox!);
   }, [currentHolder]);
 
   useEffect(() => {
     if (isMounted.current) {
-      setIsOpen(false);
-      setMinimize(false);
+      setIsOpen({
+        ...initialIrsChackboxOpenStatus,
+        [name]: false,
+      });
+      setCheck(false);
     } else {
       isMounted.current = true;
     }
@@ -364,32 +398,71 @@ const AccordionCheckbox = (props: AccordionProps) => {
         <Skeleton variant="rectangular" className="skeleton-2" />
       ) : (
         <NBAccordion
-          classes="nb-accordion"
           // eslint-disable-next-line react/no-unstable-nested-components
           header={
-            <div className="accordion-header">
-              <NBCheckbox
-                checked={isOpen}
-                className="nb-checkbox"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsDisabled(!isDisabled);
-                  setIsOpen(!isOpen);
-                  setMinimize(!minimize);
-                  if (callback) {
-                    callback(!isOpen);
-                  }
-                }}
-                disabled={disable}
-              />
-              <b>{title}</b>
+            <div style={{ display: "flex" }}>
+              <div className="accordion-header">
+                <NBCheckbox
+                  style={{ paddingTop: "0px", paddingBottom: "0px" }}
+                  checked={check}
+                  className="nb-checkbox"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDisabled(!isDisabled);
+                    setIsOpen({
+                      ...initialIrsChackboxOpenStatus,
+                      [name]: !isOpen[name],
+                    });
+                    setCheck(!check!);
+                    if (setModel3Data) {
+                      setModel3Data({
+                        show: false,
+                        title: "",
+                        isAttachmentJ: false,
+                      });
+                    }
+                  }}
+                  disabled={disable}
+                />
+                <b>{title}</b>
+              </div>
+              {infoIcon === true && (
+                <div
+                  style={{
+                    width: "22px",
+                    marginLeft: "5px",
+                    zIndex: "2",
+                    alignSelf: "center",
+                  }}
+                >
+                  <NBTooltip
+                    tooltip={textInfo}
+                    variant="dark"
+                    style={{
+                      cursor: "pointer",
+                      display: "flex",
+                    }}
+                  >
+                    <img style={{ width: "20px" }} src={infoSolid} alt="img" />
+                  </NBTooltip>
+                </div>
+              )}
             </div>
           }
           // eslint-disable-next-line react/jsx-no-bind
-          onChange={() => setMinimize(!minimize)}
+          onChange={() => {
+            setIsOpen({
+              ...initialIrsChackboxOpenStatus,
+              [name]: !isOpen[name],
+            });
+
+            if (setModel3Data) {
+              setModel3Data({ show: false, title: "", isAttachmentJ: false });
+            }
+          }}
           variant="primary"
-          expanded={isOpen && minimize}
-          disabled={!isOpen}
+          expanded={isOpen[name] && check}
+          disabled={!check}
         >
           {children}
         </NBAccordion>

@@ -95,7 +95,7 @@ const TransparenciaFiscal = (props: TransparenciaFiscalProps) => {
           />
         </div>
       )}
-      <Accordion title={t("societies")}>
+      <Accordion title={`${t("societies")}`} infoIcon textInfo="401 e 402">
         <TextField
           defaultValue={
             IRSData?.taxTransparency?.societies?.netIncome === 0
@@ -131,7 +131,11 @@ const TransparenciaFiscal = (props: TransparenciaFiscalProps) => {
           isDisabled={readOnly}
         />
       </Accordion>
-      <Accordion title={t("complementaryGrouping")}>
+      <Accordion
+        title={`${t("complementaryGrouping")}`}
+        infoIcon
+        textInfo="431 e 432"
+      >
         <TextField
           defaultValue={
             IRSData?.taxTransparency?.complementaryGrouping?.profit === 0
@@ -193,7 +197,7 @@ const TransparenciaFiscal = (props: TransparenciaFiscalProps) => {
       </Accordion>
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

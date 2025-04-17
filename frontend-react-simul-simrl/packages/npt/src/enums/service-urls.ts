@@ -1,6 +1,7 @@
 enum EServiceUrls {
   RETRIEVE_CREATE_CONTEXT = "/api/net-income/simulationcontext/create",
   RETRIEVE_GET_CONTEXT = "/api/net-income/simulationcontext/getsimulationcontextbysimulationid",
+  RETRIEVE_GET_CONTEXT_WF = "/api/net-income/simulationcontext/getsimulationcontextbyreferencework",
   RETRIEVE_GET_SIMULATION_ID = "/api/net-income/simulationirs/getsimulationid",
   RETRIEVE_SIMULATE = "/api/net-income/simulationirs/simulate",
   RETRIEVE_FIND_BY_SIMULATION_ID_AND_HOLDER = "/api/net-income/simulationirs/getsimulationbysimulationid",

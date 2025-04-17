@@ -54,6 +54,22 @@ export const updateQueryParams = (params: { [key: string]: string }) => {
   }
 };
 
+export const removeParamFromQueryParams = (paramToRemove: string) => {
+  try {
+    const queryParams = getQueryParams();
+
+    if (paramToRemove in queryParams) {
+      delete queryParams[paramToRemove];
+    }
+
+    return `?${Object.keys(queryParams)
+      .map((key) => `${key}=${queryParams[key]}`)
+      .join("&")}`;
+  } catch (error) {
+    return window.location.search;
+  }
+};
+
 /**
  * Retrieves the provided value in lowercase and trimmed
  * @param {string} value
@@ -302,21 +318,39 @@ export const formatToEuroCurrency = (number: number | undefined): string => {
   return euroValue;
 };
 
-export const converterStringMonetariaParaNumero = (
-  stringMonetaria: any
-): number => {
-  if (stringMonetaria === undefined) {
-    return 0;
-  }
-  const valorNumerico = Number(
-    stringMonetaria.replace(/[^\d,-]/g, "").replace(",", ".")
-  );
-  return isNaN(valorNumerico) ? 0 : valorNumerico;
+export const roundValue = (number: number): number => {
+  const value = number ?? 0;
+  return Math.round(value * 100) / 100;
 };
-
-export const roundValue = (number: number): number =>
-  Math.round(number * 100) / 100;
 
 export const formatNumber2DecimalPlaces = (number: number) => {
   return number.toFixed(2);
+};
+
+export const mapValueToMostRepresentativeCheckBok = (value: string) => {
+  switch (value) {
+    case "NA":
+      return null;
+    case "IRS":
+      return false;
+    case "REC":
+      return true;
+    default:
+      return null;
+  }
+};
+
+export const mapMostRepresentativeCheckBokToValues = (
+  value: boolean | null
+) => {
+  switch (value) {
+    case null:
+      return "NA";
+    case false:
+      return "IRS";
+    case true:
+      return "REC";
+    default:
+      return "NA";
+  }
 };

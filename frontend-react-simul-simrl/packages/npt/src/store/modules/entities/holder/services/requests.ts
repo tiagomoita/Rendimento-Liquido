@@ -18,24 +18,11 @@ if (window.location.href.includes("localhost")) {
 
 export const retrieveCreateContext = async ([options]: [any]) => {
   const { simulationId, numberOfHolders, Entity } = getQueryParams();
-  let CodigoBanco = "";
-  switch (Entity) {
-    case "BES": {
-      CodigoBanco = "0007";
-      break;
-    }
-    case "BAC": {
-      CodigoBanco = "0160";
-      break;
-    }
-    default:
-      CodigoBanco = "";
-  }
   return httpClient.POST(EServiceUrls.RETRIEVE_CREATE_CONTEXT, {
     headers: {
       Authorization: `Bearer ${token}`,
       "x-idempotency-key": "123",
-      CodigoBanco,
+      CodigoBanco: Entity,
       ...options.context,
     },
     body: {
@@ -57,6 +44,16 @@ export const retrieveGetContext = async ([params]: [any]) => {
   });
 };
 
+export const retrieveGetContextWF = async ([params]: [any]) => {
+  return httpClient.GET(EServiceUrls.RETRIEVE_GET_CONTEXT_WF, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "x-idempotency-key": "123",
+    },
+    params,
+  });
+};
+
 export const retrieveGetSimulationId = async () => {
   return httpClient.GET(EServiceUrls.RETRIEVE_GET_SIMULATION_ID, {
     headers: {
@@ -67,7 +64,7 @@ export const retrieveGetSimulationId = async () => {
 };
 
 export const retrieveSimulate = async ([options]: [simulateInterface]) => {
-  const { simulationId, holderName, holderNif, holder } = options;
+  const { simulationId, referenceWF, holderName, holderNif, holder } = options;
   return httpClient.POST(EServiceUrls.RETRIEVE_SIMULATE, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -76,6 +73,7 @@ export const retrieveSimulate = async ([options]: [simulateInterface]) => {
     body: {
       payload: {
         simulationId,
+        referenceWF,
         holder,
         holderName,
         holderNif,
@@ -103,6 +101,7 @@ export const retrieveSimulateReceipts = async ([options]: [
 ]) => {
   const {
     simulationId,
+    referenceWF,
     holder,
     holderName,
     holderNif,
@@ -116,6 +115,7 @@ export const retrieveSimulateReceipts = async ([options]: [
     body: {
       payload: {
         simulationId,
+        referenceWF,
         holder,
         holderName,
         holderNif,
@@ -160,20 +160,7 @@ export const retrieveSimulationResults = async ([options]: [any]) => {
 
 export const retrieveGetTaxes = async () => {
   const { Entity } = getQueryParams();
-  let CodigoBanco = "";
-  switch (Entity) {
-    case "BES": {
-      CodigoBanco = "0007";
-      break;
-    }
-    case "BAC": {
-      CodigoBanco = "0160";
-      break;
-    }
-    default:
-      CodigoBanco = "";
-  }
-  return httpClient.GET(`${EServiceUrls.RETRIEVE_GET_TAXES}/${CodigoBanco}`, {
+  return httpClient.GET(`${EServiceUrls.RETRIEVE_GET_TAXES}/${Entity}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "x-idempotency-key": "123",

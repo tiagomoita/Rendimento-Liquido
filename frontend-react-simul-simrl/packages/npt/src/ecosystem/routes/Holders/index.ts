@@ -1,2 +1,2 @@
-export { default as Holders } from "./Holders";
-export type { default as HoldersProps } from "./types";
+export { default as Holders } from "./component";
+export type { default as IHoldersProps } from "./types";

@@ -68,6 +68,7 @@ const calculateNetIncomeIndependentWithoutOrganizedAccountingTotal = (
     operatingSubsidiesTotal,
     otherSubsidiesTotal,
     categoryBIncomeNotIncludedInPreviousFieldsTotal,
+    servicesProvidedByMemberssProComIndIncTotal,
     salesProductsOtherThanThoseIncludField7Total,
     servicesRenderedTotal,
     incomeFromCapitalAndRealEstateTotal,
@@ -76,7 +77,7 @@ const calculateNetIncomeIndependentWithoutOrganizedAccountingTotal = (
     agriYieldsSilvLivstckOtherSubsidiesTotal,
     incomeFromSalesMultiannualTotal,
     categoryBIncomeTotal,
-    otherIncomeTotal,
+    servicesProvidedByMemberssAgriSilvPecuTotal,
   } = params;
   return round(
     saleOfGoodsAndProductsTotal +
@@ -96,6 +97,7 @@ const calculateNetIncomeIndependentWithoutOrganizedAccountingTotal = (
       operatingSubsidiesTotal +
       otherSubsidiesTotal +
       categoryBIncomeNotIncludedInPreviousFieldsTotal +
+      servicesProvidedByMemberssProComIndIncTotal +
       salesProductsOtherThanThoseIncludField7Total +
       servicesRenderedTotal +
       incomeFromCapitalAndRealEstateTotal +
@@ -104,7 +106,7 @@ const calculateNetIncomeIndependentWithoutOrganizedAccountingTotal = (
       agriYieldsSilvLivstckOtherSubsidiesTotal +
       incomeFromSalesMultiannualTotal +
       categoryBIncomeTotal +
-      otherIncomeTotal
+      servicesProvidedByMemberssAgriSilvPecuTotal
   );
 };
 
@@ -175,12 +177,14 @@ const calculateIncomeEarnedAbroadForResidents = (
       (pensionIncome.grossIncome -
         pensionIncome.taxPaidAbroad -
         pensionIncome.contributionsToSocialProtectionSchemes) +
-      (businessAndProfessionalIncome.grossIncome -
+      (businessAndProfessionalIncome.grossIncomeValue -
         businessAndProfessionalIncome.taxPaidAbroad -
         businessAndProfessionalIncome.contributionsToSocialProtectionSchemes -
         businessAndProfessionalIncome.withholding) +
       (propertyIncome.netIncome - propertyIncome.taxPaidAbroad) +
-      (capitalIncome.grossIncome - capitalIncome.eithholdingTaxInPortugal)
+      (capitalIncome.grossIncome -
+        capitalIncome.eithholdingTaxInPortugal -
+        capitalIncome.taxPaidAbroad)
   );
 };
 
@@ -348,50 +352,57 @@ const calculateGreenReceiptsAverageTotal = (
   params: calculateGreenReceiptsAverageTotalInterface
 ) => {
   const {
-    receipt1,
-    receipt2,
-    receipt3,
-    receipt4,
-    receipt5,
-    receipt6,
+    greenReceiptsIncomes1,
+    greenReceiptsIncomes2,
+    greenReceiptsIncomes3,
+    greenReceiptsIncomes4,
+    greenReceiptsIncomes5,
+    greenReceiptsIncomes6,
     isIrregular,
     propertyIncomeTax,
   } = params;
   if (isIrregular) {
     if (propertyIncomeTax) {
       return round(
-        ((receipt1.receiptValue +
-          receipt2.receiptValue +
-          receipt3.receiptValue +
-          receipt4.receiptValue +
-          receipt5.receiptValue +
-          receipt6.receiptValue) *
+        ((greenReceiptsIncomes1.receiptValue +
+          greenReceiptsIncomes2.receiptValue +
+          greenReceiptsIncomes3.receiptValue +
+          greenReceiptsIncomes4.receiptValue +
+          greenReceiptsIncomes5.receiptValue +
+          greenReceiptsIncomes6.receiptValue) *
           propertyIncomeTax) /
           6
       );
     }
     return round(
-      (receipt1.receiptValue +
-        receipt2.receiptValue +
-        receipt3.receiptValue +
-        receipt4.receiptValue +
-        receipt5.receiptValue +
-        receipt6.receiptValue) /
+      (greenReceiptsIncomes1.receiptValue +
+        greenReceiptsIncomes2.receiptValue +
+        greenReceiptsIncomes3.receiptValue +
+        greenReceiptsIncomes4.receiptValue +
+        greenReceiptsIncomes5.receiptValue +
+        greenReceiptsIncomes6.receiptValue) /
         6
     );
   }
-  if (!isIrregular) {
+  if (
+    !isIrregular &&
+    !!greenReceiptsIncomes1.receiptValue &&
+    !!greenReceiptsIncomes2.receiptValue &&
+    !!greenReceiptsIncomes3.receiptValue
+  ) {
     if (propertyIncomeTax) {
       return round(
-        ((receipt1.receiptValue +
-          receipt2.receiptValue +
-          receipt3.receiptValue) *
+        ((greenReceiptsIncomes1.receiptValue +
+          greenReceiptsIncomes2.receiptValue +
+          greenReceiptsIncomes3.receiptValue) *
           propertyIncomeTax) /
           3
       );
     }
     return round(
-      (receipt1.receiptValue + receipt2.receiptValue + receipt3.receiptValue) /
+      (greenReceiptsIncomes1.receiptValue +
+        greenReceiptsIncomes2.receiptValue +
+        greenReceiptsIncomes3.receiptValue) /
         3
     );
   }

@@ -82,7 +82,11 @@ const RendimentosIsentosPropriedadeIntelectual = (
           />
         </div>
       )}
-      <Accordion title={t("exemptIncomeSubjectToAggregation")}>
+      <Accordion
+        title={`${t("exemptIncomeSubjectToAggregation")}`}
+        infoIcon
+        textInfo={`${t("table")} 4`}
+      >
         <TextField
           label={`${t("grossIncome")}*`}
           defaultValue={
@@ -128,7 +132,11 @@ const RendimentosIsentosPropriedadeIntelectual = (
           isDisabled={readOnly}
         />
       </Accordion>
-      <Accordion title={t("incomeFromIntellectualPropertyPartiallyExempted")}>
+      <Accordion
+        title={`${t("incomeFromIntellectualPropertyPartiallyExempted")}`}
+        infoIcon
+        textInfo={`${t("table")} 5`}
+      >
         <TextField
           label={`${t("incomes")}*`}
           defaultValue={
@@ -154,7 +162,7 @@ const RendimentosIsentosPropriedadeIntelectual = (
       </Accordion>
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

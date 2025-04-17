@@ -10,6 +10,10 @@ const retrieveGetContextModel = (data: any) => {
   return data;
 };
 
+const retrieveGetContextWFModel = (data: any) => {
+  return data;
+};
+
 const retrieveGetSimulationIdModel = (data: any) => {
   return data;
 };
@@ -45,6 +49,7 @@ const retrieveGetDocumentModel = (data: any) => {
 export {
   retrieveCreateContextModel,
   retrieveGetContextModel,
+  retrieveGetContextWFModel,
   retrieveGetSimulationIdModel,
   retrieveSimulateModel,
   retrievefindBySimulationIdAndHolderModel,

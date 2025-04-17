@@ -29,8 +29,12 @@ type BolsasInvestigacaoEstagioProps = {
 const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
   const { readOnly, tabHolder } = props;
   const { t } = useTranslation();
-  const [isIrregular, setIsIrregular] = useState(false);
   const ReceiptsData = useSelector(retrieveReceiptsData);
+  const [isIrregular, setIsIrregular] = useState(
+    !!ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt4 ||
+      !!ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt5 ||
+      !!ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt6
+  );
   const ReceiptsDataByHolder = useSelector(
     retrieveReceiptsDataByHolder(tabHolder!)
   );
@@ -42,25 +46,42 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
     setIsIrregular(false);
   };
 
+  const handleCleanIrregularReceipts = (isRegularOrIrregular: boolean) => {
+    dispatch(
+      setResearchScholarshipsInternship({
+        data: {
+          receipt4: 0,
+          receipt5: 0,
+          receipt6: 0,
+          isIrregular: isRegularOrIrregular,
+        },
+      })
+    );
+  };
+
   const checkIsRegular = useDebouncedCallback(() => {
     if (
-      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1! > 0 &&
-      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2! > 0 &&
+      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1! > 0 ||
+      ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2! > 0 ||
       ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3! > 0
     ) {
-      setIsIrregular(
-        calculateIsRegularOrIrregular({
-          receipt1Value:
-            ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1!,
-          receipt2Value:
-            ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2!,
-          receipt3Value:
-            ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3!,
-          valueOfRegularReceipts: Taxes?.valueOfRegularReceipts!,
-        })
-      );
+      const isRegularOrIrregular = calculateIsRegularOrIrregular({
+        receipt1Value:
+          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1!,
+        receipt2Value:
+          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2!,
+        receipt3Value:
+          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3!,
+        valueOfRegularReceipts:
+          Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
+      });
+      if (isRegularOrIrregular === false) {
+        handleCleanIrregularReceipts(isRegularOrIrregular);
+      }
+      setIsIrregular(isRegularOrIrregular);
     } else {
       setIsIrregular(false);
+      handleCleanIrregularReceipts(false);
     }
   }, 1000);
 
@@ -86,17 +107,16 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
   };
 
   const summaryIsRegular = () => {
-    if (
-      ReceiptsDataByHolder?.researchScholarshipsInternshipReceipts?.receipt4 ===
-        0 &&
-      ReceiptsDataByHolder?.researchScholarshipsInternshipReceipts?.receipt5 ===
-        0 &&
-      ReceiptsDataByHolder?.researchScholarshipsInternshipReceipts?.receipt6 ===
-        0
-    ) {
-      return true;
-    }
-    return false;
+    return !calculateIsRegularOrIrregular({
+      receipt1Value:
+        ReceiptsDataByHolder?.researchScholarshipsInternshipReceipts?.receipt1!,
+      receipt2Value:
+        ReceiptsDataByHolder?.researchScholarshipsInternshipReceipts?.receipt2!,
+      receipt3Value:
+        ReceiptsDataByHolder?.researchScholarshipsInternshipReceipts?.receipt3!,
+      valueOfRegularReceipts:
+        Taxes?.recParams.percVarAvgIncRecAboveIrreg.parameterValue!,
+    });
   };
 
   return (
@@ -105,7 +125,7 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
         <div className="info-wrapper">
           <img src={info} alt="img" width="18px" />
           <Text
-            text={t("fieldEmptyIsZero")}
+            text={t("researchScholarshipsInternshipText")}
             fontSize="11px"
             margin="0px 0px 0px 10px"
             color={color.nb_bluegray}
@@ -114,11 +134,10 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
         </div>
       )}
       <TextField
+        id="researchScholarshipsInternshipReceipt1"
         label={`${t("receipt")} 1`}
         defaultValue={
-          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1! === 0
-            ? undefined
-            : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1!.toString()!
+          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt1!.toString()!
         }
         valueCallback={handleFieldChange("receipt1")}
         placeholder={
@@ -130,13 +149,14 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={t("fieldEmptyIsZero")}
       />
       <TextField
+        id="researchScholarshipsInternshipReceipt2"
         label={`${t("receipt")} 2`}
         defaultValue={
-          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2! === 0
-            ? undefined
-            : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2!.toString()!
+          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt2!.toString()!
         }
         valueCallback={handleFieldChange("receipt2")}
         placeholder={
@@ -148,13 +168,14 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={t("fieldEmptyIsZero")}
       />
       <TextField
+        id="researchScholarshipsInternshipReceipt3"
         label={`${t("receipt")} 3`}
         defaultValue={
-          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3! === 0
-            ? undefined
-            : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3!.toString()!
+          ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt3!.toString()!
         }
         valueCallback={handleFieldChange("receipt3")}
         placeholder={
@@ -166,15 +187,17 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={t("fieldEmptyIsZero")}
       />
       {readOnly ? (
         summaryIsRegular() ? null : (
           <>
             <TextField
+              id="researchScholarshipsInternshipReceipt4"
               label={`${t("receipt")} 4`}
               defaultValue={
-                ReceiptsData?.researchScholarshipsInternshipReceipts
-                  ?.receipt4! === 0
+                !isIrregular
                   ? undefined
                   : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt4!.toString()!
               }
@@ -190,10 +213,10 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
               isDisabled={!isIrregular || readOnly}
             />
             <TextField
+              id="researchScholarshipsInternshipReceipt5"
               label={`${t("receipt")} 5`}
               defaultValue={
-                ReceiptsData?.researchScholarshipsInternshipReceipts
-                  ?.receipt5! === 0
+                !isIrregular
                   ? undefined
                   : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt5!.toString()!
               }
@@ -209,10 +232,10 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
               isDisabled={!isIrregular || readOnly}
             />
             <TextField
+              id="researchScholarshipsInternshipReceipt6"
               label={`${t("receipt")} 6`}
               defaultValue={
-                ReceiptsData?.researchScholarshipsInternshipReceipts
-                  ?.receipt6! === 0
+                !isIrregular
                   ? undefined
                   : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt6!.toString()!
               }
@@ -232,12 +255,12 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
       ) : (
         <>
           <TextField
+            id="researchScholarshipsInternshipReceipt4"
             label={`${t("receipt")} 4`}
             defaultValue={
-              ReceiptsData?.researchScholarshipsInternshipReceipts
-                ?.receipt4! === 0
+              !isIrregular
                 ? undefined
-                : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt4!.toString()!
+                : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt4!.toString()
             }
             valueCallback={handleFieldChange("receipt4")}
             placeholder={
@@ -249,14 +272,16 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
                 : ""
             }
             isDisabled={!isIrregular || readOnly}
+            infoIcon
+            textInfo={t("fieldEmptyIsZero")}
           />
           <TextField
+            id="researchScholarshipsInternshipReceipt5"
             label={`${t("receipt")} 5`}
             defaultValue={
-              ReceiptsData?.researchScholarshipsInternshipReceipts
-                ?.receipt5! === 0
+              !isIrregular
                 ? undefined
-                : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt5!.toString()!
+                : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt5!.toString()
             }
             valueCallback={handleFieldChange("receipt5")}
             placeholder={
@@ -268,14 +293,16 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
                 : ""
             }
             isDisabled={!isIrregular || readOnly}
+            infoIcon
+            textInfo={t("fieldEmptyIsZero")}
           />
           <TextField
+            id="researchScholarshipsInternshipReceipt6"
             label={`${t("receipt")} 6`}
             defaultValue={
-              ReceiptsData?.researchScholarshipsInternshipReceipts
-                ?.receipt6! === 0
+              !isIrregular
                 ? undefined
-                : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt6!.toString()!
+                : ReceiptsData?.researchScholarshipsInternshipReceipts?.receipt6!.toString()
             }
             valueCallback={handleFieldChange("receipt6")}
             placeholder={
@@ -287,13 +314,15 @@ const BolsasInvestigacaoEstagio = (props: BolsasInvestigacaoEstagioProps) => {
                 : ""
             }
             isDisabled={!isIrregular || readOnly}
+            infoIcon
+            textInfo={t("fieldEmptyIsZero")}
           />
         </>
       )}
 
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleClean}>
+          <NBButton variant="outlined" onClick={handleClean}>
             {t("clean")}
           </NBButton>
         )}

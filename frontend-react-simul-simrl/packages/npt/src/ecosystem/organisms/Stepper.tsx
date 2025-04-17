@@ -1,11 +1,10 @@
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 import "./Stepper.scss";
-import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NBTooltip } from "@nb-omc-xit-frontend/nb-data-display/lib/NBTooltip";
@@ -15,6 +14,8 @@ import { useTranslation } from "react-i18next";
 import {
   retrieveArrayHolders,
   retrieveCurrentHolder,
+  retrieveCurrentNIF,
+  retrieveCurrentName,
   retrieveCurrentTypeOfIncome,
   retrieveIRSData,
   retrieveNumberOfHolders,
@@ -26,8 +27,6 @@ import {
   setCurrentTypeOfIncome,
 } from "../../store/modules/entities/holder/slices";
 import {
-  addAlert,
-  removeAlert,
   setIsLoadingFalse,
   setIsLoadingTrue,
 } from "../../store/modules/main/slices";
@@ -40,18 +39,29 @@ import {
   validateMandatoryFieldsIRS,
   validateMandatoryFieldsReceipts,
 } from "../helper/functions";
+import { Model3Data } from "../../store/modules/entities/holder/types";
+import ERouteUrls from "../../enums/route-urls";
+import { useAlert } from "../../hooks/useAlert";
 
-const MyStepper = () => {
+type StepperProps = {
+  setModel3Data?: Dispatch<SetStateAction<Model3Data>>;
+};
+
+const MyStepper = (props: StepperProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { setModel3Data } = props;
   const dispatch = useDispatch<any>();
+  const { setAlert } = useAlert();
   const location = useLocation();
   const [steps, setSteps] = useState<string[]>([
     t("numberOfHolders"),
-    t("collectedInfoSuccess"),
+    t("simulationResult"),
   ]);
 
   const holders = useSelector(retrieveNumberOfHolders);
+  const currentName = useSelector(retrieveCurrentName);
+  const currentNIF = useSelector(retrieveCurrentNIF);
   const currentHolder = useSelector(retrieveCurrentHolder);
   const arrayHolders = useSelector(retrieveArrayHolders);
   const currentTypeOfIncome = useSelector(retrieveCurrentTypeOfIncome);
@@ -68,7 +78,7 @@ const MyStepper = () => {
       for (let i = 1; i <= holders; i += 1) {
         aux.splice(i, 0, `${i}${t("holderNumber")}`);
       }
-      setSteps([t("numberOfHolders"), ...aux, t("collectedInfoSuccess")]);
+      setSteps([t("numberOfHolders"), ...aux, t("simulationResult")]);
     }
   }, [holders]);
 
@@ -78,19 +88,9 @@ const MyStepper = () => {
       for (let i = 1; i <= holders; i += 1) {
         aux.splice(i, 0, `${i}${t("holderNumber")}`);
       }
-      setSteps([t("numberOfHolders"), ...aux, t("collectedInfoSuccess")]);
+      setSteps([t("numberOfHolders"), ...aux, t("simulationResult")]);
     }
   }, [currentHolder]);
-
-  const setAlert = (variant: string, title: string, message: string) => {
-    const id = Math.random().toString(36).slice(2, 9);
-
-    dispatch(addAlert({ variant, title, message, id }));
-
-    setTimeout(() => {
-      dispatch(removeAlert({ id }));
-    }, 10000);
-  };
 
   useEffect(() => {
     if (currentTypeOfIncome === true) {
@@ -111,36 +111,44 @@ const MyStepper = () => {
   }, [IRSData, ReceiptsData]);
 
   const handleClickStep = async (index: number) => {
-    dispatch(setIsLoadingTrue());
     if (index === 0) {
       if (!isButton) {
         if (!isButtonTaxesGreaterGrossIncome) {
-          if (location.pathname !== "/simulation") {
+          if (location.pathname !== ERouteUrls.Simulation) {
+            if (setModel3Data)
+              setModel3Data({ show: false, title: "", isAttachmentJ: false });
             dispatch(setCurrentHolder(1));
             dispatch(setCurrentTypeOfIncome(true));
-            dispatch(setIsLoadingFalse());
             navigate({
-              pathname: "/",
+              pathname: ERouteUrls.Holders,
               search: window.location.search,
             });
             return;
           }
           if (currentTypeOfIncome === true) {
+            if (setModel3Data)
+              setModel3Data({ show: false, title: "", isAttachmentJ: false });
+            dispatch(setIsLoadingTrue());
             withThunkWrapper(
-              dispatch(simulateThunk({})),
+              dispatch(
+                simulateThunk({
+                  holderName: currentName,
+                  holderNif: currentNIF,
+                })
+              ),
               async () => {
                 dispatch(setCurrentHolder(1));
                 dispatch(setCurrentTypeOfIncome(true));
                 dispatch(setIsLoadingFalse());
                 navigate({
-                  pathname: "/",
+                  pathname: ERouteUrls.Holders,
                   search: window.location.search,
                 });
               },
               () => {
                 dispatch(setIsLoadingFalse());
                 navigate({
-                  pathname: "/",
+                  pathname: ERouteUrls.Holders,
                   search: window.location.search,
                 });
                 setAlert(
@@ -152,21 +160,29 @@ const MyStepper = () => {
             );
           }
           if (currentTypeOfIncome === false) {
+            if (setModel3Data)
+              setModel3Data({ show: false, title: "", isAttachmentJ: false });
+            dispatch(setIsLoadingTrue());
             withThunkWrapper(
-              dispatch(simulateReceiptsThunk({})),
+              dispatch(
+                simulateReceiptsThunk({
+                  holderName: currentName,
+                  holderNif: currentNIF,
+                })
+              ),
               async () => {
                 dispatch(setCurrentHolder(1));
                 dispatch(setCurrentTypeOfIncome(true));
                 dispatch(setIsLoadingFalse());
                 navigate({
-                  pathname: "/",
+                  pathname: ERouteUrls.Holders,
                   search: window.location.search,
                 });
               },
               () => {
                 dispatch(setIsLoadingFalse());
                 navigate({
-                  pathname: "/",
+                  pathname: ERouteUrls.Holders,
                   search: window.location.search,
                 });
                 setAlert(
@@ -192,12 +208,13 @@ const MyStepper = () => {
         );
       }
     } else if (index <= holders!) {
-      if (location.pathname !== "/simulation") {
+      if (location.pathname !== ERouteUrls.Simulation) {
+        if (setModel3Data)
+          setModel3Data({ show: false, title: "", isAttachmentJ: false });
         dispatch(setCurrentHolder(index));
         dispatch(setCurrentTypeOfIncome(true));
-        dispatch(setIsLoadingFalse());
         navigate({
-          pathname: "/simulation",
+          pathname: ERouteUrls.Simulation,
           search: window.location.search,
         });
         return;
@@ -206,16 +223,25 @@ const MyStepper = () => {
       if (!isButton) {
         if (!isButtonTaxesGreaterGrossIncome) {
           if (currentTypeOfIncome === true) {
+            if (setModel3Data)
+              setModel3Data({ show: false, title: "", isAttachmentJ: false });
+            dispatch(setIsLoadingTrue());
             withThunkWrapper(
-              dispatch(simulateThunk({})),
+              dispatch(
+                simulateThunk({
+                  holderName: currentName,
+                  holderNif: currentNIF,
+                })
+              ),
               async () => {
                 dispatch(setCurrentHolder(index));
                 dispatch(setCurrentTypeOfIncome(true));
+                dispatch(setIsLoadingFalse());
               },
               () => {
                 dispatch(setIsLoadingFalse());
                 navigate({
-                  pathname: "/",
+                  pathname: ERouteUrls.Holders,
                   search: window.location.search,
                 });
                 setAlert(
@@ -227,16 +253,25 @@ const MyStepper = () => {
             );
           }
           if (currentTypeOfIncome === false) {
+            if (setModel3Data)
+              setModel3Data({ show: false, title: "", isAttachmentJ: false });
+            dispatch(setIsLoadingTrue());
             withThunkWrapper(
-              dispatch(simulateReceiptsThunk({})),
+              dispatch(
+                simulateReceiptsThunk({
+                  holderName: currentName,
+                  holderNif: currentNIF,
+                })
+              ),
               async () => {
                 dispatch(setCurrentHolder(index));
                 dispatch(setCurrentTypeOfIncome(true));
+                dispatch(setIsLoadingFalse());
               },
               () => {
                 dispatch(setIsLoadingFalse());
                 navigate({
-                  pathname: "/",
+                  pathname: ERouteUrls.Holders,
                   search: window.location.search,
                 });
                 setAlert(
@@ -262,45 +297,69 @@ const MyStepper = () => {
         );
       }
     }
-    dispatch(setIsLoadingFalse());
+  };
+
+  const handleStepperWidth = () => {
+    switch (holders) {
+      case 1:
+        return "41%";
+      case 2:
+        return "54%";
+      case 3:
+        return "68%";
+      case 4:
+        return "81%";
+      case 5:
+        return "94%";
+      default:
+        return "100%";
+    }
   };
 
   return (
-    <div className="stepper-wrapper" data-testid="Stepper-testId">
-      <Box>
-        <Stepper activeStep={currentHolder} alternativeLabel>
-          {steps.map((label, index) => {
-            const holder = arrayHolders.find((e: any) => {
-              return e.holderNumber === index;
-            });
-            return (
-              <Step key={label} data-testid="step-testId">
-                <NBTooltip
-                  tooltip={
-                    label.includes("º") && label.charAt(0) !== "1"
+    <div
+      className="stepper-wrapper"
+      style={{
+        width: handleStepperWidth(),
+      }}
+      data-testid="Stepper-testId"
+    >
+      <Stepper activeStep={currentHolder} alternativeLabel>
+        {steps.map((label, index) => {
+          const holder = arrayHolders.find((e: any) => {
+            return e.holderNumber === index;
+          });
+          return (
+            <Step key={label} data-testid="step-testId">
+              <NBTooltip
+                tooltip={
+                  label.includes("º")
+                    ? holder?.Name === null || holder?.Nif === null
                       ? t("anonymous")
-                      : label.includes("º")
-                      ? holder?.Name === null || holder?.Nif === null
-                        ? t("anonymous")
-                        : `${t("name")}: ${holder?.Name} \n ${t("nif")}: ${
-                            holder?.Nif
-                          }`
-                      : ""
-                  }
-                  variant="dark"
+                      : `${t("name")}: ${holder?.Name} \n ${t("nif")}: ${
+                          holder?.Nif
+                        }`
+                    : ""
+                }
+                variant="dark"
+                style={{
+                  cursor: label.includes("Resultado") ? "auto" : "pointer",
+                }}
+              >
+                <StepLabel
+                  style={{
+                    cursor: label.includes("Resultado") ? "auto" : "pointer",
+                  }}
+                  onClick={() => handleClickStep(index)}
+                  data-testid="step-label-testId"
                 >
-                  <StepLabel
-                    onClick={() => handleClickStep(index)}
-                    data-testid="step-label-testId"
-                  >
-                    {label}
-                  </StepLabel>
-                </NBTooltip>
-              </Step>
-            );
-          })}
-        </Stepper>
-      </Box>
+                  {label}
+                </StepLabel>
+              </NBTooltip>
+            </Step>
+          );
+        })}
+      </Stepper>
     </div>
   );
 };

@@ -14,18 +14,20 @@ import {
   retrieveSimulationResultsService,
   retrieveGetTaxesService,
   retrieveGetDocumentService,
+  retrieveGetContextWFService,
 } from "./services";
 import {
   retrieveContext,
   retrieveCurrentHolder,
   retrieveIRSData,
   retrieveIrsOrReceipts,
-  retrieveName,
-  retrieveNIF,
   retrieveReceiptsData,
   retrieveSimulationId,
 } from "./selectors";
-import { getQueryParams } from "../../../../utils/utils";
+import {
+  getQueryParams,
+  mapMostRepresentativeCheckBokToValues,
+} from "../../../../utils/utils";
 
 export const createContextThunk = createAsyncThunk(
   ETypes.THUNK_CREATE_CONTEXT,
@@ -58,18 +60,35 @@ export const getContextThunk = createAsyncThunk(
   }
 );
 
+export const getContextWFThunk = createAsyncThunk(
+  ETypes.THUNK_GET_CONTEXT_WF,
+  async (_, { rejectWithValue }) => {
+    try {
+      const { referenceWF } = getQueryParams();
+      const response = await retrieveGetContextWFService({
+        referenceWF,
+      });
+      return response;
+    } catch (error) {
+      throw rejectWithValue(error);
+    }
+  }
+);
+
 export const simulateThunk = createAsyncThunk(
   ETypes.THUNK_SIMULATE,
   async (options: any, { rejectWithValue, getState }) => {
     try {
+      const { referenceWF } = getQueryParams();
       const state: any = getState();
       const simulationId: string = retrieveSimulationId(state);
       const holder: number = options?.holder || retrieveCurrentHolder(state);
-      const holderName: string = options?.holderName || retrieveName(state);
-      const holderNif: string = options?.holderNif || retrieveNIF(state);
+      const holderName: string = options?.holderName;
+      const holderNif: string = options?.holderNif;
       const body: holderData = options?.bodyIRS || retrieveIRSData(state);
       const response = await retrieveSimulateService({
         simulationId,
+        referenceWF,
         holder,
         holderName,
         holderNif,
@@ -104,21 +123,27 @@ export const simulateReceiptsThunk = createAsyncThunk(
   ETypes.THUNK_SIMULATE_RECEIPTS,
   async (options: any, { rejectWithValue, getState }) => {
     try {
+      const { referenceWF } = getQueryParams();
       const state: any = getState();
       const simulationId: string = retrieveSimulationId(state);
       const holder: number = options?.holder || retrieveCurrentHolder(state);
-      const holderName: string = options?.holderName || retrieveName(state);
-      const holderNif: string = options?.holderNif || retrieveNIF(state);
+      const holderName: string = options?.holderName;
+      const holderNif: string = options?.holderNif;
       const mostRepresentativeCheckBok: boolean | null =
-        options?.mostRepresentativeCheckBok || retrieveIrsOrReceipts(state);
+        options?.mostRepresentativeCheckBok !== undefined
+          ? options?.mostRepresentativeCheckBok
+          : retrieveIrsOrReceipts(state);
       const body: ReceiptsData =
         options?.bodyReceipts || retrieveReceiptsData(state);
       const response = await retrieveSimulateReceiptsService({
         simulationId,
+        referenceWF,
         holder,
         holderName,
         holderNif,
-        mostRepresentativeCheckBok,
+        mostRepresentativeCheckBok: mapMostRepresentativeCheckBokToValues(
+          mostRepresentativeCheckBok
+        ),
         body,
       });
       return response;

@@ -29,6 +29,7 @@ interface calculateNetIncomeIndependentWithoutOrganizedAccountingTotalInterface 
   operatingSubsidiesTotal: number;
   otherSubsidiesTotal: number;
   categoryBIncomeNotIncludedInPreviousFieldsTotal: number;
+  servicesProvidedByMemberssProComIndIncTotal: number;
   salesProductsOtherThanThoseIncludField7Total: number;
   servicesRenderedTotal: number;
   incomeFromCapitalAndRealEstateTotal: number;
@@ -37,7 +38,7 @@ interface calculateNetIncomeIndependentWithoutOrganizedAccountingTotalInterface 
   agriYieldsSilvLivstckOtherSubsidiesTotal: number;
   incomeFromSalesMultiannualTotal: number;
   categoryBIncomeTotal: number;
-  otherIncomeTotal: number;
+  servicesProvidedByMemberssAgriSilvPecuTotal: number;
 }
 
 interface calculateNetIncomeIndependentWithoutOrganizedAccountingInterface {
@@ -95,7 +96,7 @@ interface calculateIncomeEarnedAbroadForResidentsInterface {
     contributionsToSocialProtectionSchemes: number;
   };
   businessAndProfessionalIncome: {
-    grossIncome: number;
+    grossIncomeValue: number;
     taxPaidAbroad: number;
     contributionsToSocialProtectionSchemes: number;
     withholding: number;
@@ -107,6 +108,7 @@ interface calculateIncomeEarnedAbroadForResidentsInterface {
   capitalIncome: {
     grossIncome: number;
     eithholdingTaxInPortugal: number;
+    taxPaidAbroad: number;
   };
 }
 
@@ -163,12 +165,12 @@ interface GreenReceiptInterface {
   receiptValue: number;
 }
 interface calculateGreenReceiptsAverageTotalInterface {
-  receipt1: GreenReceiptInterface;
-  receipt2: GreenReceiptInterface;
-  receipt3: GreenReceiptInterface;
-  receipt4: GreenReceiptInterface;
-  receipt5: GreenReceiptInterface;
-  receipt6: GreenReceiptInterface;
+  greenReceiptsIncomes1: GreenReceiptInterface;
+  greenReceiptsIncomes2: GreenReceiptInterface;
+  greenReceiptsIncomes3: GreenReceiptInterface;
+  greenReceiptsIncomes4: GreenReceiptInterface;
+  greenReceiptsIncomes5: GreenReceiptInterface;
+  greenReceiptsIncomes6: GreenReceiptInterface;
   isIrregular: boolean;
   propertyIncomeTax?: number;
 }

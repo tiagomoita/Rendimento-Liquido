@@ -19,6 +19,7 @@ import {
   retrieveSimulationResultsModel,
   retrieveGetTaxesModel,
   retrieveGetDocumentModel,
+  retrieveGetContextWFModel,
 } from "./models";
 
 // Requests
@@ -33,6 +34,7 @@ import {
   retrieveSimulationResults,
   retrieveGetTaxes,
   retrieveGetDocument,
+  retrieveGetContextWF,
 } from "./requests";
 
 export const retrieveCreateContextService = asyncCompose(
@@ -45,6 +47,12 @@ export const retrieveGetContextService = asyncCompose(
   retrieveGetContextModel,
   retrieveResponsePayload,
   requestService(retrieveGetContext)
+);
+
+export const retrieveGetContextWFService = asyncCompose(
+  retrieveGetContextWFModel,
+  retrieveResponsePayload,
+  requestService(retrieveGetContextWF)
 );
 
 export const retrieveGetSimulationIdService = asyncCompose(

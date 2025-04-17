@@ -1,0 +1,30 @@
+export const indComProIncome = {
+  saleOfGoodsAndProducts: 0,
+  provisionOfHotelAndSimilarServicesCateringAndBeverage: 0,
+  provisionOfCateringAndBeverageActivitiesServices: 0,
+  provisionOfHotelServicesAndSimilarActivities: 0,
+  provisionOfServRelatedToTheExploOfLocalAccEstablishments: 0,
+  incomeFromProActivitiesSpecifArticle151OfTheCIRS: 0,
+  incomeFromServicesRenderedNotForeseenInThePreviousFields: 0,
+  intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty: 0,
+  intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart: 0,
+  positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements: 0,
+  incomeFromFinancialActivitiesCAECodesStartWith6465or66: 0,
+  servicProvidedByMembToProSocOfTheFiscalTransparencRegime: 0,
+  positiveResultOfPropertyIncome: 0,
+  propertyIncomeAttributableToCatBIncomeGeneratingActivity: 0,
+  operatingSubsidies: 0,
+  otherSubsidies: 0,
+  categoryBIncomeNotIncludedInPreviousFields: 0,
+};
+
+export const agriYieldsSilvLivstck = {
+  salesProductsOtherThanThoseIncludField7: 0,
+  servicesRendered: 0,
+  incomeFromCapitalAndRealEstate: 0,
+  positiveResultOfPropertyIncome: 0,
+  operatingSubsidiesRelatedToSales: 0,
+  otherSubsidies: 0,
+  incomeFromSalesMultiannual: 0,
+  categoryBIncome: 0,
+};

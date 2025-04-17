@@ -7,15 +7,17 @@
   align-items: center;
 }
 
-.nb-x-it-component.nb-checkbox-container
-  .nb-checkbox-label__container
-  .nb-checkbox {
-  padding-top: 0px;
-  padding-bottom: 0px;
+.accordion-wrapper div.MuiGrid-root.MuiGrid-item {
+  width: 100%;
+}
+
+.accordion-wrapper
+  div.MuiGrid-root.MuiGrid-item
+  ~ div.MuiGrid-root.MuiGrid-item {
+  width: auto;
 }
 
 .skeleton-2 {
   height: 67px;
   border-radius: 6px;
-  margin-bottom: 18px;
 }

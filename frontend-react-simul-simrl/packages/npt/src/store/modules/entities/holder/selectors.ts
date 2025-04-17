@@ -17,6 +17,11 @@ export const retrieveSimulationId = createSelector(
   (state) => state.SimulationId
 );
 
+export const retrieveReferenceWF = createSelector(
+  selectSelf,
+  (state) => state.ReferenceWF
+);
+
 export const retrieveContext = createSelector(
   selectSelf,
   (state) => state.context
@@ -47,19 +52,25 @@ export const retrieveArrayHolders = createSelector(
   (state) => state.arrayHolders
 );
 
-export const retrieveName = createSelector(selectSelf, (state: any): string => {
-  const data = state.arrayHolders.find(
-    (e: holder) => e.holderNumber === state.currentHolder
-  );
-  return data?.Name!;
-});
+export const retrieveCurrentName = createSelector(
+  selectSelf,
+  (state: any): string => {
+    const data = state.arrayHolders.find(
+      (e: holder) => e.holderNumber === state.currentHolder
+    );
+    return data?.Name!;
+  }
+);
 
-export const retrieveNIF = createSelector(selectSelf, (state: any): string => {
-  const data = state.arrayHolders.find(
-    (e: holder) => e.holderNumber === state.currentHolder
-  );
-  return data?.Nif!;
-});
+export const retrieveCurrentNIF = createSelector(
+  selectSelf,
+  (state: any): string => {
+    const data = state.arrayHolders.find(
+      (e: holder) => e.holderNumber === state.currentHolder
+    );
+    return data?.Nif!;
+  }
+);
 
 export const retrieveIrsOrReceipts = createSelector(
   selectSelf,

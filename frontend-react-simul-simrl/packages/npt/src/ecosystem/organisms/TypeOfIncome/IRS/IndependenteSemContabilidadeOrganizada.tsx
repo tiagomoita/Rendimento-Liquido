@@ -28,6 +28,7 @@ import {
 } from "../../../../store/modules/entities/holder/slices";
 import { Model3Data } from "../../../../store/modules/entities/holder/types";
 import { color } from "../../../../utils/colors";
+import { agriYieldsSilvLivstck, indComProIncome } from "../Common/dataAuxiliar";
 
 type IndependenteSemContabilidadeOrganizadaProps = {
   setModel3Data?: Dispatch<SetStateAction<Model3Data>>;
@@ -47,11 +48,13 @@ const IndependenteSemContabilidadeOrganizada = (
   const dispatch = useDispatch();
 
   const [taxIncidenceRate] = useState<number>(
-    Taxes?.valueToCalculateTaxIncidence!
+    Taxes?.irsParams?.taxIncOnIndWorkNoOrgAcc?.parameterValue!
   );
 
   const handleCleanAll = () => {
     dispatch(setClean("independentWithoutOrganizedAccountingAll2"));
+    if (setModel3Data)
+      setModel3Data({ show: false, title: "", isAttachmentJ: false });
   };
 
   const handleCleanModel = () => {
@@ -61,35 +64,8 @@ const IndependenteSemContabilidadeOrganizada = (
         data: {
           charges,
           totalGrossIncome: 0,
-          indComProIncome: {
-            saleOfGoodsAndProducts: 0,
-            provisionOfHotelAndSimilarServicesCateringAndBeverage: 0,
-            provisionOfCateringAndBeverageActivitiesServices: 0,
-            provisionOfHotelServicesAndSimilarActivities: 0,
-            provisionOfServRelatedToTheExploOfLocalAccEstablishments: 0,
-            incomeFromProActivitiesSpecifArticle151OfTheCIRS: 0,
-            incomeFromServicesRenderedNotForeseenInThePreviousFields: 0,
-            intellPropertyNotCoveByArtic58OfTheEBFIndOrInforProperty: 0,
-            intellPropertyIncoCoveredByArtic58OfTheEBFNonExemptPart: 0,
-            positiveBalanOfCapGainsAndLossesAndOtherEquityIncrements: 0,
-            incomeFromFinancialActivitiesCAECodesStartWith6465or66: 0,
-            servicProvidedByMembToProSocOfTheFiscalTransparencRegime: 0,
-            positiveResultOfPropertyIncome: 0,
-            propertyIncomeAttributableToCatBIncomeGeneratingActivity: 0,
-            operatingSubsidies: 0,
-            otherSubsidies: 0,
-            categoryBIncomeNotIncludedInPreviousFields: 0,
-          },
-          agriYieldsSilvLivstck: {
-            salesProductsOtherThanThoseIncludField7: 0,
-            servicesRendered: 0,
-            incomeFromCapitalAndRealEstate: 0,
-            positiveResultOfPropertyIncome: 0,
-            operatingSubsidiesRelatedToSales: 0,
-            otherSubsidies: 0,
-            incomeFromSalesMultiannual: 0,
-            categoryBIncome: 0,
-          },
+          indComProIncome,
+          agriYieldsSilvLivstck,
           otherIncome: { otherIncome: 0 },
           netIncome: calculateNetIncomeIndependentWithoutOrganizedAccounting({
             totalGrossIncome: 0,
@@ -168,8 +144,7 @@ const IndependenteSemContabilidadeOrganizada = (
   const applyTotalValue = (
     valueTotal: any,
     indComProIncomeClone: any,
-    agriYieldsSilvLivstckClone: any,
-    otherIncomeClone: any
+    agriYieldsSilvLivstckClone: any
   ) => {
     const charges = IRSData?.independentWithoutOrganizedAccounting?.charges;
     dispatch(
@@ -179,7 +154,6 @@ const IndependenteSemContabilidadeOrganizada = (
           totalGrossIncome: valueTotal,
           indComProIncome: { ...indComProIncomeClone },
           agriYieldsSilvLivstck: { ...agriYieldsSilvLivstckClone },
-          otherIncome: { ...otherIncomeClone },
           netIncome: calculateNetIncomeIndependentWithoutOrganizedAccounting({
             totalGrossIncome: valueTotal,
             charges: charges!,
@@ -195,7 +169,22 @@ const IndependenteSemContabilidadeOrganizada = (
         },
       })
     );
-    if (setModel3Data) setModel3Data({ show: false, title: "" });
+    if (setModel3Data)
+      setModel3Data({ show: false, title: "", isAttachmentJ: false });
+  };
+
+  const saveValues = (
+    indComProIncomeClone: any,
+    agriYieldsSilvLivstckClone: any
+  ) => {
+    dispatch(
+      setIndependentWithoutOrganizedAccounting({
+        data: {
+          indComProIncome: { ...indComProIncomeClone },
+          agriYieldsSilvLivstck: { ...agriYieldsSilvLivstckClone },
+        },
+      })
+    );
   };
 
   return (
@@ -221,8 +210,7 @@ const IndependenteSemContabilidadeOrganizada = (
               ?.totalGrossIncome! === 0
               ? undefined
               : readOnly
-              ? IRSData?.independentWithoutOrganizedAccounting
-                  ?.totalGrossIncome!
+              ? IRSData?.independentWithoutOrganizedAccounting?.totalGrossIncome?.toString()!
               : formatNumber2DecimalPlaces(
                   roundValue(
                     IRSData?.independentWithoutOrganizedAccounting
@@ -236,70 +224,60 @@ const IndependenteSemContabilidadeOrganizada = (
                   IRSDataByHolder?.independentWithoutOrganizedAccounting
                     ?.totalGrossIncome
                 )
-              : IRSData?.independentWithoutOrganizedAccounting
-                  ?.totalGrossIncome! === 0
-              ? ""
-              : `${formatNumber2DecimalPlaces(
-                  roundValue(
-                    IRSData?.independentWithoutOrganizedAccounting
-                      ?.totalGrossIncome! || 0
-                  )
-                )} €`
+              : ""
           }
-          isDisabled
+          isDisabled={readOnly}
+          infoIcon
+          textInfo={`${t("table")} 4`}
         />
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            cursor: "pointer",
-          }}
-          role="presentation"
-          onClick={() => {
-            if (setModel3Data) {
-              setModel3Data({
-                title: `${t("attachment")} B`,
-                show: true,
-                indComProIncome: {
-                  ...IRSData?.independentWithoutOrganizedAccounting
-                    ?.indComProIncome,
-                },
-                agriYieldsSilvLivstck: {
-                  ...IRSData?.independentWithoutOrganizedAccounting
-                    ?.agriYieldsSilvLivstck,
-                },
-                otherIncome: {
-                  ...IRSData?.independentWithoutOrganizedAccounting
-                    ?.otherIncome,
-                },
-                indComProIncomeByHolder: {
-                  ...IRSDataByHolder?.independentWithoutOrganizedAccounting
-                    ?.indComProIncome,
-                },
-                agriYieldsSilvLivstckByHolder: {
-                  ...IRSDataByHolder?.independentWithoutOrganizedAccounting
-                    ?.agriYieldsSilvLivstck,
-                },
-                otherIncomeByHolder: {
-                  ...IRSDataByHolder?.independentWithoutOrganizedAccounting
-                    ?.otherIncome,
-                },
-                totalGrossIncomeByHolder:
-                  IRSDataByHolder?.independentWithoutOrganizedAccounting
-                    ?.totalGrossIncome,
-                applyTotalValue,
-                handleCleanModel,
-              });
-            }
-          }}
-        />
+        {!readOnly && (
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              cursor: "pointer",
+            }}
+            role="presentation"
+            onClick={() => {
+              if (setModel3Data) {
+                setModel3Data({
+                  title: `${t("attachment")} B`,
+                  show: true,
+                  isAttachmentJ: false,
+                  indComProIncome: {
+                    ...IRSData?.independentWithoutOrganizedAccounting
+                      ?.indComProIncome,
+                  },
+                  agriYieldsSilvLivstck: {
+                    ...IRSData?.independentWithoutOrganizedAccounting
+                      ?.agriYieldsSilvLivstck,
+                  },
+                  indComProIncomeByHolder: {
+                    ...IRSDataByHolder?.independentWithoutOrganizedAccounting
+                      ?.indComProIncome,
+                  },
+                  agriYieldsSilvLivstckByHolder: {
+                    ...IRSDataByHolder?.independentWithoutOrganizedAccounting
+                      ?.agriYieldsSilvLivstck,
+                  },
+                  totalGrossIncomeByHolder:
+                    IRSDataByHolder?.independentWithoutOrganizedAccounting
+                      ?.totalGrossIncome,
+                  applyTotalValue,
+                  handleCleanModel,
+                  saveValues,
+                });
+              }
+            }}
+          />
+        )}
       </span>
 
       <TextField
-        label={t("charges")}
+        label={`${t("charges")}`}
         defaultValue={
           IRSData?.independentWithoutOrganizedAccounting?.charges === 0
             ? undefined
@@ -314,6 +292,8 @@ const IndependenteSemContabilidadeOrganizada = (
             : ""
         }
         isDisabled={readOnly}
+        infoIcon
+        textInfo={`${t("table")} 6`}
       />
       <TextField
         label={t("taxIncidence")}
@@ -321,7 +301,7 @@ const IndependenteSemContabilidadeOrganizada = (
           IRSData?.independentWithoutOrganizedAccounting?.taxIncidence! === 0
             ? undefined
             : readOnly
-            ? IRSData?.independentWithoutOrganizedAccounting?.taxIncidence!
+            ? IRSData?.independentWithoutOrganizedAccounting?.taxIncidence?.toString()!
             : formatNumber2DecimalPlaces(
                 roundValue(
                   IRSData?.independentWithoutOrganizedAccounting?.taxIncidence!
@@ -348,7 +328,7 @@ const IndependenteSemContabilidadeOrganizada = (
       />
       <div className="buttons">
         {!readOnly && (
-          <NBButton nbtype="Secondary" onClick={handleCleanAll}>
+          <NBButton variant="outlined" onClick={handleCleanAll}>
             {t("clean")}
           </NBButton>
         )}

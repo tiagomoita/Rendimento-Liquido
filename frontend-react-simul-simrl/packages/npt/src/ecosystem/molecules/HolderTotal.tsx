@@ -18,7 +18,7 @@ type HolderTotalProps = {
 const HolderTotal = (props: HolderTotalProps) => {
   const { title, irsValue, receiptValue } = props;
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
 
   useEffect(() => {
     dispatch(setIRSTotal({ currentHolder: title, total: irsValue }));
@@ -58,7 +58,7 @@ const HolderTotal = (props: HolderTotalProps) => {
         style={{
           display: "flex",
           width: "100%",
-          height: "1px",
+          height: "0.5px",
           backgroundColor: "#e0e7e8",
         }}
       />
@@ -92,7 +92,7 @@ const HolderTotal = (props: HolderTotalProps) => {
         style={{
           display: "flex",
           width: "100%",
-          height: "1px",
+          height: "0.5px",
           backgroundColor: "#e0e7e8",
         }}
       />
