@@ -40,6 +40,20 @@ interface calculateNetIncomeIndependentWithoutOrganizedAccountingTotalInterface 
   otherIncomeTotal: number;
 }
 
+interface calculateNetIncomeEarnedAbroadForResidentsTotalInterface {
+  commercialAndIndustrialIncomeTotal: number;
+  agriculturalIncomeFromForestryOrLivestockTotal: number;
+  incomeTableArticle151Total: number;
+  incomeFromUnforeseenInstallmentsTotal: number;
+  intellectualOrIndustrialPropertyIncomeTotal: number;
+  incomeIntellectualPropertyArt58NonExemptTotal: number;
+  incomeIntellectualPropertyArt58ExemptTotal: number;
+  incomeOfArtistsAndSportsmen2017AndPreviousTotal: number;
+  incomeAttributableBusinessIndIncomeGeneratingActivitiesTotal: number;
+  incomeOfArtists2018AndLaterTotal: number;
+  incomeOfSportsmen2018AndLaterTotal: number;
+}
+
 interface calculateNetIncomeIndependentWithoutOrganizedAccountingInterface {
   totalGrossIncome: number;
   charges: number;
@@ -95,7 +109,7 @@ interface calculateIncomeEarnedAbroadForResidentsInterface {
     contributionsToSocialProtectionSchemes: number;
   };
   businessAndProfessionalIncome: {
-    grossIncome: number;
+    grossIncomeValue: number;
     taxPaidAbroad: number;
     contributionsToSocialProtectionSchemes: number;
     withholding: number;
@@ -107,6 +121,7 @@ interface calculateIncomeEarnedAbroadForResidentsInterface {
   capitalIncome: {
     grossIncome: number;
     eithholdingTaxInPortugal: number;
+    taxPaidAbroad: number;
   };
 }
 
@@ -160,6 +175,20 @@ interface calculateReceiptsAverageTotalInterface {
   propertyIncomeTax?: number;
 }
 
+interface GreenReceiptInterface {
+  receiptValue: number;
+}
+interface calculateGreenReceiptsAverageTotalInterface {
+  greenReceiptsIncomes1: GreenReceiptInterface;
+  greenReceiptsIncomes2: GreenReceiptInterface;
+  greenReceiptsIncomes3: GreenReceiptInterface;
+  greenReceiptsIncomes4: GreenReceiptInterface;
+  greenReceiptsIncomes5: GreenReceiptInterface;
+  greenReceiptsIncomes6: GreenReceiptInterface;
+  isIrregular: boolean;
+  propertyIncomeTax?: number;
+}
+
 export {
   calculateNetIncomeDependentsAndPensionsInterface,
   calculateNetIncomeIndependentWithOrganizedAccountingInterface,
@@ -174,4 +203,6 @@ export {
   calculateOtherIncomeInterface,
   calculateIsRegularOrIrregularInterface,
   calculateReceiptsAverageTotalInterface,
+  calculateGreenReceiptsAverageTotalInterface,
+  calculateNetIncomeEarnedAbroadForResidentsTotalInterface,
 };

@@ -12,6 +12,8 @@ import {
   calculateNetIncomeIndependentWithoutOrganizedAccountingInterface,
   calculateIsRegularOrIrregularInterface,
   calculateReceiptsAverageTotalInterface,
+  calculateGreenReceiptsAverageTotalInterface,
+  calculateNetIncomeEarnedAbroadForResidentsTotalInterface,
 } from "./interface";
 
 import { round } from "./helpers";
@@ -174,12 +176,14 @@ const calculateIncomeEarnedAbroadForResidents = (
       (pensionIncome.grossIncome -
         pensionIncome.taxPaidAbroad -
         pensionIncome.contributionsToSocialProtectionSchemes) +
-      (businessAndProfessionalIncome.grossIncome -
+      (businessAndProfessionalIncome.grossIncomeValue -
         businessAndProfessionalIncome.taxPaidAbroad -
         businessAndProfessionalIncome.contributionsToSocialProtectionSchemes -
         businessAndProfessionalIncome.withholding) +
       (propertyIncome.netIncome - propertyIncome.taxPaidAbroad) +
-      (capitalIncome.grossIncome - capitalIncome.eithholdingTaxInPortugal)
+      (capitalIncome.grossIncome -
+        capitalIncome.eithholdingTaxInPortugal -
+        capitalIncome.taxPaidAbroad)
   );
 };
 
@@ -343,6 +347,98 @@ const calculateReceiptsAverageTotal = (
   return 0;
 };
 
+const calculateGreenReceiptsAverageTotal = (
+  params: calculateGreenReceiptsAverageTotalInterface
+) => {
+  const {
+    greenReceiptsIncomes1,
+    greenReceiptsIncomes2,
+    greenReceiptsIncomes3,
+    greenReceiptsIncomes4,
+    greenReceiptsIncomes5,
+    greenReceiptsIncomes6,
+    isIrregular,
+    propertyIncomeTax,
+  } = params;
+  if (isIrregular) {
+    if (propertyIncomeTax) {
+      return round(
+        ((greenReceiptsIncomes1.receiptValue +
+          greenReceiptsIncomes2.receiptValue +
+          greenReceiptsIncomes3.receiptValue +
+          greenReceiptsIncomes4.receiptValue +
+          greenReceiptsIncomes5.receiptValue +
+          greenReceiptsIncomes6.receiptValue) *
+          propertyIncomeTax) /
+          6
+      );
+    }
+    return round(
+      (greenReceiptsIncomes1.receiptValue +
+        greenReceiptsIncomes2.receiptValue +
+        greenReceiptsIncomes3.receiptValue +
+        greenReceiptsIncomes4.receiptValue +
+        greenReceiptsIncomes5.receiptValue +
+        greenReceiptsIncomes6.receiptValue) /
+        6
+    );
+  }
+  if (
+    !isIrregular &&
+    !!greenReceiptsIncomes1.receiptValue &&
+    !!greenReceiptsIncomes2.receiptValue &&
+    !!greenReceiptsIncomes3.receiptValue
+  ) {
+    if (propertyIncomeTax) {
+      return round(
+        ((greenReceiptsIncomes1.receiptValue +
+          greenReceiptsIncomes2.receiptValue +
+          greenReceiptsIncomes3.receiptValue) *
+          propertyIncomeTax) /
+          3
+      );
+    }
+    return round(
+      (greenReceiptsIncomes1.receiptValue +
+        greenReceiptsIncomes2.receiptValue +
+        greenReceiptsIncomes3.receiptValue) /
+        3
+    );
+  }
+  return 0;
+};
+
+const calculateNetIncomeEarnedAbroadForResidentsTotal = (
+  params: calculateNetIncomeEarnedAbroadForResidentsTotalInterface
+) => {
+  const {
+    commercialAndIndustrialIncomeTotal,
+    agriculturalIncomeFromForestryOrLivestockTotal,
+    incomeTableArticle151Total,
+    incomeFromUnforeseenInstallmentsTotal,
+    intellectualOrIndustrialPropertyIncomeTotal,
+    incomeIntellectualPropertyArt58NonExemptTotal,
+    incomeIntellectualPropertyArt58ExemptTotal,
+    incomeOfArtistsAndSportsmen2017AndPreviousTotal,
+    incomeAttributableBusinessIndIncomeGeneratingActivitiesTotal,
+    incomeOfArtists2018AndLaterTotal,
+    incomeOfSportsmen2018AndLaterTotal,
+  } = params;
+  return round(
+    commercialAndIndustrialIncomeTotal +
+      agriculturalIncomeFromForestryOrLivestockTotal +
+      incomeTableArticle151Total +
+      incomeFromUnforeseenInstallmentsTotal +
+      intellectualOrIndustrialPropertyIncomeTotal +
+      incomeIntellectualPropertyArt58NonExemptTotal +
+      incomeIntellectualPropertyArt58ExemptTotal +
+      incomeOfArtistsAndSportsmen2017AndPreviousTotal +
+      incomeAttributableBusinessIndIncomeGeneratingActivitiesTotal +
+      incomeOfArtists2018AndLaterTotal +
+      incomeOfSportsmen2018AndLaterTotal
+  );
+};
+
 export {
   calculateNetIncomeDependentsAndPensions,
   calculateNetIncomeIndependentWithOrganizedAccounting,
@@ -357,4 +453,6 @@ export {
   calculateOtherIncome,
   calculateIsRegularOrIrregular,
   calculateReceiptsAverageTotal,
+  calculateGreenReceiptsAverageTotal,
+  calculateNetIncomeEarnedAbroadForResidentsTotal,
 };
